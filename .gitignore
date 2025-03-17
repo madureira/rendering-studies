@@ -1,0 +1,6 @@
+.cache/*
+build/*
+CMakeFiles/*
+compile_commands.json
+CMakeUserPresets.json
+CMakeCache.txt
