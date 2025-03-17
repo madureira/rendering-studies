@@ -1,17 +1,16 @@
 #include "./triangle.h"
 
-#include <headers/types.h>
 #include <iostream>
 
 #include "../../file_manager/file_manager.h"
 
 Triangle::Triangle()
     : m_model(1.f),
-    m_view(1.f),
-    m_shader(Shader(
-        FileManager::read("shaders/simple.vs"), // Vertex shader source
-        FileManager::read("shaders/simple.fs")  // Fragment shader source
-    ))
+      m_view(1.f),
+      m_shader(Shader(
+          FileManager::read("shaders/simple.vs"), // Vertex shader source
+          FileManager::read("shaders/simple.fs")  // Fragment shader source
+          ))
 {
     createMesh();
 
@@ -53,10 +52,10 @@ void Triangle::update(float32 time, uint32 windowWidth, uint32 windowHeight)
 
         // Projection matrix
         glm::mat4 projection = glm::perspective(
-            (float32)M_PI_2,                                            // Field of view (90 degrees in radians)
-            (float32)windowWidth / (float32)windowHeight,   // Aspect ratio (width / height)
-            0.01f,                                                      // Near clipping plane
-            100.0f                                                      // Far clipping plane
+            (float32)M_PI_2,                              // Field of view (90 degrees in radians)
+            (float32)windowWidth / (float32)windowHeight, // Aspect ratio (width / height)
+            0.01f,                                        // Near clipping plane
+            100.0f                                        // Far clipping plane
         );
 
         // Update model matrix for rotating the triangle on Z-axis

@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include <headers/types.h>
+#include <rendering_studies/types.h>
 
 class Shader
 {

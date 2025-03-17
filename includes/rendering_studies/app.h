@@ -1,6 +1,6 @@
 #pragma once
 
-#include <headers/types.h>
+#include <rendering_studies/types.h>
 
 enum class AppType
 {

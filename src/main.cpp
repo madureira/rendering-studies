@@ -1,14 +1,13 @@
-#include <headers/types.h>
-#include "window/window.h"
 #include "app/app_factory.h"
+#include "window/window.h"
 
 int main()
 {
     // Initialize window
-    Window window("C++ Project Template", 1200, 900);
+    Window window("Rendering Studies", 1200, 900);
 
     // Initialize app
-    App* app = AppFactory().generate(AppType::Triangle);
+    App *app = AppFactory().generate(AppType::Triangle);
 
     // Main loop
     while (window.isOpen())
@@ -21,6 +20,8 @@ int main()
         window.swapBuffers();
         window.pollEvents();
     }
+
+    delete app;
 
     return 0;
 }

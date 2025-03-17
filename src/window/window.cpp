@@ -15,8 +15,8 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
 
     const int32 MONITOR_INDEX = 0;
     int32 monitors;
-    GLFWmonitor* pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
-    const GLFWvidmode* pMode = glfwGetVideoMode(pMonitor);
+    GLFWmonitor *pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
+    const GLFWvidmode *pMode = glfwGetVideoMode(pMonitor);
 
     // Set OpenGL version and profile
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // OpenGL 4.1
@@ -50,14 +50,12 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glfwSwapInterval(VSYNC_ON ? 1 : 0);
     glfwFocusWindow(m_window);
 
-    glfwSetErrorCallback([](int error, const char* description)
-    {
+    glfwSetErrorCallback([](int error, const char *description) {
         std::cerr << "GLFW ERROR: code: " << error << ", message: " << description << std::endl;
     });
 
-    glfwSetWindowSizeCallback(m_window, [](GLFWwindow* pNativeWindow, int32 width, int32 height)
-    {
-        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
+    glfwSetWindowSizeCallback(m_window, [](GLFWwindow *pNativeWindow, int32 width, int32 height) {
+        Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
         window.m_width = width;
         window.m_height = height;
         glViewport(0, 0, width, height);
@@ -119,7 +117,6 @@ uint32 Window::getHeight() const
 {
     return m_height;
 }
-
 
 void Window::shutdown() const
 {

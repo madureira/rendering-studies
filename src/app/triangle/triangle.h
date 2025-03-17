@@ -4,8 +4,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <headers/types.h>
-#include "../app.h"
+#include <rendering_studies/app.h>
+#include <rendering_studies/types.h>
+
 #include "../../shader/shader.h"
 
 class Triangle : public App

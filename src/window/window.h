@@ -1,12 +1,11 @@
 #pragma once
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include <string>
 
-#include <headers/types.h>
+#include <rendering_studies/types.h>
 
 class Window
 {
