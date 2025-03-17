@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(cpp-project-template)
+project(rendering-studies)
 
 set(CMAKE_BUILD_TYPE Debug)
 

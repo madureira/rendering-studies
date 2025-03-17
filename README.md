@@ -1,4 +1,4 @@
-# CPP Project Template
+# Rendering Studies
 
 ## Dependencies
 

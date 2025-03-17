@@ -18,7 +18,7 @@ conan install .. --output-folder=. --build=missing --settings=build_type=%BUILD_
 cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
 cmake --build .
 
-cpp-project-template.exe
+rendering-studies.exe
 
 popd
 
