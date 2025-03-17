@@ -7,6 +7,7 @@ set(CMAKE_BUILD_TYPE Debug)
 find_package(glfw3 REQUIRED)
 find_package(glew REQUIRED)
 find_package(glm REQUIRED)
+find_package(spdlog REQUIRED)
 
 # Add all .cpp files in the src directory and its subdirectories
 file(GLOB_RECURSE CPP_SOURCES src/*.cpp)
@@ -24,5 +25,6 @@ file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR}/)
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} GLEW::GLEW)
 target_link_libraries(${PROJECT_NAME} glm::glm)
+target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 
 target_include_directories(${PROJECT_NAME} PRIVATE includes)

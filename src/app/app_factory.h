@@ -12,6 +12,7 @@ public:
         switch (type)
         {
         case AppType::Triangle:
+            LOG_INFO("AppFactory: instantiating Triangle app");
             return new Triangle();
         }
 

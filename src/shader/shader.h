@@ -1,11 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <string>
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+
+#include <string>
 
 #include <rendering_studies/types.h>
 

@@ -109,9 +109,7 @@ void Shader::checkCompileError(uint32 shader, const std::string type)
     if (!success)
     {
         glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-        std::cout << "Shader: Error compiling " << type << ":" << std::endl
-                  << infoLog
-                  << std::endl;
+        LOG_ERROR("Shader: Error compiling {}:\n{}", type, infoLog);
     }
 }
 
@@ -123,8 +121,6 @@ void Shader::checkLinkingError()
     if (!success)
     {
         glGetProgramInfoLog(m_id, 1024, NULL, infoLog);
-        std::cout << "Shader: Error linking shader program: " << std::endl
-                  << infoLog
-                  << std::endl;
+        LOG_ERROR("Shader: Error linking shader program: {}", infoLog);
     }
 }

@@ -1,7 +1,8 @@
 #include "file_manager.h"
 
+#include <rendering_studies/types.h>
+
 #include <fstream>
-#include <iostream>
 #include <sstream>
 
 FileManager::FileManager()
@@ -18,15 +19,13 @@ std::string FileManager::read(const std::string &filename)
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     std::stringstream fileStream;
-    try
-    {
+
+    try {
         file.open(filename.c_str());
         fileStream << file.rdbuf();
         file.close();
-    }
-    catch (std::ifstream::failure e)
-    {
-        std::cout << "FileManager: error reading file: " << filename << std::endl;
+    } catch (std::ifstream::failure e) {
+        LOG_ERROR("FileManager: error reading file: {}", filename);
     }
 
     return fileStream.str();

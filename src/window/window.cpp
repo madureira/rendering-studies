@@ -1,7 +1,5 @@
 #include "window.h"
 
-#include <iostream>
-
 Window::Window(const std::string &title, uint32 width, uint32 height)
 {
     m_width = width;
@@ -9,7 +7,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
 
     if (!glfwInit())
     {
-        std::cout << "Window: error initializing GLFW" << std::endl;
+        LOG_ERROR("Window: error initializing GLFW");
         return;
     }
 
@@ -37,7 +35,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     m_window = glfwCreateWindow(width, height, title.c_str(), FULLSCREEN ? pMonitor : NULL, NULL);
     if (!m_window)
     {
-        std::cout << "Window: error creating window" << std::endl;
+        LOG_ERROR("Window: error creating window");
         shutdown();
         return;
     }
@@ -51,7 +49,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glfwFocusWindow(m_window);
 
     glfwSetErrorCallback([](int error, const char *description) {
-        std::cerr << "GLFW ERROR: code: " << error << ", message: " << description << std::endl;
+        LOG_ERROR("GLFW ERROR: code: {}, message: {}", error, description);
     });
 
     glfwSetWindowSizeCallback(m_window, [](GLFWwindow *pNativeWindow, int32 width, int32 height) {
@@ -65,7 +63,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
     {
-        std::cerr << "Failed to initialize GLEW" << std::endl;
+        LOG_ERROR("Window: error initializing GLEW");
         shutdown();
         return;
     }
