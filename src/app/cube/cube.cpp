@@ -69,22 +69,22 @@ void Cube::Update(Window *window)
 
         if (window->IsKeyPressed(KeyToken::Up) || window->IsKeyPressed(KeyToken::W))
         {
-            m_Camera->ProcessKeyboard(CameraMovement::FORWARD, m_DeltaTime);
+            m_Camera->ProcessKeyboard(CameraMove::FORWARD, m_DeltaTime);
         }
 
         if (window->IsKeyPressed(KeyToken::Down) || window->IsKeyPressed(KeyToken::S))
         {
-            m_Camera->ProcessKeyboard(CameraMovement::BACKWARD, m_DeltaTime);
+            m_Camera->ProcessKeyboard(CameraMove::BACKWARD, m_DeltaTime);
         }
 
         if (window->IsKeyPressed(KeyToken::Left) || window->IsKeyPressed(KeyToken::A))
         {
-            m_Camera->ProcessKeyboard(CameraMovement::LEFT, m_DeltaTime);
+            m_Camera->ProcessKeyboard(CameraMove::LEFT, m_DeltaTime);
         }
 
         if (window->IsKeyPressed(KeyToken::Right) || window->IsKeyPressed(KeyToken::D))
         {
-            m_Camera->ProcessKeyboard(CameraMovement::RIGHT, m_DeltaTime);
+            m_Camera->ProcessKeyboard(CameraMove::RIGHT, m_DeltaTime);
         }
 
         m_Shader.SetMat4("u_model", m_Model);

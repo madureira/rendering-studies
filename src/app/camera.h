@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <RenderingStudies/Types.h>
 
-enum class CameraMovement
+enum class CameraMove
 {
     FORWARD,
     BACKWARD,
@@ -57,26 +57,26 @@ public:
         return m_Zoom;
     }
 
-    void ProcessKeyboard(CameraMovement direction, float32 deltaTime)
+    void ProcessKeyboard(CameraMove direction, float32 deltaTime)
     {
         float32 velocity = m_MovementSpeed * deltaTime;
 
-        if (direction == CameraMovement::FORWARD)
+        if (direction == CameraMove::FORWARD)
         {
             m_Position += m_Front * velocity;
         }
 
-        if (direction == CameraMovement::BACKWARD)
+        if (direction == CameraMove::BACKWARD)
         {
             m_Position -= m_Front * velocity;
         }
 
-        if (direction == CameraMovement::LEFT)
+        if (direction == CameraMove::LEFT)
         {
             m_Position -= m_Right * velocity;
         }
 
-        if (direction == CameraMovement::RIGHT)
+        if (direction == CameraMove::RIGHT)
         {
             m_Position += m_Right * velocity;
         }
