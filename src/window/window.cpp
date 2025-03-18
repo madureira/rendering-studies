@@ -45,6 +45,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glfwSetWindowUserPointer(m_window, this);
     glfwSetWindowPos(m_window, (pMode->width - width) / 2, (pMode->height - height) / 2);
     glfwSetWindowSizeLimits(m_window, 800, 600, 3840, 2160);
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSwapInterval(VSYNC_ON ? 1 : 0);
     glfwFocusWindow(m_window);
 
@@ -57,6 +58,26 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
         window.m_width = width;
         window.m_height = height;
         glViewport(0, 0, width, height);
+    });
+
+    glfwSetCursorPosCallback(m_window, [](GLFWwindow *pNativeWindow, float64 xpos, float64 ypos) {
+        Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
+        window.m_mouseX = xpos;
+        window.m_mouseY = ypos;
+    });
+
+    glfwSetScrollCallback(m_window, [](GLFWwindow *pNativeWindow, float64 xoffset, float64 yoffset) {
+        Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
+        window.m_xOffset = xoffset;
+        window.m_yOffset = yoffset;
+    });
+
+    glfwSetKeyCallback(m_window, [](GLFWwindow *pNativeWindow, int32 key, int32 scancode, int32 action, int32 mods) {
+        Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        {
+            glfwSetWindowShouldClose(pNativeWindow, GLFW_TRUE);
+        }
     });
 
     // Initialize GLEW
@@ -114,6 +135,36 @@ uint32 Window::getWidth() const
 uint32 Window::getHeight() const
 {
     return m_height;
+}
+
+bool Window::isKeyPressed(KeyToken key) const
+{
+    return glfwGetKey(m_window, (int32)key) == (int32)KeyAction::Press;
+}
+
+bool Window::isKeyReleased(KeyToken key) const
+{
+    return glfwGetKey(m_window, (int32)key) == (int32)KeyAction::Release;
+}
+
+float64 Window::getMouseX() const
+{
+    return m_mouseX;
+}
+
+float64 Window::getMouseY() const
+{
+    return m_mouseY;
+}
+
+float64 Window::getXOffset() const
+{
+    return m_xOffset;
+}
+
+float64 Window::getYOffset() const
+{
+    return m_yOffset;
 }
 
 void Window::shutdown() const

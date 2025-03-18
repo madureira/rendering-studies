@@ -3,25 +3,18 @@
 
 int main()
 {
-    // Initialize window
     Window window("Rendering Studies", 1200, 900);
+    App *app = AppFactory().generate(AppType::Cube);
 
-    // Initialize app
-    App *app = AppFactory().generate(AppType::Triangle);
-
-    // Main loop
     while (window.isOpen())
     {
         window.clear();
-
-        app->update(window.getTime(), window.getWidth(), window.getHeight());
-
-        // Swap buffers and poll events
+        app->update(&window);
         window.swapBuffers();
         window.pollEvents();
     }
 
     delete app;
 
-    return 0;
+    return EXIT_SUCCESS;
 }

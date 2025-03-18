@@ -20,11 +20,14 @@ std::string FileManager::read(const std::string &filename)
 
     std::stringstream fileStream;
 
-    try {
+    try
+    {
         file.open(filename.c_str());
         fileStream << file.rdbuf();
         file.close();
-    } catch (std::ifstream::failure e) {
+    }
+    catch (std::ifstream::failure e)
+    {
         LOG_ERROR("FileManager: error reading file: {}", filename);
     }
 

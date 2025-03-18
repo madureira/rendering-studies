@@ -36,8 +36,12 @@ Triangle::~Triangle()
     glDeleteBuffers(1, &m_ebo);
 }
 
-void Triangle::update(float32 time, uint32 windowWidth, uint32 windowHeight)
+void Triangle::update(Window *window)
 {
+    float32 time = window->getTime();
+    uint32 windowWidth = window->getWidth();
+    uint32 windowHeight = window->getHeight();
+
     // Vary color based on time
     float32 red = (std::sin(time * 0.5f) + 1.0f) / 4.0f;
     float32 green = (std::sin(time * 0.3f) + 1.0f) / 4.0f;
@@ -45,12 +49,9 @@ void Triangle::update(float32 time, uint32 windowWidth, uint32 windowHeight)
 
     glClearColor(red, green, blue, 1.0f); // Use oscillating colors
 
-    // Render the triangle
     {
-        // Activate the shader to use it for rendering
         m_shader.use();
 
-        // Projection matrix
         glm::mat4 projection = glm::perspective(
             (float32)M_PI_2,                              // Field of view (90 degrees in radians)
             (float32)windowWidth / (float32)windowHeight, // Aspect ratio (width / height)
@@ -64,19 +65,12 @@ void Triangle::update(float32 time, uint32 windowWidth, uint32 windowHeight)
             std::sin(time * 0.8f) / 4.f,
             glm::vec3(0.f, 0.f, -1.f));
 
-        m_model = glm::scale(m_model, glm::vec3(time * 0.1f, time * 0.1f, time * 0.1f));
-
-        m_model = glm::translate(m_model, glm::vec3(time * 0.1f, 0.f, 0.f));
-
-        // Set shader uniforms
         m_shader.setMat4("u_model", m_model);
         m_shader.setMat4("u_view", m_view);
         m_shader.setMat4("u_projection", projection);
 
-        // Bind the VAO that stores the triangle's vertex data and settings
         glBindVertexArray(m_vao);
 
-        // Issue the draw command
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
         // Unbind the VAO
@@ -88,7 +82,7 @@ void Triangle::createMesh()
 {
     // Define the vertices and their associated colors for the triangle
     // Each vertex has a position (x, y, z) and a color (r, g, b)
-    float32 triangleVertices[] = {
+    float32 vertices[] = {
         0.0f, 1.0f, 0.0f,  // Position of vertex 1
         1.0f, 0.0f, 0.0f,  // Color of vertex 1 (Red)
         -1.f, -0.5f, 0.0f, // Position of vertex 2
@@ -98,7 +92,7 @@ void Triangle::createMesh()
     };
 
     // Define the indices that represent how to draw the triangle using the vertices
-    uint32 triangleIndices[] = {
+    uint32 indices[] = {
         0, 1, 2 // The triangle consists of vertices 0, 1, and 2
     };
 
@@ -114,12 +108,12 @@ void Triangle::createMesh()
     // Bind the VBO to the GL_ARRAY_BUFFER target to store vertex data
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     // Upload the vertex data to the GPU
-    glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Bind the EBO to the GL_ELEMENT_ARRAY_BUFFER target to store index data
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
     // Upload the index data to the GPU
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triangleIndices), triangleIndices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Specify the layout of the vertex data:
     // Attribute 0: Position (x, y, z) - 3 floats, starting at offset 0

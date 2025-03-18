@@ -8,8 +8,9 @@
 
 #include "../../shader/shader.h"
 #include "../../window/window.h"
+#include "../camera.h"
 
-class Triangle : public App
+class Cube : public App
 {
 private:
     uint32 m_vao;
@@ -24,6 +25,8 @@ private:
     float32 m_positionX;
     float32 m_positionY;
 
+    Camera *m_camera;
+
     // Delta time
     bool m_firstMouse = true;
     float32 m_deltaTime = 0.0f;
@@ -32,8 +35,8 @@ private:
     float32 m_lastY;
 
 public:
-    Triangle();
-    ~Triangle();
+    Cube();
+    ~Cube();
 
     virtual void update(Window *window) override;
 
