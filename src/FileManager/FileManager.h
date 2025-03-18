@@ -8,5 +8,5 @@ public:
     FileManager();
     ~FileManager();
 
-    static std::string read(const std::string &filename);
+    static std::string Read(const std::string &filename);
 };

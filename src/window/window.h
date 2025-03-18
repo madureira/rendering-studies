@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include <rendering_studies/types.h>
+#include <RenderingStudies/Types.h>
 
 enum class KeyAction;
 enum class KeyToken;
@@ -13,34 +13,34 @@ enum class KeyToken;
 class Window
 {
 private:
-    GLFWwindow *m_window;
-    uint32 m_width;
-    uint32 m_height;
-    float64 m_mouseX;
-    float64 m_mouseY;
-    float64 m_xOffset;
-    float64 m_yOffset;
+    GLFWwindow *m_Window;
+    uint32 m_Width;
+    uint32 m_Height;
+    float64 m_MouseX;
+    float64 m_MouseY;
+    float64 m_OffsetX;
+    float64 m_OffsetY;
 
 public:
     Window(const std::string &title, uint32 width, uint32 height);
     ~Window();
 
-    bool isOpen() const;
-    void clear() const;
-    void swapBuffers() const;
-    void pollEvents() const;
-    float32 getTime() const;
-    uint32 getWidth() const;
-    uint32 getHeight() const;
-    bool isKeyPressed(KeyToken key) const;
+    bool IsOpen() const;
+    void Clear() const;
+    void SwapBuffers() const;
+    void PollEvents() const;
+    float32 GetTime() const;
+    uint32 GetWidth() const;
+    uint32 GetHeight() const;
+    bool IsKeyPressed(KeyToken key) const;
     bool isKeyReleased(KeyToken key) const;
-    float64 getMouseX() const;
-    float64 getMouseY() const;
-    float64 getXOffset() const;
-    float64 getYOffset() const;
+    float64 GetMouseX() const;
+    float64 GetMouseY() const;
+    float64 GetOffsetX() const;
+    float64 GetOffsetY() const;
 
 private:
-    void shutdown() const;
+    void Shutdown() const;
 };
 
 enum class KeyAction

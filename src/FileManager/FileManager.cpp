@@ -1,6 +1,6 @@
-#include "file_manager.h"
+#include "FileManager.h"
 
-#include <rendering_studies/types.h>
+#include <RenderingStudies/Types.h>
 
 #include <fstream>
 #include <sstream>
@@ -13,7 +13,7 @@ FileManager::~FileManager()
 {
 }
 
-std::string FileManager::read(const std::string &filename)
+std::string FileManager::Read(const std::string &filename)
 {
     std::ifstream file;
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);

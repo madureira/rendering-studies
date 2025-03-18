@@ -53,7 +53,20 @@
         "variant": "cpp",
         "vector": "cpp",
         "algorithm": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "__tree": "cpp",
+        "any": "cpp",
+        "cfenv": "cpp",
+        "charconv": "cpp",
+        "condition_variable": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "regex": "cpp",
+        "set": "cpp",
+        "source_location": "cpp",
+        "span": "cpp",
+        "typeindex": "cpp"
     },
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.intelliSenseEngine": "Tag Parser"

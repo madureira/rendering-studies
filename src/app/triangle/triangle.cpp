@@ -1,28 +1,26 @@
-#include "./triangle.h"
+#include "./Triangle.h"
 
-#include <iostream>
-
-#include "../../file_manager/file_manager.h"
+#include "../../FileManager/FileManager.h"
 
 Triangle::Triangle()
-    : m_model(1.f),
-      m_view(1.f),
-      m_shader(Shader(
-          FileManager::read("shaders/simple.vs"), // Vertex shader source
-          FileManager::read("shaders/simple.fs")  // Fragment shader source
+    : m_Model(1.f),
+      m_View(1.f),
+      m_Shader(Shader(
+          FileManager::Read("shaders/simple.vs"), // Vertex shader source
+          FileManager::Read("shaders/simple.fs")  // Fragment shader source
           ))
 {
-    createMesh();
+    CreateMesh();
 
     // Camera setup
     glm::vec3 cameraPosition(0.f, 0.f, 2.f);       // Camera is placed at (0, 0, 2)
     glm::vec3 cameraViewDirection(0.f, 0.f, -1.f); // Camera looks towards the negative Z-axis
 
     // Model matrix
-    m_model = glm::mat4(1.f); // Identity matrix, meaning no transformation on the model
+    m_Model = glm::mat4(1.f); // Identity matrix, meaning no transformation on the model
 
     // View matrix
-    m_view = glm::lookAt(
+    m_View = glm::lookAt(
         cameraPosition,                       // Camera position
         cameraPosition + cameraViewDirection, // Target position (camera looks here)
         glm::vec3(0.f, 1.f, 0.f)              // Up vector (positive Y-axis)
@@ -31,16 +29,16 @@ Triangle::Triangle()
 
 Triangle::~Triangle()
 {
-    glDeleteVertexArrays(1, &m_vao);
-    glDeleteBuffers(1, &m_vbo);
-    glDeleteBuffers(1, &m_ebo);
+    glDeleteVertexArrays(1, &m_VAO);
+    glDeleteBuffers(1, &m_VBO);
+    glDeleteBuffers(1, &m_EBO);
 }
 
-void Triangle::update(Window *window)
+void Triangle::Update(Window *window)
 {
-    float32 time = window->getTime();
-    uint32 windowWidth = window->getWidth();
-    uint32 windowHeight = window->getHeight();
+    float32 time = window->GetTime();
+    uint32 windowWidth = window->GetWidth();
+    uint32 windowHeight = window->GetHeight();
 
     // Vary color based on time
     float32 red = (std::sin(time * 0.5f) + 1.0f) / 4.0f;
@@ -50,7 +48,7 @@ void Triangle::update(Window *window)
     glClearColor(red, green, blue, 1.0f); // Use oscillating colors
 
     {
-        m_shader.use();
+        m_Shader.Use();
 
         glm::mat4 projection = glm::perspective(
             (float32)M_PI_2,                              // Field of view (90 degrees in radians)
@@ -60,16 +58,16 @@ void Triangle::update(Window *window)
         );
 
         // Update model matrix for rotating the triangle on Z-axis
-        m_model = glm::rotate(
+        m_Model = glm::rotate(
             glm::mat4(1.f),
             std::sin(time * 0.8f) / 4.f,
             glm::vec3(0.f, 0.f, -1.f));
 
-        m_shader.setMat4("u_model", m_model);
-        m_shader.setMat4("u_view", m_view);
-        m_shader.setMat4("u_projection", projection);
+        m_Shader.SetMat4("u_model", m_Model);
+        m_Shader.SetMat4("u_view", m_View);
+        m_Shader.SetMat4("u_projection", projection);
 
-        glBindVertexArray(m_vao);
+        glBindVertexArray(m_VAO);
 
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
@@ -78,7 +76,7 @@ void Triangle::update(Window *window)
     }
 }
 
-void Triangle::createMesh()
+void Triangle::CreateMesh()
 {
     // Define the vertices and their associated colors for the triangle
     // Each vertex has a position (x, y, z) and a color (r, g, b)
@@ -98,20 +96,20 @@ void Triangle::createMesh()
 
     // Generate a Vertex Array Object (VAO), Vertex Buffer Object (VBO),
     // and Element Buffer Object (EBO) to manage and store OpenGL state
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1, &m_vbo);
-    glGenBuffers(1, &m_ebo);
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
 
     // Bind the VAO to start recording the OpenGL state for this triangle
-    glBindVertexArray(m_vao);
+    glBindVertexArray(m_VAO);
 
     // Bind the VBO to the GL_ARRAY_BUFFER target to store vertex data
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     // Upload the vertex data to the GPU
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Bind the EBO to the GL_ELEMENT_ARRAY_BUFFER target to store index data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     // Upload the index data to the GPU
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 

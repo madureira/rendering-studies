@@ -1,10 +1,10 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <RenderingStudies/Types.h>
 
-enum Camera_Movement
+enum class CameraMovement
 {
     FORWARD,
     BACKWARD,
@@ -19,109 +19,116 @@ const float32 ZOOM = 45.0f;
 
 class Camera
 {
+private:
+    glm::vec3 m_Position;
+    glm::vec3 m_Front;
+    glm::vec3 m_Up;
+    glm::vec3 m_Right;
+    glm::vec3 m_WorldUp;
+
+    float32 m_Zoom;
+    float32 m_Yaw;
+    float32 m_Pitch;
+    float32 m_MovementSpeed;
+    float32 m_MouseSensitivity;
+
 public:
-    glm::vec3 Position;
-    glm::vec3 Front;
-    glm::vec3 Up;
-    glm::vec3 Right;
-    glm::vec3 WorldUp;
-
-    float Yaw;
-    float Pitch;
-    float MovementSpeed;
-    float MouseSensitivity;
-    float Zoom;
-
-    Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
-        : Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-          MovementSpeed(SPEED),
-          MouseSensitivity(SENSITIVITY),
-          Zoom(ZOOM)
+    Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)
+        : m_Front(glm::vec3(0.0f, 0.0f, -1.0f)),
+          m_MovementSpeed(SPEED),
+          m_MouseSensitivity(SENSITIVITY),
+          m_Zoom(ZOOM)
     {
-        Position = position;
-        WorldUp = up;
-        Yaw = yaw;
-        Pitch = pitch;
-        updateCameraVectors();
+        m_Position = position;
+        m_WorldUp = up;
+        m_Yaw = yaw;
+        m_Pitch = pitch;
+
+        UpdateCameraVectors();
     }
 
-    glm::mat4 getViewMatrix()
+    glm::mat4 GetViewMatrix()
     {
-        return glm::lookAt(Position, Position + Front, Up);
+        return glm::lookAt(m_Position, m_Position + m_Front, m_Up);
     }
 
-    void processKeyboard(Camera_Movement direction, float deltaTime)
+    float32 GetZoom()
     {
-        float32 velocity = MovementSpeed * deltaTime;
+        return m_Zoom;
+    }
 
-        if (direction == FORWARD)
+    void ProcessKeyboard(CameraMovement direction, float32 deltaTime)
+    {
+        float32 velocity = m_MovementSpeed * deltaTime;
+
+        if (direction == CameraMovement::FORWARD)
         {
-            Position += Front * velocity;
+            m_Position += m_Front * velocity;
         }
 
-        if (direction == BACKWARD)
+        if (direction == CameraMovement::BACKWARD)
         {
-            Position -= Front * velocity;
+            m_Position -= m_Front * velocity;
         }
 
-        if (direction == LEFT)
+        if (direction == CameraMovement::LEFT)
         {
-            Position -= Right * velocity;
+            m_Position -= m_Right * velocity;
         }
 
-        if (direction == RIGHT)
+        if (direction == CameraMovement::RIGHT)
         {
-            Position += Right * velocity;
+            m_Position += m_Right * velocity;
         }
     }
 
-    void processMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
+    void ProcessMouseMovement(float32 xoffset, float32 yoffset, bool constrainPitch = true)
     {
         float32 dampingFactor = 0.5f; // Reduce sudden changes
-        xoffset *= MouseSensitivity * dampingFactor;
-        yoffset *= MouseSensitivity * dampingFactor;
+        xoffset *= m_MouseSensitivity * dampingFactor;
+        yoffset *= m_MouseSensitivity * dampingFactor;
 
-        Yaw += xoffset;
-        Pitch += yoffset;
+        m_Yaw += xoffset;
+        m_Pitch += yoffset;
 
         if (constrainPitch)
         {
-            if (Pitch > 89.0f)
+            if (m_Pitch > 89.0f)
             {
-                Pitch = 89.0f;
+                m_Pitch = 89.0f;
             }
-            if (Pitch < -89.0f)
+            if (m_Pitch < -89.0f)
             {
-                Pitch = -89.0f;
+                m_Pitch = -89.0f;
             }
         }
 
-        updateCameraVectors();
+        UpdateCameraVectors();
     }
 
-    void processMouseScroll(float yoffset)
+    void ProcessMouseScroll(float32 yoffset)
     {
-        Zoom -= yoffset;
+        m_Zoom -= yoffset;
 
-        if (Zoom < 1.0f)
+        if (m_Zoom < 1.0f)
         {
-            Zoom = 1.0f;
+            m_Zoom = 1.0f;
         }
-        if (Zoom > 45.0f)
+        if (m_Zoom > 45.0f)
         {
-            Zoom = 45.0f;
+            m_Zoom = 45.0f;
         }
     }
 
 private:
-    void updateCameraVectors()
+    void UpdateCameraVectors()
     {
         glm::vec3 front;
-        front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-        front.y = sin(glm::radians(Pitch));
-        front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-        Front = glm::normalize(front);
-        Right = glm::normalize(glm::cross(Front, WorldUp));
-        Up = glm::normalize(glm::cross(Right, Front));
+        front.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+        front.y = sin(glm::radians(m_Pitch));
+        front.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+        m_Front = glm::normalize(front);
+        m_Right = glm::normalize(glm::cross(m_Front, m_WorldUp));
+        m_Up = glm::normalize(glm::cross(m_Right, m_Front));
     }
 };

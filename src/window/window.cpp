@@ -1,9 +1,9 @@
-#include "window.h"
+#include "Window.h"
 
 Window::Window(const std::string &title, uint32 width, uint32 height)
 {
-    m_width = width;
-    m_height = height;
+    m_Width = width;
+    m_Height = height;
 
     if (!glfwInit())
     {
@@ -32,47 +32,47 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     const bool FULLSCREEN = false;
     const bool VSYNC_ON = true;
 
-    m_window = glfwCreateWindow(width, height, title.c_str(), FULLSCREEN ? pMonitor : NULL, NULL);
-    if (!m_window)
+    m_Window = glfwCreateWindow(width, height, title.c_str(), FULLSCREEN ? pMonitor : NULL, NULL);
+    if (!m_Window)
     {
         LOG_ERROR("Window: error creating window");
-        shutdown();
+        Shutdown();
         return;
     }
 
     // Make OpenGL context current
-    glfwMakeContextCurrent(m_window);
-    glfwSetWindowUserPointer(m_window, this);
-    glfwSetWindowPos(m_window, (pMode->width - width) / 2, (pMode->height - height) / 2);
-    glfwSetWindowSizeLimits(m_window, 800, 600, 3840, 2160);
-    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwMakeContextCurrent(m_Window);
+    glfwSetWindowUserPointer(m_Window, this);
+    glfwSetWindowPos(m_Window, (pMode->width - width) / 2, (pMode->height - height) / 2);
+    glfwSetWindowSizeLimits(m_Window, 800, 600, 3840, 2160);
+    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSwapInterval(VSYNC_ON ? 1 : 0);
-    glfwFocusWindow(m_window);
+    glfwFocusWindow(m_Window);
 
     glfwSetErrorCallback([](int error, const char *description) {
         LOG_ERROR("GLFW ERROR: code: {}, message: {}", error, description);
     });
 
-    glfwSetWindowSizeCallback(m_window, [](GLFWwindow *pNativeWindow, int32 width, int32 height) {
+    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow *pNativeWindow, int32 width, int32 height) {
         Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
-        window.m_width = width;
-        window.m_height = height;
+        window.m_Width = width;
+        window.m_Height = height;
         glViewport(0, 0, width, height);
     });
 
-    glfwSetCursorPosCallback(m_window, [](GLFWwindow *pNativeWindow, float64 xpos, float64 ypos) {
+    glfwSetCursorPosCallback(m_Window, [](GLFWwindow *pNativeWindow, float64 xpos, float64 ypos) {
         Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
-        window.m_mouseX = xpos;
-        window.m_mouseY = ypos;
+        window.m_MouseX = xpos;
+        window.m_MouseY = ypos;
     });
 
-    glfwSetScrollCallback(m_window, [](GLFWwindow *pNativeWindow, float64 xoffset, float64 yoffset) {
+    glfwSetScrollCallback(m_Window, [](GLFWwindow *pNativeWindow, float64 xoffset, float64 yoffset) {
         Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
-        window.m_xOffset = xoffset;
-        window.m_yOffset = yoffset;
+        window.m_OffsetX = xoffset;
+        window.m_OffsetY = yoffset;
     });
 
-    glfwSetKeyCallback(m_window, [](GLFWwindow *pNativeWindow, int32 key, int32 scancode, int32 action, int32 mods) {
+    glfwSetKeyCallback(m_Window, [](GLFWwindow *pNativeWindow, int32 key, int32 scancode, int32 action, int32 mods) {
         Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         {
@@ -85,7 +85,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     if (glewInit() != GLEW_OK)
     {
         LOG_ERROR("Window: error initializing GLEW");
-        shutdown();
+        Shutdown();
         return;
     }
 
@@ -96,15 +96,15 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
 
 Window::~Window()
 {
-    shutdown();
+    Shutdown();
 }
 
-bool Window::isOpen() const
+bool Window::IsOpen() const
 {
-    return !glfwWindowShouldClose(m_window);
+    return !glfwWindowShouldClose(m_Window);
 }
 
-void Window::clear() const
+void Window::Clear() const
 {
     // Clear color buffer and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -112,63 +112,63 @@ void Window::clear() const
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-void Window::swapBuffers() const
+void Window::SwapBuffers() const
 {
-    glfwSwapBuffers(m_window);
+    glfwSwapBuffers(m_Window);
 }
 
-void Window::pollEvents() const
+void Window::PollEvents() const
 {
     glfwPollEvents();
 }
 
-float Window::getTime() const
+float Window::GetTime() const
 {
     return (float)glfwGetTime();
 }
 
-uint32 Window::getWidth() const
+uint32 Window::GetWidth() const
 {
-    return m_width;
+    return m_Width;
 }
 
-uint32 Window::getHeight() const
+uint32 Window::GetHeight() const
 {
-    return m_height;
+    return m_Height;
 }
 
-bool Window::isKeyPressed(KeyToken key) const
+bool Window::IsKeyPressed(KeyToken key) const
 {
-    return glfwGetKey(m_window, (int32)key) == (int32)KeyAction::Press;
+    return glfwGetKey(m_Window, (int32)key) == (int32)KeyAction::Press;
 }
 
 bool Window::isKeyReleased(KeyToken key) const
 {
-    return glfwGetKey(m_window, (int32)key) == (int32)KeyAction::Release;
+    return glfwGetKey(m_Window, (int32)key) == (int32)KeyAction::Release;
 }
 
-float64 Window::getMouseX() const
+float64 Window::GetMouseX() const
 {
-    return m_mouseX;
+    return m_MouseX;
 }
 
-float64 Window::getMouseY() const
+float64 Window::GetMouseY() const
 {
-    return m_mouseY;
+    return m_MouseY;
 }
 
-float64 Window::getXOffset() const
+float64 Window::GetOffsetX() const
 {
-    return m_xOffset;
+    return m_OffsetX;
 }
 
-float64 Window::getYOffset() const
+float64 Window::GetOffsetY() const
 {
-    return m_yOffset;
+    return m_OffsetY;
 }
 
-void Window::shutdown() const
+void Window::Shutdown() const
 {
-    glfwDestroyWindow(m_window);
+    glfwDestroyWindow(m_Window);
     glfwTerminate();
 }

@@ -3,40 +3,30 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <rendering_studies/app.h>
-#include <rendering_studies/types.h>
+#include <RenderingStudies/App.h>
+#include <RenderingStudies/Types.h>
 
-#include "../../shader/shader.h"
-#include "../../window/window.h"
+#include "../../Shader/Shader.h"
+#include "../../Window/Window.h"
 
 class Triangle : public App
 {
 private:
-    uint32 m_vao;
-    uint32 m_vbo;
-    uint32 m_ebo;
+    uint32 m_VAO;
+    uint32 m_VBO;
+    uint32 m_EBO;
 
-    glm::mat4 m_model;
-    glm::mat4 m_view;
+    glm::mat4 m_Model;
+    glm::mat4 m_View;
 
-    Shader m_shader;
-
-    float32 m_positionX;
-    float32 m_positionY;
-
-    // Delta time
-    bool m_firstMouse = true;
-    float32 m_deltaTime = 0.0f;
-    float32 m_lastFrame = 0.0f;
-    float32 m_lastX;
-    float32 m_lastY;
+    Shader m_Shader;
 
 public:
     Triangle();
     ~Triangle();
 
-    virtual void update(Window *window) override;
+    virtual void Update(Window *window) override;
 
 private:
-    void createMesh();
+    void CreateMesh();
 };

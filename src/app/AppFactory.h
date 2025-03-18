@@ -1,9 +1,9 @@
 #pragma once
 
-#include <rendering_studies/app.h>
+#include <RenderingStudies/App.h>
 
-#include "./cube/cube.h"
-#include "./triangle/triangle.h"
+#include "./Cube/Cube.h"
+#include "./Triangle/Triangle.h"
 
 enum class AppType
 {
@@ -14,7 +14,7 @@ enum class AppType
 class AppFactory
 {
 public:
-    App *generate(AppType type)
+    App *Generate(AppType type)
     {
         switch (type)
         {

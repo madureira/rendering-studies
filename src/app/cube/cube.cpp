@@ -1,99 +1,97 @@
-#include "./cube.h"
+#include "./Cube.h"
 
-#include <iostream>
-
-#include "../../file_manager/file_manager.h"
+#include "../../FileManager/FileManager.h"
 
 Cube::Cube()
-    : m_model(1.f),
-      m_view(1.f),
-      m_shader(Shader(
-          FileManager::read("shaders/simple.vs"), // Vertex shader source
-          FileManager::read("shaders/simple.fs")  // Fragment shader source
+    : m_Model(1.f),
+      m_View(1.f),
+      m_Shader(Shader(
+          FileManager::Read("shaders/simple.vs"), // Vertex shader source
+          FileManager::Read("shaders/simple.fs")  // Fragment shader source
           ))
 {
-    createMesh();
+    CreateMesh();
 
     // Model matrix
-    m_model = glm::mat4(1.f); // Identity matrix, meaning no transformation on the model
+    m_Model = glm::mat4(1.f); // Identity matrix, meaning no transformation on the model
 
-    m_camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
-    m_lastX = 1200 / 2.0f;
-    m_lastY = 900 / 2.0f;
+    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+    m_LastX = 1200 / 2.0f;
+    m_LastY = 900 / 2.0f;
 }
 
 Cube::~Cube()
 {
-    glDeleteVertexArrays(1, &m_vao);
-    glDeleteBuffers(1, &m_vbo);
-    glDeleteBuffers(1, &m_ebo);
+    glDeleteVertexArrays(1, &m_VAO);
+    glDeleteBuffers(1, &m_VBO);
+    glDeleteBuffers(1, &m_EBO);
 }
 
-void Cube::update(Window *window)
+void Cube::Update(Window *window)
 {
-    float64 xpos = window->getMouseX();
-    float64 ypos = window->getMouseY();
+    float64 xpos = window->GetMouseX();
+    float64 ypos = window->GetMouseY();
 
-    if (m_firstMouse)
+    if (m_FirstMouse)
     {
-        m_lastX = xpos;
-        m_lastY = ypos;
-        m_firstMouse = false;
+        m_LastX = xpos;
+        m_LastY = ypos;
+        m_FirstMouse = false;
     }
 
-    float xoffset = xpos - m_lastX;
-    float yoffset = m_lastY - ypos; // Reversed since Y-coordinates go from bottom to top
-    m_lastX = xpos;
-    m_lastY = ypos;
+    float xoffset = xpos - m_LastX;
+    float yoffset = m_LastY - ypos; // Reversed since Y-coordinates go from bottom to top
+    m_LastX = xpos;
+    m_LastY = ypos;
 
-    m_camera->processMouseMovement(xoffset, yoffset);
+    m_Camera->ProcessMouseMovement(xoffset, yoffset);
 
     // Get the currentFrame in seconds
-    float32 currentFrame = window->getTime();
-    m_deltaTime = currentFrame - m_lastFrame;
-    m_lastFrame = currentFrame;
+    float32 currentFrame = window->GetTime();
+    m_DeltaTime = currentFrame - m_LastFrame;
+    m_LastFrame = currentFrame;
 
     // Get the window dimensions
-    uint32 windowWidth = window->getWidth();
-    uint32 windowHeight = window->getHeight();
+    uint32 windowWidth = window->GetWidth();
+    uint32 windowHeight = window->GetHeight();
 
     {
-        m_shader.use();
+        m_Shader.Use();
 
-        glm::mat4 view = m_camera->getViewMatrix();
+        glm::mat4 view = m_Camera->GetViewMatrix();
 
         glm::mat4 projection = glm::perspective(
-            glm::radians(m_camera->Zoom),                 // Field of view (90 degrees in radians)
+            glm::radians(m_Camera->GetZoom()),            // Field of view (90 degrees in radians)
             (float32)windowWidth / (float32)windowHeight, // Aspect ratio (width / height)
             0.01f,                                        // Near clipping plane
             100.0f                                        // Far clipping plane
         );
 
-        if (window->isKeyPressed(KeyToken::Up) || window->isKeyPressed(KeyToken::W))
+        if (window->IsKeyPressed(KeyToken::Up) || window->IsKeyPressed(KeyToken::W))
         {
-            m_camera->processKeyboard(FORWARD, m_deltaTime);
+            m_Camera->ProcessKeyboard(CameraMovement::FORWARD, m_DeltaTime);
         }
 
-        if (window->isKeyPressed(KeyToken::Down) || window->isKeyPressed(KeyToken::S))
+        if (window->IsKeyPressed(KeyToken::Down) || window->IsKeyPressed(KeyToken::S))
         {
-            m_camera->processKeyboard(BACKWARD, m_deltaTime);
+            m_Camera->ProcessKeyboard(CameraMovement::BACKWARD, m_DeltaTime);
         }
 
-        if (window->isKeyPressed(KeyToken::Left) || window->isKeyPressed(KeyToken::A))
+        if (window->IsKeyPressed(KeyToken::Left) || window->IsKeyPressed(KeyToken::A))
         {
-            m_camera->processKeyboard(LEFT, m_deltaTime);
+            m_Camera->ProcessKeyboard(CameraMovement::LEFT, m_DeltaTime);
         }
 
-        if (window->isKeyPressed(KeyToken::Right) || window->isKeyPressed(KeyToken::D))
+        if (window->IsKeyPressed(KeyToken::Right) || window->IsKeyPressed(KeyToken::D))
         {
-            m_camera->processKeyboard(RIGHT, m_deltaTime);
+            m_Camera->ProcessKeyboard(CameraMovement::RIGHT, m_DeltaTime);
         }
 
-        m_shader.setMat4("u_model", m_model);
-        m_shader.setMat4("u_view", view);
-        m_shader.setMat4("u_projection", projection);
+        m_Shader.SetMat4("u_model", m_Model);
+        m_Shader.SetMat4("u_view", view);
+        m_Shader.SetMat4("u_projection", projection);
 
-        glBindVertexArray(m_vao);
+        glBindVertexArray(m_VAO);
 
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
@@ -102,7 +100,7 @@ void Cube::update(Window *window)
     }
 }
 
-void Cube::createMesh()
+void Cube::CreateMesh()
 {
     float32 vertices[] = {
         // Positions          // Colors
@@ -135,18 +133,18 @@ void Cube::createMesh()
     };
 
     // Generate and bind VAO
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1, &m_vbo);
-    glGenBuffers(1, &m_ebo);
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
 
-    glBindVertexArray(m_vao);
+    glBindVertexArray(m_VAO);
 
     // Bind and set vertex buffer
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Bind and set index buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Position attribute (location = 0 in shader)

@@ -1,17 +1,17 @@
-#include "app/app_factory.h"
-#include "window/window.h"
+#include "App/AppFactory.h"
+#include "Window/Window.h"
 
 int main()
 {
     Window window("Rendering Studies", 1200, 900);
-    App *app = AppFactory().generate(AppType::Cube);
+    App *app = AppFactory().Generate(AppType::Cube);
 
-    while (window.isOpen())
+    while (window.IsOpen())
     {
-        window.clear();
-        app->update(&window);
-        window.swapBuffers();
-        window.pollEvents();
+        window.Clear();
+        app->Update(&window);
+        window.SwapBuffers();
+        window.PollEvents();
     }
 
     delete app;
