@@ -1,8 +1,8 @@
 #pragma once
 
+#include <RenderingStudies/Types.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <RenderingStudies/Types.h>
 
 enum class CameraMove
 {
@@ -13,7 +13,7 @@ enum class CameraMove
 };
 
 // Default settings
-const float32 SPEED = 1.5f;
+const float32 SPEED = 2.5f;
 const float32 SENSITIVITY = 0.05f;
 const float32 ZOOM = 45.0f;
 
@@ -57,9 +57,9 @@ public:
         return m_Zoom;
     }
 
-    void ProcessKeyboard(CameraMove direction, float32 deltaTime)
+    void ProcessKeyboard(CameraMove direction, float32 deltaTime, float32 speed = 1.0f)
     {
-        float32 velocity = m_MovementSpeed * deltaTime;
+        float32 velocity = m_MovementSpeed * deltaTime * speed;
 
         if (direction == CameraMove::FORWARD)
         {

@@ -13,27 +13,25 @@
 class Cube : public App
 {
 private:
+    Window *m_Window;
+    Camera *m_Camera;
+    Shader *m_Shader;
+
     uint32 m_VAO;
     uint32 m_VBO;
     uint32 m_EBO;
 
-    glm::mat4 m_Model;
-    glm::mat4 m_View;
-
-    bool m_FirstMouse = true;
     float32 m_DeltaTime = 0.0f;
     float32 m_LastFrame = 0.0f;
     float32 m_LastX;
     float32 m_LastY;
-
-    Shader m_Shader;
-    Camera *m_Camera;
+    bool m_FirstMouse = true;
 
 public:
-    Cube();
+    Cube(Window *window);
     ~Cube();
 
-    virtual void Update(Window *window) override;
+    virtual void Update() override;
 
 private:
     void CreateMesh();

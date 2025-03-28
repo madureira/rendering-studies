@@ -1,27 +1,28 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-
 #include <string>
+
+#include <glm/glm.hpp>
 
 #include <RenderingStudies/Types.h>
 
 class Shader
 {
 private:
-    uint32 m_ShaderId;
-    uint32 m_VertexId;
-    uint32 m_FragmentId;
     std::string m_VertexCode;
     std::string m_FragmentCode;
 
+    uint32 m_ID;
+    uint32 m_VertexId;
+    uint32 m_FragmentId;
+
 public:
-    Shader(const std::string &vertexCode, const std::string &fragmentCode);
+    Shader(const std::string &vertexPath, const std::string &fragmentPath);
     ~Shader();
 
-    void Use();
+    void Bind();
+    void Unbind();
+    uint32 GetProgram() const;
     void SetBool(const std::string &name, bool value) const;
     void SetInt(const std::string &name, int32 value) const;
     void SetFloat(const std::string &name, float32 value) const;

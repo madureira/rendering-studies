@@ -1,7 +1,23 @@
 #include "Window.h"
 
+#include <iomanip>
+#include <sstream>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include "../FileManager/FileManager.h"
+
+static const bool FULLSCREEN = false;
+static const bool VSYNC_ON = false;
+static float64 m_LastTime;
+static int32 m_NbFrames;
+static bool m_Fullscreen;
+
 Window::Window(const std::string &title, uint32 width, uint32 height)
 {
+    m_InitialWidth = width;
+    m_InitialHeight = height;
     m_Width = width;
     m_Height = height;
 
@@ -27,10 +43,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glfwWindowHint(GLFW_RED_BITS, pMode->redBits);
     glfwWindowHint(GLFW_GREEN_BITS, pMode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, pMode->blueBits);
-    glfwWindowHint(GLFW_REFRESH_RATE, 60);
-
-    const bool FULLSCREEN = false;
-    const bool VSYNC_ON = true;
+    // glfwWindowHint(GLFW_REFRESH_RATE, 60);
 
     m_Window = glfwCreateWindow(width, height, title.c_str(), FULLSCREEN ? pMonitor : NULL, NULL);
     if (!m_Window)
@@ -49,7 +62,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glfwSwapInterval(VSYNC_ON ? 1 : 0);
     glfwFocusWindow(m_Window);
 
-    glfwSetErrorCallback([](int error, const char *description) {
+    glfwSetErrorCallback([](int32 error, const char *description) {
         LOG_ERROR("GLFW ERROR: code: {}, message: {}", error, description);
     });
 
@@ -57,6 +70,9 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
         Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
         window.m_Width = width;
         window.m_Height = height;
+    });
+
+    glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow *pNativeWindow, int32 width, int32 height) {
         glViewport(0, 0, width, height);
     });
 
@@ -74,6 +90,12 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
 
     glfwSetKeyCallback(m_Window, [](GLFWwindow *pNativeWindow, int32 key, int32 scancode, int32 action, int32 mods) {
         Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
+
+        if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+        {
+            window.Fullscreen();
+        }
+
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(pNativeWindow, GLFW_TRUE);
@@ -92,6 +114,14 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    m_TextShader = new Shader("assets/shaders/text.vs", "assets/shaders/text.fs");
+
+    m_TextRenderer = new TextRenderer("assets/fonts/roboto-regular.ttf");
+
+    glm::mat4 projection = glm::ortho(0.0f, (float32)m_InitialWidth, 0.0f, (float32)m_InitialHeight);
+    m_TextShader->Bind();
+    m_TextShader->SetMat4("projection", projection);
 }
 
 Window::~Window()
@@ -108,8 +138,10 @@ void Window::Clear() const
 {
     // Clear color buffer and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // Black background
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    // Gray background
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+
+    RenderFPS();
 }
 
 void Window::SwapBuffers() const
@@ -122,7 +154,7 @@ void Window::PollEvents() const
     glfwPollEvents();
 }
 
-float Window::GetTime() const
+float32 Window::GetTime() const
 {
     return (float)glfwGetTime();
 }
@@ -171,4 +203,51 @@ void Window::Shutdown() const
 {
     glfwDestroyWindow(m_Window);
     glfwTerminate();
+}
+
+void Window::RenderFPS() const
+{
+    float64 currentTime = glfwGetTime();
+    m_NbFrames++;
+
+    static std::string fpsText;
+    if (currentTime - m_LastTime >= 1.0)
+    { // If 1 second has passed
+        float64 fps = float64(m_NbFrames) / (currentTime - m_LastTime);
+
+        // Convert FPS to string with 2 decimal places
+        std::stringstream fpsStream;
+        fpsStream << std::fixed << std::setprecision(2) << fps;
+        fpsText = "FPS: " + fpsStream.str();
+
+        m_NbFrames = 0;
+        m_LastTime = currentTime;
+    }
+
+    static const float32 scale = 0.3f;
+    static const float32 originX = 5.0f;
+    static const float32 rowHeight = 20.0f;
+    const float32 fpsTextPosY = m_InitialHeight - rowHeight;
+
+    m_TextRenderer->Render(*m_TextShader, fpsText, originX, fpsTextPosY, scale, glm::vec3(0.5f, 0.8f, 0.2f));
+}
+
+void Window::Fullscreen() const
+{
+    m_Fullscreen = !m_Fullscreen;
+
+    const int32 MONITOR_INDEX = 0;
+    int32 monitors;
+    GLFWmonitor *pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
+    const GLFWvidmode *pMode = glfwGetVideoMode(pMonitor);
+
+    if (m_Fullscreen)
+    {
+        glfwSetWindowMonitor(m_Window, pMonitor, 0, 0, pMode->width, pMode->height, pMode->refreshRate);
+    }
+    else
+    {
+        glfwSetWindowMonitor(m_Window, NULL, 0, 0, m_InitialWidth, m_InitialHeight, 0);
+        glfwSetWindowPos(m_Window, (pMode->width - m_InitialWidth) / 2, (pMode->height - m_InitialHeight) / 2);
+    }
 }

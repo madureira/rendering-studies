@@ -2,22 +2,14 @@
 
 #include "../../FileManager/FileManager.h"
 
-Triangle::Triangle()
-    : m_Model(1.f),
-      m_View(1.f),
-      m_Shader(Shader(
-          FileManager::Read("shaders/simple.vs"), // Vertex shader source
-          FileManager::Read("shaders/simple.fs")  // Fragment shader source
-          ))
+Triangle::Triangle(Window *window)
+    : m_Window(window)
 {
-    CreateMesh();
+    m_Shader = new Shader("assets/shaders/simple.vs", "assets/shaders/simple.fs");
 
     // Camera setup
     glm::vec3 cameraPosition(0.f, 0.f, 2.f);       // Camera is placed at (0, 0, 2)
     glm::vec3 cameraViewDirection(0.f, 0.f, -1.f); // Camera looks towards the negative Z-axis
-
-    // Model matrix
-    m_Model = glm::mat4(1.f); // Identity matrix, meaning no transformation on the model
 
     // View matrix
     m_View = glm::lookAt(
@@ -25,6 +17,8 @@ Triangle::Triangle()
         cameraPosition + cameraViewDirection, // Target position (camera looks here)
         glm::vec3(0.f, 1.f, 0.f)              // Up vector (positive Y-axis)
     );
+
+    CreateMesh();
 }
 
 Triangle::~Triangle()
@@ -34,11 +28,11 @@ Triangle::~Triangle()
     glDeleteBuffers(1, &m_EBO);
 }
 
-void Triangle::Update(Window *window)
+void Triangle::Update()
 {
-    float32 time = window->GetTime();
-    uint32 windowWidth = window->GetWidth();
-    uint32 windowHeight = window->GetHeight();
+    float32 time = m_Window->GetTime();
+    uint32 windowWidth = m_Window->GetWidth();
+    uint32 windowHeight = m_Window->GetHeight();
 
     // Vary color based on time
     float32 red = (std::sin(time * 0.5f) + 1.0f) / 4.0f;
@@ -47,33 +41,40 @@ void Triangle::Update(Window *window)
 
     glClearColor(red, green, blue, 1.0f); // Use oscillating colors
 
+    if (m_Window->IsKeyPressed(KeyToken::Space))
     {
-        m_Shader.Use();
-
-        glm::mat4 projection = glm::perspective(
-            (float32)M_PI_2,                              // Field of view (90 degrees in radians)
-            (float32)windowWidth / (float32)windowHeight, // Aspect ratio (width / height)
-            0.01f,                                        // Near clipping plane
-            100.0f                                        // Far clipping plane
-        );
-
-        // Update model matrix for rotating the triangle on Z-axis
-        m_Model = glm::rotate(
-            glm::mat4(1.f),
-            std::sin(time * 0.8f) / 4.f,
-            glm::vec3(0.f, 0.f, -1.f));
-
-        m_Shader.SetMat4("u_model", m_Model);
-        m_Shader.SetMat4("u_view", m_View);
-        m_Shader.SetMat4("u_projection", projection);
-
-        glBindVertexArray(m_VAO);
-
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-
-        // Unbind the VAO
-        glBindVertexArray(0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    // Update model matrix for rotating the triangle on Z-axis
+    glm::mat4 model = glm::rotate(
+        glm::mat4(1.f),
+        std::sin(time * 0.8f) / 4.f,
+        glm::vec3(0.f, 0.f, -1.f));
+
+    glm::mat4 projection = glm::perspective(
+        (float32)M_PI_2,                              // Field of view (90 degrees in radians)
+        (float32)windowWidth / (float32)windowHeight, // Aspect ratio (width / height)
+        0.01f,                                        // Near clipping plane
+        100.0f                                        // Far clipping plane
+    );
+
+    m_Shader->Bind();
+
+    m_Shader->SetMat4("u_model", model);
+    m_Shader->SetMat4("u_view", m_View);
+    m_Shader->SetMat4("u_projection", projection);
+
+    glBindVertexArray(m_VAO);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+
+    // Unbind the VAO
+    glBindVertexArray(0);
+    m_Shader->Unbind();
 }
 
 void Triangle::CreateMesh()
@@ -122,9 +123,10 @@ void Triangle::CreateMesh()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void *)(3 * sizeof(float32)));
     glEnableVertexAttribArray(1); // Enable attribute 1
 
-    // Unbind the VBO (optional, to prevent accidental modification of VBO data)
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // Unbind the VAO (optional, to prevent accidental modification of VAO state)
+    // Unbind objects
     glBindVertexArray(0);
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

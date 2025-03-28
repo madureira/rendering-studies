@@ -1,15 +1,21 @@
 #include "App/AppFactory.h"
 #include "Window/Window.h"
+#include <RenderingStudies/Types.h>
 
-int main()
+int32 main()
 {
     Window window("Rendering Studies", 1200, 900);
-    App *app = AppFactory().Generate(AppType::Cube);
+    App *app = AppFactory().Generate(AppType::BlenderModel, &window);
+
+    if (app == nullptr)
+    {
+        return EXIT_FAILURE;
+    }
 
     while (window.IsOpen())
     {
         window.Clear();
-        app->Update(&window);
+        app->Update();
         window.SwapBuffers();
         window.PollEvents();
     }

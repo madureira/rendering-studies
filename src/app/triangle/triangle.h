@@ -12,20 +12,20 @@
 class Triangle : public App
 {
 private:
+    Window *m_Window;
+    Shader *m_Shader;
+
     uint32 m_VAO;
     uint32 m_VBO;
     uint32 m_EBO;
 
-    glm::mat4 m_Model;
     glm::mat4 m_View;
 
-    Shader m_Shader;
-
 public:
-    Triangle();
+    Triangle(Window *window);
     ~Triangle();
 
-    virtual void Update(Window *window) override;
+    virtual void Update() override;
 
 private:
     void CreateMesh();

@@ -1,11 +1,14 @@
 #pragma once
 
+#include <string>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <string>
-
 #include <RenderingStudies/Types.h>
+
+#include "../Shader/Shader.h"
+#include "../TextRenderer/TextRenderer.h"
 
 enum class KeyAction;
 enum class KeyToken;
@@ -14,12 +17,18 @@ class Window
 {
 private:
     GLFWwindow *m_Window;
-    uint32 m_Width;
-    uint32 m_Height;
+    Shader *m_TextShader;
+    TextRenderer *m_TextRenderer;
+
     float64 m_MouseX;
     float64 m_MouseY;
     float64 m_OffsetX;
     float64 m_OffsetY;
+
+    uint32 m_InitialWidth;
+    uint32 m_InitialHeight;
+    uint32 m_Width;
+    uint32 m_Height;
 
 public:
     Window(const std::string &title, uint32 width, uint32 height);
@@ -41,6 +50,8 @@ public:
 
 private:
     void Shutdown() const;
+    void RenderFPS() const;
+    void Fullscreen() const;
 };
 
 enum class KeyAction

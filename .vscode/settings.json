@@ -66,7 +66,8 @@
         "set": "cpp",
         "source_location": "cpp",
         "span": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "type_traits": "cpp"
     },
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.intelliSenseEngine": "Tag Parser"
