@@ -5,7 +5,7 @@
 Cube::Cube(Window *window)
     : m_Window(window)
 {
-    m_Shader = new Shader("assets/shaders/simple.vs", "assets/shaders/simple.fs");
+    m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
     m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     CreateMesh();
 }

@@ -142,7 +142,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_TextShader = new Shader("assets/shaders/text.vs", "assets/shaders/text.fs");
+    m_TextShader = new Shader("assets/shaders/text.vert", "assets/shaders/text.frag");
 
     m_TextRenderer = new TextRenderer("assets/fonts/roboto-regular.ttf");
 

@@ -5,7 +5,7 @@
 Triangle::Triangle(Window *window)
     : m_Window(window)
 {
-    m_Shader = new Shader("assets/shaders/simple.vs", "assets/shaders/simple.fs");
+    m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
 
     // Camera setup
     glm::vec3 cameraPosition(0.f, 0.f, 2.f);       // Camera is placed at (0, 0, 2)
