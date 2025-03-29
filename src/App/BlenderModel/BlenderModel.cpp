@@ -10,7 +10,7 @@ BlenderModel::BlenderModel(Window *window)
     m_Shader = new Shader("assets/shaders/simple.vs", "assets/shaders/simple.fs");
     m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     m_Grid = new Grid();
-    m_Model = new Model("assets/models/monkey.obj");
+    m_Model = new Model("assets/models/cube.obj");
 }
 
 BlenderModel::~BlenderModel()
@@ -96,9 +96,9 @@ void BlenderModel::Update()
 
     m_Shader->Bind();
 
-    m_Shader->SetMat4("u_model", model);
-    m_Shader->SetMat4("u_view", view);
-    m_Shader->SetMat4("u_projection", projection);
+    m_Shader->SetMat4("uModel", model);
+    m_Shader->SetMat4("uView", view);
+    m_Shader->SetMat4("uProjection", projection);
 
     m_Grid->Draw();
     m_Model->Draw();

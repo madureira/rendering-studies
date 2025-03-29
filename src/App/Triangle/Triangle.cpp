@@ -65,9 +65,9 @@ void Triangle::Update()
 
     m_Shader->Bind();
 
-    m_Shader->SetMat4("u_model", model);
-    m_Shader->SetMat4("u_view", m_View);
-    m_Shader->SetMat4("u_projection", projection);
+    m_Shader->SetMat4("uModel", model);
+    m_Shader->SetMat4("uView", m_View);
+    m_Shader->SetMat4("uProjection", projection);
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);

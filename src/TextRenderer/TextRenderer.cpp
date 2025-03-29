@@ -86,7 +86,7 @@ void TextRenderer::Render(Shader &shader, std::string text, float32 x, float32 y
 {
     shader.Bind();
 
-    shader.SetVec3("textColor", color.x, color.y, color.z);
+    shader.SetVec3("uTextColor", color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(m_VAO);
 
@@ -124,6 +124,7 @@ void TextRenderer::Render(Shader &shader, std::string text, float32 x, float32 y
             glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
 

@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../FileManager/FileManager.h"
+#include "../Utils/HardwareUtil.h"
 
 static const bool FULLSCREEN = false;
 static const bool VSYNC_ON = false;
@@ -33,17 +34,19 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     const GLFWvidmode *pMode = glfwGetVideoMode(pMonitor);
 
     // Set OpenGL version and profile
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // OpenGL 4.1
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1); // OpenGL 4.1
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Required on Mac
+#if defined(__APPLE__)
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
     glfwWindowHint(GLFW_RED_BITS, pMode->redBits);
     glfwWindowHint(GLFW_GREEN_BITS, pMode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, pMode->blueBits);
-    // glfwWindowHint(GLFW_REFRESH_RATE, 60);
+    glfwWindowHint(GLFW_REFRESH_RATE, 60);
 
     m_Window = glfwCreateWindow(width, height, title.c_str(), FULLSCREEN ? pMonitor : NULL, NULL);
     if (!m_Window)
@@ -61,6 +64,7 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSwapInterval(VSYNC_ON ? 1 : 0);
     glfwFocusWindow(m_Window);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     glfwSetErrorCallback([](int32 error, const char *description) {
         LOG_ERROR("GLFW ERROR: code: {}, message: {}", error, description);
@@ -111,7 +115,30 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
         return;
     }
 
+    LOG_INFO("================================================");
+    LOG_INFO("OS: {}", HardwareUtil::GetOS());
+    LOG_INFO("================================================");
+    LOG_INFO("CPU Model: {}", HardwareUtil::GetCPUModel());
+    LOG_INFO("CPU Architecture: {}", HardwareUtil::GetCPUArchitecture());
+    LOG_INFO("CPU Cores: {}", HardwareUtil::GetCPUCores());
+    LOG_INFO("================================================");
+    LOG_INFO("Physical Memory: {} GB", HardwareUtil::GetTotalMemory());
+    LOG_INFO("Used Memory: {} GB", HardwareUtil::GetUsedMemory());
+    LOG_INFO("Free Memory: {} GB", HardwareUtil::GetFreeMemory());
+    LOG_INFO("================================================");
+    LOG_INFO("GPU Model: {}", HardwareUtil::GetGPUModel());
+    LOG_INFO("GPU Vendor: {}", HardwareUtil::GetGPUVendor());
+    LOG_INFO("GPU Memory: {} GB", HardwareUtil::GetEstimateGPUMemory());
+    LOG_INFO("================================================");
+    LOG_INFO("OpenGL Version: {}", HardwareUtil::GetGLVersion());
+    LOG_INFO("GLSL Version: {}", HardwareUtil::GetGLSLVersion());
+    LOG_INFO("================================================");
+
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -121,7 +148,8 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
 
     glm::mat4 projection = glm::ortho(0.0f, (float32)m_InitialWidth, 0.0f, (float32)m_InitialHeight);
     m_TextShader->Bind();
-    m_TextShader->SetMat4("projection", projection);
+    m_TextShader->SetMat4("uProjection", projection);
+    m_TextShader->Unbind();
 }
 
 Window::~Window()
@@ -136,10 +164,11 @@ bool Window::IsOpen() const
 
 void Window::Clear() const
 {
-    // Clear color buffer and depth buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Gray background
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    // Clear color buffer and depth buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
 
     RenderFPS();
 }

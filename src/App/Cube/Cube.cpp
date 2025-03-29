@@ -78,11 +78,9 @@ void Cube::Update()
         100.0f                                        // Far clipping plane
     );
 
-    m_Shader->SetMat4("u_model", model);
-    m_Shader->SetMat4("u_view", view);
-    m_Shader->SetMat4("u_projection", projection);
-
-    glBindVertexArray(m_VAO);
+    m_Shader->SetMat4("uModel", model);
+    m_Shader->SetMat4("uView", view);
+    m_Shader->SetMat4("uProjection", projection);
 
     if (m_Window->IsKeyPressed(KeyToken::Space))
     {
@@ -93,6 +91,7 @@ void Cube::Update()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
     // Unbind the VAO

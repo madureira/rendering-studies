@@ -10,10 +10,6 @@ FileManager::FileManager()
 {
 }
 
-FileManager::~FileManager()
-{
-}
-
 std::string FileManager::ReadText(const std::string &filename)
 {
     std::ifstream file;

@@ -1,23 +1,19 @@
 #version 410 core
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 color;
-layout (location = 2) in vec2 texCoord;
+layout (location = 0) in vec3 aPosition;
+layout (location = 1) in vec3 aColor;
+layout (location = 2) in vec2 aTexCoord;
 
-out vec3 vertexColor;
-out vec2 TexCoord;
+uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProjection;
 
-// Uniforms for transformation matrices
-uniform mat4 u_model;       // Model matrix: transforms from local space to world space
-uniform mat4 u_view;        // View matrix: transforms from world space to camera space (view space)
-uniform mat4 u_projection;  // Projection matrix: transforms from camera space to clip space
+out vec3 vColor;
+out vec2 vTexCoord;
 
 void main()
 {
-	// Apply the transformations to the vertex position
-    gl_Position = u_projection * u_view * u_model * vec4(position, 1.0);
-
-	vertexColor = color;
-
-	TexCoord = vec2(texCoord.x, texCoord.y);
+    gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
+	vColor = aColor;
+	vTexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }

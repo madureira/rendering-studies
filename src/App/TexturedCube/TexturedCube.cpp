@@ -91,9 +91,9 @@ void TexturedCube::Update()
 
     m_Texture->Bind(0);
 
-    m_Shader->SetMat4("u_model", model);
-    m_Shader->SetMat4("u_view", view);
-    m_Shader->SetMat4("u_projection", projection);
+    m_Shader->SetMat4("uModel", model);
+    m_Shader->SetMat4("uView", view);
+    m_Shader->SetMat4("uProjection", projection);
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
