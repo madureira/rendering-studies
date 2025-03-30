@@ -1,6 +1,6 @@
 #version 410 core
 
-layout (location = 0) in vec3 aPosition;
+layout(location = 0) in vec3 aPosition;
 
 uniform mat4 uModel;
 uniform mat4 uView;
@@ -13,7 +13,7 @@ uniform float uFrequency;
 const float cPhase = 1.0;
 const float cDamping = 0.5;
 
-out float vHeight; // Pass height to fragment shader
+out float vHeight;
 out float vTime;
 
 void main()

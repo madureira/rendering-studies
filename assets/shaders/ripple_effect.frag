@@ -1,7 +1,7 @@
 #version 410 core
 
-in float vHeight; // Receive height from vertex shader
-in float vTime; // Receive time from vertex shader
+in float vHeight;
+in float vTime;
 
 out vec4 fColor;
 
