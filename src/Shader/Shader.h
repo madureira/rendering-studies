@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 #include <glm/glm.hpp>
 
@@ -15,6 +16,8 @@ private:
     uint32 m_ID;
     uint32 m_VertexId;
     uint32 m_FragmentId;
+
+    mutable std::unordered_map<std::string, int32> m_UniformLocationCache;
 
 public:
     Shader(const std::string &vertexPath, const std::string &fragmentPath);
@@ -41,4 +44,5 @@ private:
     void Link();
     void CheckCompileError(uint32 shader, const std::string type);
     void CheckLinkingError();
+    int32 GetUniformLocation(const std::string &name) const;
 };

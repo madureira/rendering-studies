@@ -47,8 +47,6 @@ void Cube::Update()
     uint32 windowWidth = m_Window->GetWidth();
     uint32 windowHeight = m_Window->GetHeight();
 
-    m_Shader->Bind();
-
     if (m_Window->IsKeyPressed(KeyToken::Up) || m_Window->IsKeyPressed(KeyToken::W))
     {
         m_Camera->ProcessKeyboard(CameraMove::FORWARD, m_DeltaTime);
@@ -78,6 +76,8 @@ void Cube::Update()
         100.0f                                        // Far clipping plane
     );
 
+    m_Shader->Bind();
+
     m_Shader->SetMat4("uModel", model);
     m_Shader->SetMat4("uView", view);
     m_Shader->SetMat4("uProjection", projection);
@@ -92,29 +92,34 @@ void Cube::Update()
     }
 
     glBindVertexArray(m_VAO);
+
+    glCullFace(GL_BACK);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-    // Unbind the VAO
-    glBindVertexArray(0);
+    glCullFace(GL_FRONT);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
+    // Undind
+    glCullFace(GL_BACK);
+    glBindVertexArray(0);
     m_Shader->Unbind();
 }
 
 void Cube::CreateMesh()
 {
     float32 vertices[] = {
-        // Positions          // Colors
+        // Positions        // Colors
         // Front face
         -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, // Bottom-left
-        0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // Bottom-right
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,   // Top-right
-        -0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f,  // Top-left
+         0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, // Bottom-right
+         0.5f,  0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // Top-right
+        -0.5f,  0.5f, 0.5f, 1.0f, 1.0f, 0.0f, // Top-left
 
         // Back face
         -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, // Bottom-left
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,  // Bottom-right
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,   // Top-right
-        -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f,  // Top-left
+         0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, // Bottom-right
+         0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, // Top-right
+        -0.5f,  0.5f, -0.5f, 0.5f, 0.5f, 0.5f, // Top-left
     };
 
     uint32 indices[] = {
@@ -132,11 +137,12 @@ void Cube::CreateMesh()
         4, 5, 1, 1, 0, 4,
     };
 
-    // Generate and bind VAO
+    // Generate Objects
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
     glGenBuffers(1, &m_EBO);
 
+    // Bind Vertex Array Object
     glBindVertexArray(m_VAO);
 
     // Bind and set vertex buffer

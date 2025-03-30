@@ -5,7 +5,7 @@
 int32 main()
 {
     Window window("Rendering Studies", 1200, 900);
-    App *app = AppFactory().Generate(AppType::BlenderModel, &window);
+    App *app = AppFactory().Generate(AppName::Triangle, &window);
 
     if (app == nullptr)
     {

@@ -72,7 +72,7 @@ void Triangle::Update()
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
-    // Unbind the VAO
+    // Unbind
     glBindVertexArray(0);
     m_Shader->Unbind();
 }

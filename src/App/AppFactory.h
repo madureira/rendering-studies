@@ -4,15 +4,17 @@
 
 #include "./BlenderModel/BlenderModel.h"
 #include "./Cube/Cube.h"
+#include "./RippleEffect/RippleEffect.h"
 #include "./TexturedCube/TexturedCube.h"
 #include "./Triangle/Triangle.h"
 
 class Window;
 
-enum class AppType
+enum class AppName
 {
     BlenderModel,
     Cube,
+    RippleEffect,
     TexturedCube,
     Triangle,
 };
@@ -20,20 +22,23 @@ enum class AppType
 class AppFactory
 {
 public:
-    App *Generate(AppType type, Window *window)
+    App *Generate(AppName type, Window *window)
     {
         switch (type)
         {
-        case AppType::BlenderModel:
+        case AppName::BlenderModel:
             LOG_INFO("AppFactory: instantiating BlenderModel app");
             return new BlenderModel(window);
-        case AppType::Cube:
+        case AppName::Cube:
             LOG_INFO("AppFactory: instantiating Cube app");
             return new Cube(window);
-        case AppType::TexturedCube:
+        case AppName::RippleEffect:
+            LOG_INFO("AppFactory: instantiating RippleEffect app");
+            return new RippleEffect(window);
+        case AppName::TexturedCube:
             LOG_INFO("AppFactory: instantiating TexturedCube app");
             return new TexturedCube(window);
-        case AppType::Triangle:
+        case AppName::Triangle:
             LOG_INFO("AppFactory: instantiating Triangle app");
             return new Triangle(window);
         }
