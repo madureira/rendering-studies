@@ -37,7 +37,7 @@ uint32 Shader::GetProgram() const
 
 void Shader::SetBool(const std::string &name, bool value) const
 {
-    glUniform1i(GetUniformLocation(name), (int)value);
+    glUniform1i(GetUniformLocation(name), (int32)value);
 }
 
 void Shader::SetInt(const std::string &name, int32 value) const

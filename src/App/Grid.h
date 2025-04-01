@@ -1,10 +1,13 @@
 #pragma once
 
+#include <vector>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 #include <RenderingStudies/Types.h>
 
-class Grid
+class Grid final
 {
 private:
     uint32 m_VAO;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <GL/glew.h>
 #include <string>
 
 #if defined(__APPLE__)
@@ -15,6 +14,8 @@
 #include <intrin.h>
 #include <windows.h>
 #endif
+
+#include <GL/glew.h>
 
 std::string get_sysctl_value(const char *name);
 

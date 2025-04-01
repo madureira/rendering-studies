@@ -7,7 +7,7 @@
 
 #include <RenderingStudies/Types.h>
 
-class Shader
+class Shader final
 {
 private:
     std::string m_VertexCode;

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <RenderingStudies/Types.h>
 #include <string>
 
-class FileManager
+#include <RenderingStudies/Types.h>
+
+class FileManager final
 {
 public:
     FileManager();

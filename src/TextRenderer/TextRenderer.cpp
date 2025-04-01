@@ -5,9 +5,6 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "../Shader/Shader.h"
-#include <GL/glew.h>
-
 TextRenderer::TextRenderer(std::string fontPath)
 {
     FT_Library ft;

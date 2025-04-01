@@ -1,13 +1,14 @@
 #pragma once
 
-#include <RenderingStudies/Types.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <RenderingStudies/Types.h>
+
 enum class CameraMove
 {
-    FORWARD,
     BACKWARD,
+    FORWARD,
     LEFT,
     RIGHT
 };
@@ -17,12 +18,12 @@ const float32 SPEED = 2.5f;
 const float32 SENSITIVITY = 0.05f;
 const float32 ZOOM = 45.0f;
 
-class Camera
+class Camera final
 {
 private:
     glm::vec3 m_Position;
-    glm::vec3 m_Front;
     glm::vec3 m_Up;
+    glm::vec3 m_Front;
     glm::vec3 m_Right;
     glm::vec3 m_WorldUp;
 
@@ -31,6 +32,10 @@ private:
     float32 m_Pitch;
     float32 m_MovementSpeed;
     float32 m_MouseSensitivity;
+
+    float32 m_LastX;
+    float32 m_LastY;
+    bool m_FirstMouse = true;
 
 public:
     Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)
@@ -50,6 +55,23 @@ public:
     glm::mat4 GetViewMatrix()
     {
         return glm::lookAt(m_Position, m_Position + m_Front, m_Up);
+    }
+
+    glm::mat4 GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight)
+    {
+        if (windowHeight == 0)
+        {
+            windowHeight = 1; // Prevent division by zero
+        }
+
+        float32 aspectRatio = (float32)windowWidth / (float32)windowHeight;
+
+        return glm::perspective(
+            glm::radians(m_Zoom), // Field of view (45 degrees in radians)
+            aspectRatio,          // Aspect ratio (width / height)
+            0.01f,                // Near clipping plane
+            100.0f                // Far clipping plane
+        );
     }
 
     float32 GetZoom()
@@ -82,8 +104,20 @@ public:
         }
     }
 
-    void ProcessMouseMovement(float32 xoffset, float32 yoffset, bool constrainPitch = true)
+    void ProcessMouseMovement(float32 mouseX, float32 mouseY, bool constrainPitch = true)
     {
+        if (m_FirstMouse)
+        {
+            m_LastX = mouseX;
+            m_LastY = mouseY;
+            m_FirstMouse = false;
+        }
+
+        float32 xoffset = mouseX - m_LastX;
+        float32 yoffset = m_LastY - mouseY; // Reversed since Y-coordinates go from bottom to top
+        m_LastX = mouseX;
+        m_LastY = mouseY;
+
         float32 dampingFactor = 0.5f; // Reduce sudden changes
         xoffset *= m_MouseSensitivity * dampingFactor;
         yoffset *= m_MouseSensitivity * dampingFactor;

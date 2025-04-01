@@ -28,7 +28,7 @@ Triangle::~Triangle()
     glDeleteBuffers(1, &m_EBO);
 }
 
-void Triangle::Update()
+void Triangle::Update(float32 deltaTime)
 {
     float32 time = m_Window->GetTime();
     uint32 windowWidth = m_Window->GetWidth();
@@ -40,15 +40,6 @@ void Triangle::Update()
     float32 blue = (std::sin(time * 0.7f) + 1.0f) / 4.0f;
 
     glClearColor(red, green, blue, 1.0f); // Use oscillating colors
-
-    if (m_Window->IsKeyPressed(KeyToken::Space))
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
-    else
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
 
     // Update model matrix for rotating the triangle on Z-axis
     glm::mat4 model = glm::rotate(
@@ -119,7 +110,7 @@ void Triangle::CreateMesh()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void *)0);
     glEnableVertexAttribArray(0); // Enable attribute 0
 
-    // Attribute 1: Color (r, g, b) - 3 floats, starting at offset 3 * sizeof(float)
+    // Attribute 1: Color (r, g, b) - 3 floats, starting at offset 3 * sizeof(float32)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void *)(3 * sizeof(float32)));
     glEnableVertexAttribArray(1); // Enable attribute 1
 

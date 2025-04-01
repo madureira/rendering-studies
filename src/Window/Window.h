@@ -13,7 +13,7 @@
 enum class KeyAction;
 enum class KeyToken;
 
-class Window
+class Window final
 {
 private:
     GLFWwindow *m_Window;
@@ -29,6 +29,8 @@ private:
     uint32 m_InitialHeight;
     uint32 m_Width;
     uint32 m_Height;
+
+    float32 m_LastTime = 0.0f;
 
 public:
     Window(const std::string &title, uint32 width, uint32 height);
@@ -47,11 +49,13 @@ public:
     float64 GetMouseY() const;
     float64 GetOffsetX() const;
     float64 GetOffsetY() const;
+    float32 GetDeltaTime();
 
 private:
     void Shutdown() const;
     void RenderFPS() const;
     void Fullscreen() const;
+    void SetPolygonMode() const;
 };
 
 enum class KeyAction

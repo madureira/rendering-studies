@@ -1,14 +1,14 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <string>
 #include <vector>
 
+#include <glm/glm.hpp>
+
 #include <RenderingStudies/Types.h>
 
-struct aiNode;
-struct aiScene;
-struct aiMesh;
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 struct Vertex
 {
@@ -26,7 +26,7 @@ struct Mesh
     std::vector<uint32> indices;
 };
 
-class Model
+class Model final
 {
 private:
     std::vector<Mesh> m_Meshes;

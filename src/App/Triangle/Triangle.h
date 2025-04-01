@@ -9,7 +9,7 @@
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
 
-class Triangle : public App
+class Triangle final : public App
 {
 private:
     Window *m_Window;
@@ -25,7 +25,7 @@ public:
     Triangle(Window *window);
     ~Triangle();
 
-    virtual void Update() override;
+    virtual void Update(float32 deltaTime) override;
 
 private:
     void CreateMesh();

@@ -4,7 +4,7 @@
 
 #include <RenderingStudies/Types.h>
 
-class Texture
+class Texture final
 {
 private:
     uint32 m_ID;

@@ -11,9 +11,9 @@
 
 static const bool FULLSCREEN = false;
 static const bool VSYNC_ON = false;
-static float64 m_LastTime;
-static int32 m_NbFrames;
-static bool m_Fullscreen;
+static float64 s_LastTime;
+static int32 s_NbFrames;
+static bool s_Fullscreen;
 
 Window::Window(const std::string &title, uint32 width, uint32 height)
 {
@@ -171,6 +171,7 @@ void Window::Clear() const
     glLoadIdentity();
 
     RenderFPS();
+    SetPolygonMode();
 }
 
 void Window::SwapBuffers() const
@@ -185,7 +186,7 @@ void Window::PollEvents() const
 
 float32 Window::GetTime() const
 {
-    return (float)glfwGetTime();
+    return (float32)glfwGetTime();
 }
 
 uint32 Window::GetWidth() const
@@ -228,6 +229,14 @@ float64 Window::GetOffsetY() const
     return m_OffsetY;
 }
 
+float32 Window::GetDeltaTime()
+{
+    float32 currentTime = (float32)glfwGetTime();
+    float32 deltaTime = currentTime - m_LastTime;
+    m_LastTime = currentTime;
+    return deltaTime;
+}
+
 void Window::Shutdown() const
 {
     glfwDestroyWindow(m_Window);
@@ -237,20 +246,20 @@ void Window::Shutdown() const
 void Window::RenderFPS() const
 {
     float64 currentTime = glfwGetTime();
-    m_NbFrames++;
+    s_NbFrames++;
 
     static std::string fpsText;
-    if (currentTime - m_LastTime >= 1.0)
+    if (currentTime - s_LastTime >= 1.0)
     { // If 1 second has passed
-        float64 fps = float64(m_NbFrames) / (currentTime - m_LastTime);
+        float64 fps = float64(s_NbFrames) / (currentTime - s_LastTime);
 
         // Convert FPS to string with 2 decimal places
         std::stringstream fpsStream;
         fpsStream << std::fixed << std::setprecision(2) << fps;
         fpsText = "FPS: " + fpsStream.str();
 
-        m_NbFrames = 0;
-        m_LastTime = currentTime;
+        s_NbFrames = 0;
+        s_LastTime = currentTime;
     }
 
     static const float32 scale = 0.3f;
@@ -263,14 +272,14 @@ void Window::RenderFPS() const
 
 void Window::Fullscreen() const
 {
-    m_Fullscreen = !m_Fullscreen;
+    s_Fullscreen = !s_Fullscreen;
 
     const int32 MONITOR_INDEX = 0;
     int32 monitors;
     GLFWmonitor *pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
     const GLFWvidmode *pMode = glfwGetVideoMode(pMonitor);
 
-    if (m_Fullscreen)
+    if (s_Fullscreen)
     {
         glfwSetWindowMonitor(m_Window, pMonitor, 0, 0, pMode->width, pMode->height, pMode->refreshRate);
     }
@@ -278,5 +287,17 @@ void Window::Fullscreen() const
     {
         glfwSetWindowMonitor(m_Window, NULL, 0, 0, m_InitialWidth, m_InitialHeight, 0);
         glfwSetWindowPos(m_Window, (pMode->width - m_InitialWidth) / 2, (pMode->height - m_InitialHeight) / 2);
+    }
+}
+
+void Window::SetPolygonMode() const
+{
+    if (IsKeyPressed(KeyToken::Space))
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 }

@@ -9,7 +9,7 @@
 #include "../Camera.h"
 #include "../Grid.h"
 
-class BlenderModel : public App
+class BlenderModel final : public App
 {
 private:
     Window *m_Window;
@@ -18,15 +18,9 @@ private:
     Grid *m_Grid;
     Model *m_Model;
 
-    float32 m_DeltaTime = 0.0f;
-    float32 m_LastFrame = 0.0f;
-    float32 m_LastX;
-    float32 m_LastY;
-    bool m_FirstMouse = true;
-
 public:
     BlenderModel(Window *window);
     ~BlenderModel();
 
-    virtual void Update() override;
+    virtual void Update(float32 deltaTime) override;
 };
