@@ -2,7 +2,7 @@
 
 #include "../../FileManager/FileManager.h"
 
-Triangle::Triangle(Window *window)
+Triangle::Triangle(Window* window)
     : m_Window(window)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
@@ -12,8 +12,7 @@ Triangle::Triangle(Window *window)
     glm::vec3 cameraViewDirection(0.f, 0.f, -1.f); // Camera looks towards the negative Z-axis
 
     // View matrix
-    m_View = glm::lookAt(
-        cameraPosition,                       // Camera position
+    m_View = glm::lookAt(cameraPosition,      // Camera position
         cameraPosition + cameraViewDirection, // Target position (camera looks here)
         glm::vec3(0.f, 1.f, 0.f)              // Up vector (positive Y-axis)
     );
@@ -28,7 +27,7 @@ Triangle::~Triangle()
     glDeleteBuffers(1, &m_EBO);
 }
 
-void Triangle::Update(float32 deltaTime)
+void Triangle::Update([[maybe_unused]] float32 deltaTime)
 {
     float32 time = m_Window->GetTime();
     uint32 windowWidth = m_Window->GetWidth();
@@ -42,13 +41,9 @@ void Triangle::Update(float32 deltaTime)
     glClearColor(red, green, blue, 1.0f); // Use oscillating colors
 
     // Update model matrix for rotating the triangle on Z-axis
-    glm::mat4 model = glm::rotate(
-        glm::mat4(1.f),
-        std::sin(time * 0.8f) / 4.f,
-        glm::vec3(0.f, 0.f, -1.f));
+    glm::mat4 model = glm::rotate(glm::mat4(1.f), std::sin(time * 0.8f) / 4.f, glm::vec3(0.f, 0.f, -1.f));
 
-    glm::mat4 projection = glm::perspective(
-        (float32)M_PI_2,                              // Field of view (90 degrees in radians)
+    glm::mat4 projection = glm::perspective((float32)M_PI_2,
         (float32)windowWidth / (float32)windowHeight, // Aspect ratio (width / height)
         0.01f,                                        // Near clipping plane
         100.0f                                        // Far clipping plane
@@ -107,11 +102,11 @@ void Triangle::CreateMesh()
 
     // Specify the layout of the vertex data:
     // Attribute 0: Position (x, y, z) - 3 floats, starting at offset 0
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void*)0);
     glEnableVertexAttribArray(0); // Enable attribute 0
 
     // Attribute 1: Color (r, g, b) - 3 floats, starting at offset 3 * sizeof(float32)
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void *)(3 * sizeof(float32)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void*)(3 * sizeof(float32)));
     glEnableVertexAttribArray(1); // Enable attribute 1
 
     // Unbind objects

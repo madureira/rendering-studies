@@ -37,16 +37,7 @@ TextRenderer::TextRenderer(std::string fontPath)
         GLuint texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RED,
-            face->glyph->bitmap.width,
-            face->glyph->bitmap.rows,
-            0,
-            GL_RED,
-            GL_UNSIGNED_BYTE,
-            face->glyph->bitmap.buffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -54,12 +45,7 @@ TextRenderer::TextRenderer(std::string fontPath)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        Character character = {
-            texture,
-            glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-            glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-            (GLuint)face->glyph->advance.x
-        };
+        Character character = { texture, glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows), glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top), (GLuint)face->glyph->advance.x };
         m_Characters.insert(std::pair<GLchar, Character>(c, character));
     }
 
@@ -79,7 +65,7 @@ TextRenderer::TextRenderer(std::string fontPath)
     glBindVertexArray(0);
 }
 
-void TextRenderer::Render(Shader &shader, std::string text, float32 x, float32 y, float32 scale, glm::vec3 color)
+void TextRenderer::Render(Shader& shader, std::string text, float32 x, float32 y, float32 scale, glm::vec3 color)
 {
     shader.Bind();
 
@@ -100,13 +86,12 @@ void TextRenderer::Render(Shader &shader, std::string text, float32 x, float32 y
         float32 h = ch.Size.y * scale;
 
         float32 vertices[6][4] = {
-            {xpos, ypos + h, 0.0, 0.0},
-            {xpos, ypos, 0.0, 1.0},
-            {xpos + w, ypos, 1.0, 1.0},
-
-            {xpos, ypos + h, 0.0, 0.0},
-            {xpos + w, ypos, 1.0, 1.0},
-            {xpos + w, ypos + h, 1.0, 0.0}
+            { xpos, ypos + h, 0.0, 0.0 },
+            { xpos, ypos, 0.0, 1.0 },
+            { xpos + w, ypos, 1.0, 1.0 },
+            { xpos, ypos + h, 0.0, 0.0 },
+            { xpos + w, ypos, 1.0, 1.0 },
+            { xpos + w, ypos + h, 1.0, 0.0 }
         };
 
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);

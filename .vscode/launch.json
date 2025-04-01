@@ -8,12 +8,12 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/rendering-studies",
+            "program": "${workspaceFolder}/build/Debug/rendering-studies",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/",
+            "cwd": "${workspaceFolder}/build/Debug/",
             "environment": [
-                { "name": "PATH", "value": "${workspaceFolder}/build/" },
+                { "name": "PATH", "value": "${workspaceFolder}/build/Debug/" },
                 { "name": "config", "value": "Debug" }
             ],
             "externalConsole": false,

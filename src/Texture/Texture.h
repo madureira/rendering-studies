@@ -13,7 +13,7 @@ private:
     int32 m_Channels;
 
 public:
-    Texture(const std::string &path);
+    Texture(const std::string& path);
     ~Texture();
 
     void Bind(uint32 slot = 0) const;

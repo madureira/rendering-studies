@@ -10,16 +10,16 @@
 class Cube final : public App
 {
 private:
-    Window *m_Window;
-    Camera *m_Camera;
-    Shader *m_Shader;
+    Window* m_Window;
+    Camera* m_Camera;
+    Shader* m_Shader;
 
     uint32 m_VAO;
     uint32 m_VBO;
     uint32 m_EBO;
 
 public:
-    Cube(Window *window);
+    Cube(Window* window);
     ~Cube();
 
     virtual void Update(float32 deltaTime) override;

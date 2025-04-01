@@ -27,11 +27,11 @@ private:
     glm::vec3 m_Right;
     glm::vec3 m_WorldUp;
 
-    float32 m_Zoom;
     float32 m_Yaw;
     float32 m_Pitch;
     float32 m_MovementSpeed;
     float32 m_MouseSensitivity;
+    float32 m_Zoom;
 
     float32 m_LastX;
     float32 m_LastY;
@@ -39,10 +39,10 @@ private:
 
 public:
     Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)
-        : m_Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-          m_MovementSpeed(SPEED),
-          m_MouseSensitivity(SENSITIVITY),
-          m_Zoom(ZOOM)
+        : m_Front(glm::vec3(0.0f, 0.0f, -1.0f))
+        , m_MovementSpeed(SPEED)
+        , m_MouseSensitivity(SENSITIVITY)
+        , m_Zoom(ZOOM)
     {
         m_Position = position;
         m_WorldUp = up;
@@ -66,11 +66,10 @@ public:
 
         float32 aspectRatio = (float32)windowWidth / (float32)windowHeight;
 
-        return glm::perspective(
-            glm::radians(m_Zoom), // Field of view (45 degrees in radians)
-            aspectRatio,          // Aspect ratio (width / height)
-            0.01f,                // Near clipping plane
-            100.0f                // Far clipping plane
+        return glm::perspective(glm::radians(m_Zoom), // Field of view (45 degrees in radians)
+            aspectRatio,                              // Aspect ratio (width / height)
+            0.01f,                                    // Near clipping plane
+            100.0f                                    // Far clipping plane
         );
     }
 

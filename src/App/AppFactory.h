@@ -24,7 +24,7 @@ enum class AppName
 class AppFactory final
 {
 public:
-    App *Generate(AppName appName, Window *window)
+    App* Generate(AppName appName, Window* window)
     {
         auto name = magic_enum::enum_name(appName);
 
@@ -32,16 +32,16 @@ public:
 
         switch (appName)
         {
-        case AppName::BlenderModel:
-            return new BlenderModel(window);
-        case AppName::Cube:
-            return new Cube(window);
-        case AppName::RippleEffect:
-            return new RippleEffect(window);
-        case AppName::TexturedCube:
-            return new TexturedCube(window);
-        case AppName::Triangle:
-            return new Triangle(window);
+            case AppName::BlenderModel:
+                return new BlenderModel(window);
+            case AppName::Cube:
+                return new Cube(window);
+            case AppName::RippleEffect:
+                return new RippleEffect(window);
+            case AppName::TexturedCube:
+                return new TexturedCube(window);
+            case AppName::Triangle:
+                return new Triangle(window);
         }
 
         LOG_ERROR("AppFactory: unknown app {}", name);

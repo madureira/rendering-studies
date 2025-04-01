@@ -39,25 +39,20 @@ cmake --version
 
 ### MacOS / Linux
 
+#### Debug
+
 ```sh
-./bash.sh
+./debug_build.sh
+```
+
+#### Release
+
+```sh
+./release_build.sh
 ```
 
 ### Windows
 
 ```sh
 ./bash.bat
-```
-
-## VSCODE
-
-### Add dependencies to the include path
-
-Edit the file `.vscode/c_cpp_properties.json` and add `conan2` to the `includePath` property:
-
-```json
-"includePath": [
-    "${workspaceFolder}/**",
-    "~/.conan2/**"
-]
 ```

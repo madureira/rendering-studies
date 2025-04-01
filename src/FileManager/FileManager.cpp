@@ -10,7 +10,7 @@ FileManager::FileManager()
 {
 }
 
-std::string FileManager::ReadText(const std::string &filename)
+std::string FileManager::ReadText(const std::string& filename)
 {
     std::ifstream file;
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -31,13 +31,13 @@ std::string FileManager::ReadText(const std::string &filename)
     return fileStream.str();
 }
 
-uchar *FileManager::LoadTexture(const std::string &filename, int32 &width, int32 &height, int32 &channels, bool flip)
+uchar* FileManager::LoadTexture(const std::string& filename, int32& width, int32& height, int32& channels, bool flip)
 {
     stbi_set_flip_vertically_on_load(flip);
     return stbi_load(filename.c_str(), &width, &height, &channels, 0);
 }
 
-void FileManager::FreeTexture(uchar *data)
+void FileManager::FreeTexture(uchar* data)
 {
     stbi_image_free(data);
 }

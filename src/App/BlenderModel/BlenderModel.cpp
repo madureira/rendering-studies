@@ -2,7 +2,7 @@
 
 #include "../../FileManager/FileManager.h"
 
-BlenderModel::BlenderModel(Window *window)
+BlenderModel::BlenderModel(Window* window)
     : m_Window(window)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");

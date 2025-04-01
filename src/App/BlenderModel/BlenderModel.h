@@ -12,14 +12,14 @@
 class BlenderModel final : public App
 {
 private:
-    Window *m_Window;
-    Shader *m_Shader;
-    Camera *m_Camera;
-    Grid *m_Grid;
-    Model *m_Model;
+    Window* m_Window;
+    Shader* m_Shader;
+    Camera* m_Camera;
+    Grid* m_Grid;
+    Model* m_Model;
 
 public:
-    BlenderModel(Window *window);
+    BlenderModel(Window* window);
     ~BlenderModel();
 
     virtual void Update(float32 deltaTime) override;

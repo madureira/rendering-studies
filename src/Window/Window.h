@@ -16,9 +16,9 @@ enum class KeyToken;
 class Window final
 {
 private:
-    GLFWwindow *m_Window;
-    Shader *m_TextShader;
-    TextRenderer *m_TextRenderer;
+    GLFWwindow* m_Window;
+    Shader* m_TextShader;
+    TextRenderer* m_TextRenderer;
 
     float64 m_MouseX;
     float64 m_MouseY;
@@ -33,7 +33,7 @@ private:
     float32 m_LastTime = 0.0f;
 
 public:
-    Window(const std::string &title, uint32 width, uint32 height);
+    Window(const std::string& title, uint32 width, uint32 height);
     ~Window();
 
     bool IsOpen() const;

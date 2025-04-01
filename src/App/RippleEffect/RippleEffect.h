@@ -12,9 +12,9 @@
 class RippleEffect final : public App
 {
 private:
-    Window *m_Window;
-    Shader *m_Shader;
-    Camera *m_Camera;
+    Window* m_Window;
+    Shader* m_Shader;
+    Camera* m_Camera;
 
     uint32 m_VAO;
     uint32 m_VBO;
@@ -24,7 +24,7 @@ private:
     std::vector<uint32> indices;
 
 public:
-    RippleEffect(Window *window);
+    RippleEffect(Window* window);
     ~RippleEffect();
 
     virtual void Update(float32 deltaTime) override;

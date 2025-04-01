@@ -12,8 +12,8 @@
 class Triangle final : public App
 {
 private:
-    Window *m_Window;
-    Shader *m_Shader;
+    Window* m_Window;
+    Shader* m_Shader;
 
     uint32 m_VAO;
     uint32 m_VBO;
@@ -22,7 +22,7 @@ private:
     glm::mat4 m_View;
 
 public:
-    Triangle(Window *window);
+    Triangle(Window* window);
     ~Triangle();
 
     virtual void Update(float32 deltaTime) override;

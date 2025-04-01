@@ -15,7 +15,7 @@ static float64 s_LastTime;
 static int32 s_NbFrames;
 static bool s_Fullscreen;
 
-Window::Window(const std::string &title, uint32 width, uint32 height)
+Window::Window(const std::string& title, uint32 width, uint32 height)
 {
     m_InitialWidth = width;
     m_InitialHeight = height;
@@ -30,8 +30,8 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
 
     const int32 MONITOR_INDEX = 0;
     int32 monitors;
-    GLFWmonitor *pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
-    const GLFWvidmode *pMode = glfwGetVideoMode(pMonitor);
+    GLFWmonitor* pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
+    const GLFWvidmode* pMode = glfwGetVideoMode(pMonitor);
 
     // Set OpenGL version and profile
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -66,34 +66,34 @@ Window::Window(const std::string &title, uint32 width, uint32 height)
     glfwFocusWindow(m_Window);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    glfwSetErrorCallback([](int32 error, const char *description) {
+    glfwSetErrorCallback([](int32 error, const char* description) {
         LOG_ERROR("GLFW ERROR: code: {}, message: {}", error, description);
     });
 
-    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow *pNativeWindow, int32 width, int32 height) {
-        Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
+    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* pNativeWindow, int32 width, int32 height) {
+        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
         window.m_Width = width;
         window.m_Height = height;
     });
 
-    glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow *pNativeWindow, int32 width, int32 height) {
+    glfwSetFramebufferSizeCallback(m_Window, []([[maybe_unused]] GLFWwindow* pNativeWindow, int32 width, int32 height) {
         glViewport(0, 0, width, height);
     });
 
-    glfwSetCursorPosCallback(m_Window, [](GLFWwindow *pNativeWindow, float64 xpos, float64 ypos) {
-        Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
+    glfwSetCursorPosCallback(m_Window, [](GLFWwindow* pNativeWindow, float64 xpos, float64 ypos) {
+        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
         window.m_MouseX = xpos;
         window.m_MouseY = ypos;
     });
 
-    glfwSetScrollCallback(m_Window, [](GLFWwindow *pNativeWindow, float64 xoffset, float64 yoffset) {
-        Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
+    glfwSetScrollCallback(m_Window, [](GLFWwindow* pNativeWindow, float64 xoffset, float64 yoffset) {
+        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
         window.m_OffsetX = xoffset;
         window.m_OffsetY = yoffset;
     });
 
-    glfwSetKeyCallback(m_Window, [](GLFWwindow *pNativeWindow, int32 key, int32 scancode, int32 action, int32 mods) {
-        Window &window = *(Window *)glfwGetWindowUserPointer(pNativeWindow);
+    glfwSetKeyCallback(m_Window, [](GLFWwindow* pNativeWindow, int32 key, [[maybe_unused]] int32 scancode, int32 action, [[maybe_unused]] int32 mods) {
+        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
 
         if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
         {
@@ -276,8 +276,8 @@ void Window::Fullscreen() const
 
     const int32 MONITOR_INDEX = 0;
     int32 monitors;
-    GLFWmonitor *pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
-    const GLFWvidmode *pMode = glfwGetVideoMode(pMonitor);
+    GLFWmonitor* pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
+    const GLFWvidmode* pMode = glfwGetVideoMode(pMonitor);
 
     if (s_Fullscreen)
     {

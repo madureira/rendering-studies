@@ -17,7 +17,7 @@
 
 #include <GL/glew.h>
 
-std::string get_sysctl_value(const char *name);
+std::string get_sysctl_value(const char* name);
 
 class HardwareUtil final
 {
@@ -173,13 +173,13 @@ public:
 
     static std::string GetGPUModel()
     {
-        std::string gpuModel = reinterpret_cast<char const *>(glGetString(GL_RENDERER));
+        std::string gpuModel = reinterpret_cast<char const*>(glGetString(GL_RENDERER));
         return gpuModel;
     }
 
     static std::string GetGPUVendor()
     {
-        std::string gpuVendor = reinterpret_cast<char const *>(glGetString(GL_VENDOR));
+        std::string gpuVendor = reinterpret_cast<char const*>(glGetString(GL_VENDOR));
         return gpuVendor;
     }
 
@@ -191,19 +191,19 @@ public:
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 
         // Estimate VRAM based on texture size (rough approximation)
-        double estimatedVRAM = (maxTextureSize / 1024.0) * 4.0;  // GB Estimate
+        double estimatedVRAM = (maxTextureSize / 1024.0) * 4.0; // GB Estimate
         return estimatedVRAM;
     }
 
     static std::string GetGLVersion()
     {
-        std::string glVersion = reinterpret_cast<char const *>(glGetString(GL_VERSION));
+        std::string glVersion = reinterpret_cast<char const*>(glGetString(GL_VERSION));
         return glVersion;
     }
 
     static std::string GetGLSLVersion()
     {
-        std::string glslVersion = reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+        std::string glslVersion = reinterpret_cast<char const*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
         return glslVersion;
     }
 
@@ -218,7 +218,7 @@ public:
     }
 };
 
-std::string get_sysctl_value(const char *name)
+std::string get_sysctl_value(const char* name)
 {
     char buffer[128];
     size_t size = sizeof(buffer);

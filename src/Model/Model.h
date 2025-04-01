@@ -32,12 +32,12 @@ private:
     std::vector<Mesh> m_Meshes;
 
 public:
-    Model(const std::string &path);
+    Model(const std::string& path);
     void Draw() const;
 
 private:
-    void LoadModel(const std::string &path);
-    void ProcessNode(aiNode *node, const aiScene *scene);
-    Mesh ProcessMesh(aiMesh *mesh);
-    void SetupMesh(Mesh *mesh) const;
+    void LoadModel(const std::string& path);
+    void ProcessNode(aiNode* node, const aiScene* scene);
+    Mesh ProcessMesh(aiMesh* mesh);
+    void SetupMesh(Mesh* mesh) const;
 };

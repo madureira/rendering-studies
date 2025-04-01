@@ -2,7 +2,7 @@
 
 #include "../../FileManager/FileManager.h"
 
-RippleEffect::RippleEffect(Window *window)
+RippleEffect::RippleEffect(Window* window)
     : m_Window(window)
 {
     m_Shader = new Shader("assets/shaders/ripple_effect.vert", "assets/shaders/ripple_effect.frag");
@@ -125,7 +125,7 @@ void RippleEffect::CreateMesh()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32), indices.data(), GL_STATIC_DRAW);
 
     // Set vertex attribute pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float32), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float32), (void*)0);
     glEnableVertexAttribArray(0); // Position attribute
 
     // Unbind objects

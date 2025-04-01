@@ -4,9 +4,9 @@
 
 #include "../FileManager/FileManager.h"
 
-Texture::Texture(const std::string &path)
+Texture::Texture(const std::string& path)
 {
-    uchar *data = FileManager::LoadTexture(path, m_Width, m_Height, m_Channels, true);
+    uchar* data = FileManager::LoadTexture(path, m_Width, m_Height, m_Channels, true);
 
     if (data)
     {

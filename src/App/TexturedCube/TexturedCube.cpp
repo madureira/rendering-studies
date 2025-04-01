@@ -2,7 +2,7 @@
 
 #include "../../FileManager/FileManager.h"
 
-TexturedCube::TexturedCube(Window *window)
+TexturedCube::TexturedCube(Window* window)
     : m_Window(window)
 {
     m_Shader = new Shader("assets/shaders/texture.vert", "assets/shaders/texture.frag");
@@ -151,15 +151,15 @@ void TexturedCube::CreateMesh()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Position attribute (location = 0 in shader)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float32), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float32), (void*)0);
     glEnableVertexAttribArray(0);
 
     // Color attribute (location = 1 in shader)
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float32), (void *)(3 * sizeof(float32)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float32), (void*)(3 * sizeof(float32)));
     glEnableVertexAttribArray(1);
 
     // Texture coordinate attribute (location = 2 in shader)
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float32), (void *)(6 * sizeof(float32)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float32), (void*)(6 * sizeof(float32)));
     glEnableVertexAttribArray(2);
 
     // Load and create a texture
