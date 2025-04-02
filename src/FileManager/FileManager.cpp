@@ -6,10 +6,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-FileManager::FileManager()
-{
-}
-
 std::string FileManager::ReadText(const std::string& filename)
 {
     std::ifstream file;

@@ -6,7 +6,7 @@ BlenderModel::BlenderModel(Window* window)
     : m_Window(window)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
-    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+    m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f);
     m_Grid = new Grid();
     m_Model = new Model("assets/models/dragon.obj");
 }
@@ -27,7 +27,7 @@ void BlenderModel::Update(float32 deltaTime)
 
     if (m_Window->IsKeyPressed(KeyToken::LeftShift))
     {
-        speed = 3.f;
+        speed = 10.f;
     }
 
     if (m_Window->IsKeyPressed(KeyToken::Up) || m_Window->IsKeyPressed(KeyToken::W))
@@ -54,13 +54,14 @@ void BlenderModel::Update(float32 deltaTime)
     glm::mat4 view = m_Camera->GetViewMatrix();
     glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
 
+    m_Grid->Draw(view, projection);
+
     m_Shader->Bind();
 
     m_Shader->SetMat4("uModel", model);
     m_Shader->SetMat4("uView", view);
     m_Shader->SetMat4("uProjection", projection);
 
-    m_Grid->Draw();
     m_Model->Draw();
 
     m_Shader->Unbind();

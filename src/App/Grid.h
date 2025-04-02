@@ -1,52 +1,63 @@
 #pragma once
 
-#include <vector>
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <RenderingStudies/Types.h>
 
-class Grid final
+#include "../Shader/Shader.h"
+
+class Grid
 {
 private:
+    const float32 NEAR_CLIP = 0.01f;
+    const float32 FAR_CLIP = 10000.0f;
+
+    Shader* m_Shader;
     uint32 m_VAO;
     uint32 m_VBO;
-    std::vector<float32> m_Vertices;
+    uint32 m_EBO;
+
+    const float32 m_Vertices[8] = {
+        -1.0f, -1.0f,
+        -1.0f,  1.0f,
+         1.0f,  1.0f,
+         1.0f, -1.0f,
+    };
+    const uint32 m_Indices[6] = {
+        0, 2, 1,
+        0, 3, 2,
+    };
 
 public:
+    enum class plane
+    {
+        xz, xy,
+        yz, yx,
+    };
+
     Grid()
     {
-        int32 gridSize = 10;    // Half of the grid size
-        float32 spacing = 1.0f; // Distance between lines
+        m_Shader = new Shader("assets/shaders/grid.vert", "assets/shaders/grid.frag");
 
-        for (int32 i = -gridSize; i <= gridSize; i++)
-        {
-            // Vertical lines (constant x, varying z)
-            m_Vertices.push_back(i * spacing);
-            m_Vertices.push_back(0.0f);
-            m_Vertices.push_back(-gridSize * spacing);
-            m_Vertices.push_back(i * spacing);
-            m_Vertices.push_back(0.0f);
-            m_Vertices.push_back(gridSize * spacing);
-
-            // Horizontal lines (constant z, varying x)
-            m_Vertices.push_back(-gridSize * spacing);
-            m_Vertices.push_back(0.0f);
-            m_Vertices.push_back(i * spacing);
-            m_Vertices.push_back(gridSize * spacing);
-            m_Vertices.push_back(0.0f);
-            m_Vertices.push_back(i * spacing);
-        }
-
+        // Generate Objects
         glGenVertexArrays(1, &m_VAO);
         glGenBuffers(1, &m_VBO);
+        glGenBuffers(1, &m_EBO);
 
+        // Bind Vertex Array Object
         glBindVertexArray(m_VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(float32), m_Vertices.data(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float32), (void*)0);
+        // Bind Vertex Buffer Object
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices, GL_STATIC_DRAW);
+
+        // Bind Element Buffer Object
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_Indices), m_Indices, GL_STATIC_DRAW);
+
+        // Set vertex attributes
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float32), (void*)0);
         glEnableVertexAttribArray(0);
 
         // Unbind objects
@@ -54,18 +65,29 @@ public:
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
-
     ~Grid()
     {
+        delete m_Shader;
         glDeleteVertexArrays(1, &m_VAO);
         glDeleteBuffers(1, &m_VBO);
+        glDeleteBuffers(1, &m_EBO);
     }
 
-    void Draw()
+    auto Draw(glm::mat4 const& view, glm::mat4 const& projection) const -> void
     {
+        m_Shader->Bind();
+
+        m_Shader->SetFloat("uNear", NEAR_CLIP);
+        m_Shader->SetFloat("uFar", FAR_CLIP);
+        m_Shader->SetMat4("uView", view);
+        m_Shader->SetMat4("uProjection", projection);
+
         glBindVertexArray(m_VAO);
-        glDrawArrays(GL_LINES, 0, m_Vertices.size() / 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         glBindVertexArray(0);
+        m_Shader->Unbind();
     }
 };

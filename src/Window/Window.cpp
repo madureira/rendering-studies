@@ -249,8 +249,8 @@ void Window::RenderFPS() const
     s_NbFrames++;
 
     static std::string fpsText;
-    if (currentTime - s_LastTime >= 1.0)
-    { // If 1 second has passed
+    if (currentTime - s_LastTime >= 1.0) // If 1 second has passed
+    {
         float64 fps = float64(s_NbFrames) / (currentTime - s_LastTime);
 
         // Convert FPS to string with 2 decimal places

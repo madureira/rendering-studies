@@ -13,14 +13,15 @@ enum class CameraMove
     RIGHT
 };
 
-// Default settings
-const float32 SPEED = 2.5f;
-const float32 SENSITIVITY = 0.05f;
-const float32 ZOOM = 45.0f;
-
 class Camera final
 {
 private:
+    const float32 SPEED = 2.5f;
+    const float32 SENSITIVITY = 0.05f;
+    const float32 ZOOM = 45.0f;
+    const float32 NEAR_CLIP = 0.01f;
+    const float32 FAR_CLIP = 10000.0f;
+
     glm::vec3 m_Position;
     glm::vec3 m_Up;
     glm::vec3 m_Front;
@@ -68,8 +69,8 @@ public:
 
         return glm::perspective(glm::radians(m_Zoom), // Field of view (45 degrees in radians)
             aspectRatio,                              // Aspect ratio (width / height)
-            0.01f,                                    // Near clipping plane
-            100.0f                                    // Far clipping plane
+            NEAR_CLIP,                                // Near clipping plane
+            FAR_CLIP                                  // Far clipping plane
         );
     }
 
