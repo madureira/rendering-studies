@@ -30,12 +30,6 @@ private:
     };
 
 public:
-    enum class plane
-    {
-        xz, xy,
-        yz, yx,
-    };
-
     Grid()
     {
         m_Shader = new Shader("assets/shaders/grid.vert", "assets/shaders/grid.frag");
