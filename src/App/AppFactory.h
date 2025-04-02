@@ -26,9 +26,7 @@ class AppFactory final
 public:
     App* Generate(AppName appName, Window* window)
     {
-        auto name = magic_enum::enum_name(appName);
-
-        LOG_INFO("AppFactory: instantiating app {}", name);
+        LOG_INFO("AppFactory: instantiating app {}", magic_enum::enum_name(appName));
 
         switch (appName)
         {
@@ -43,8 +41,6 @@ public:
             case AppName::Triangle:
                 return new Triangle(window);
         }
-
-        LOG_ERROR("AppFactory: unknown app {}", name);
 
         return nullptr;
     }

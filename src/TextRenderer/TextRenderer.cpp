@@ -5,6 +5,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include <RenderingStudies/GL.h>
+
 TextRenderer::TextRenderer(std::string fontPath)
 {
     FT_Library ft;
@@ -24,7 +26,7 @@ TextRenderer::TextRenderer(std::string fontPath)
 
     FT_Set_Pixel_Sizes(face, 0, 48);
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    GL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 
     for (GLubyte c = 0; c < 128; c++)
     {
@@ -35,34 +37,34 @@ TextRenderer::TextRenderer(std::string fontPath)
         }
 
         GLuint texture;
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
+        GL(glGenTextures(1, &texture));
+        GL(glBindTexture(GL_TEXTURE_2D, texture));
+        GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer));
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
         Character character = { texture, glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows), glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top), (GLuint)face->glyph->advance.x };
         m_Characters.insert(std::pair<GLchar, Character>(c, character));
     }
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    GL(glBindTexture(GL_TEXTURE_2D, 0));
 
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
-    glBindVertexArray(m_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    GL(glGenVertexArrays(1, &m_VAO));
+    GL(glGenBuffers(1, &m_VBO));
+    GL(glBindVertexArray(m_VAO));
+    GL(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
+    GL(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW));
+    GL(glEnableVertexAttribArray(0));
+    GL(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
+    GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GL(glBindVertexArray(0));
 }
 
 void TextRenderer::Render(Shader& shader, std::string text, float32 x, float32 y, float32 scale, glm::vec3 color)
