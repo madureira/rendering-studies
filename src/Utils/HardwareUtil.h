@@ -15,7 +15,9 @@
 #include <windows.h>
 #endif
 
-#include <GL/glew.h>
+#include <glad/glad.h>
+
+#include <RenderingStudies/GL.h>
 
 std::string get_sysctl_value(const char* name);
 
@@ -197,13 +199,13 @@ public:
 
     static std::string GetGLVersion()
     {
-        std::string glVersion = reinterpret_cast<char const*>(glGetString(GL_VERSION));
+        std::string glVersion = reinterpret_cast<char const*>(GLR(glGetString(GL_VERSION)));
         return glVersion;
     }
 
     static std::string GetGLSLVersion()
     {
-        std::string glslVersion = reinterpret_cast<char const*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+        std::string glslVersion = reinterpret_cast<char const*>(GLR(glGetString(GL_SHADING_LANGUAGE_VERSION)));
         return glslVersion;
     }
 

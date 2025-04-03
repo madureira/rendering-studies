@@ -6,9 +6,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <RenderingStudies/GL.h>
+
 #include "../FileManager/FileManager.h"
+#include "../Shader/Shader.h"
+#include "../TextRenderer/TextRenderer.h"
 #include "../Utils/HardwareUtil.h"
 
+static const bool SHOW_FPS = true;
 static const bool FULLSCREEN = false;
 static const bool VSYNC_ON = false;
 static float64 s_LastTime;
@@ -106,11 +111,10 @@ Window::Window(const std::string& title, uint32 width, uint32 height)
         }
     });
 
-    // Initialize GLEW
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK)
+    // Initialize GLAD
+    if (!gladLoadGL())
     {
-        LOG_ERROR("Window: error initializing GLEW");
+        LOG_ERROR("Window: error initializing GLAD");
         Shutdown();
         return;
     }
@@ -134,17 +138,27 @@ Window::Window(const std::string& title, uint32 width, uint32 height)
     LOG_INFO("GLSL Version: {}", HardwareUtil::GetGLSLVersion());
     LOG_INFO("================================================");
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_MULTISAMPLE);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if (!glfwGetCurrentContext())
+    {
+        LOG_ERROR("No OpenGL context is active!");
+        return;
+    }
+
+    GL(glEnable(GL_DEPTH_TEST));
+    GL(glEnable(GL_MULTISAMPLE));
+    GL(glEnable(GL_CULL_FACE));
+    GL(glCullFace(GL_BACK));
+    GL(glFrontFace(GL_CCW));
+    GL(glEnable(GL_BLEND));
+    GL(glDepthFunc(GL_LEQUAL));
+    GL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     m_TextShader = new Shader("assets/shaders/text.vert", "assets/shaders/text.frag");
 
-    m_TextRenderer = new TextRenderer("assets/fonts/roboto-regular.ttf");
+    if (SHOW_FPS)
+    {
+        m_TextRenderer = new TextRenderer("assets/fonts/roboto-regular.ttf");
+    }
 
     glm::mat4 projection = glm::ortho(0.0f, (float32)m_InitialWidth, 0.0f, (float32)m_InitialHeight);
     m_TextShader->Bind();
@@ -168,9 +182,12 @@ void Window::Clear() const
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     // Clear color buffer and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
 
-    RenderFPS();
+    if (SHOW_FPS)
+    {
+        RenderFPS();
+    }
+
     SetPolygonMode();
 }
 
@@ -199,16 +216,6 @@ uint32 Window::GetHeight() const
     return m_Height;
 }
 
-bool Window::IsKeyPressed(KeyToken key) const
-{
-    return glfwGetKey(m_Window, (int32)key) == (int32)KeyAction::Press;
-}
-
-bool Window::isKeyReleased(KeyToken key) const
-{
-    return glfwGetKey(m_Window, (int32)key) == (int32)KeyAction::Release;
-}
-
 float64 Window::GetMouseX() const
 {
     return m_MouseX;
@@ -235,6 +242,16 @@ float32 Window::GetDeltaTime()
     float32 deltaTime = currentTime - m_LastTime;
     m_LastTime = currentTime;
     return deltaTime;
+}
+
+bool Window::IsKeyPressed(KeyToken key) const
+{
+    return glfwGetKey(m_Window, (int32)key) == (int32)KeyAction::Press;
+}
+
+bool Window::isKeyReleased(KeyToken key) const
+{
+    return glfwGetKey(m_Window, (int32)key) == (int32)KeyAction::Release;
 }
 
 void Window::Shutdown() const

@@ -16,7 +16,8 @@ uniform mat4 uProjection;
 
 out vec4 fColor;
 
-vec4 grid(vec3 fragPos3D, float scale, bool drawAxis) {
+vec4 grid(vec3 fragPos3D, float scale, bool drawAxis)
+{
     vec2 coord = fragPos3D.xz * scale;
     vec2 derivative = fwidth(coord);
     vec2 grid = abs(fract(coord - 0.5) - 0.5) / derivative;
@@ -38,7 +39,8 @@ vec4 grid(vec3 fragPos3D, float scale, bool drawAxis) {
 
     return color;
 }
-float computeDepth(vec3 pos) {
+float computeDepth(vec3 pos)
+{
     vec4 clip_space_pos = uProjection * uView * vec4(pos, 1.0);
     float clip_space_depth = (clip_space_pos.z / clip_space_pos.w);
     float far  = gl_DepthRange.far;
@@ -46,13 +48,17 @@ float computeDepth(vec3 pos) {
     float depth = (((far - near) * clip_space_depth) + near + far) / 2.0;
     return depth;
 }
-float computeLinearDepth(vec3 pos) {
+
+float computeLinearDepth(vec3 pos)
+{
     vec4 clip_space_pos = uProjection * uView * vec4(pos.xyz, 1.0);
     float clip_space_depth = (clip_space_pos.z / clip_space_pos.w) * 2.0 - 1.0; // put back between -1 and 1
     float linearDepth = (2.0 * uNear * uFar) / (uFar + uNear - clip_space_depth * (uFar - uNear)); // get linear value between 0.01 and 100
     return linearDepth / uFar; // normalize
 }
-void main() {
+
+void main()
+{
     float t = -vNear.y / (vFar.y - vNear.y);
     vec3 fragPos3D = vNear + t * (vFar - vNear);
     float is_on = float(t > 0);

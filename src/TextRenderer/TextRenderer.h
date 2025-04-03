@@ -9,7 +9,7 @@
 
 #include <RenderingStudies/Types.h>
 
-#include "../Shader/Shader.h"
+class Shader;
 
 class TextRenderer final
 {

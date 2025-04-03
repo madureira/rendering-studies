@@ -1,9 +1,10 @@
 #pragma once
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <RenderingStudies/Types.h>
+#include <RenderingStudies/GL.h>
 
 #include "../Shader/Shader.h"
 
@@ -35,31 +36,28 @@ public:
         m_Shader = new Shader("assets/shaders/grid.vert", "assets/shaders/grid.frag");
 
         // Generate Objects
-        glGenVertexArrays(1, &m_VAO);
-        glGenBuffers(1, &m_VBO);
-        glGenBuffers(1, &m_EBO);
+        GL(glGenVertexArrays(1, &m_VAO));
+        GL(glGenBuffers(1, &m_VBO));
+        GL(glGenBuffers(1, &m_EBO));
 
         // Bind Vertex Array Object
-        glBindVertexArray(m_VAO);
+        GL(glBindVertexArray(m_VAO));
 
         // Bind Vertex Buffer Object
-        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices, GL_STATIC_DRAW);
+        GL(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
+        GL(glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices, GL_STATIC_DRAW));
 
         // Bind Element Buffer Object
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_Indices), m_Indices, GL_STATIC_DRAW);
+        GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
+        GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_Indices), m_Indices, GL_STATIC_DRAW));
 
         // Set vertex attributes
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float32), (void*)0);
-        glEnableVertexAttribArray(0);
+        GL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float32), (void*)0));
+        GL(glEnableVertexAttribArray(0));
 
         // Unbind objects
-        glBindVertexArray(0);
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+        GL(glBindVertexArray(0));
     }
     ~Grid()
     {

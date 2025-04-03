@@ -3,10 +3,10 @@
 #include <RenderingStudies/App.h>
 #include <RenderingStudies/Types.h>
 
-#include "../../Shader/Shader.h"
-#include "../../Texture/Texture.h"
-#include "../../Window/Window.h"
-#include "../Camera.h"
+class Camera;
+class Shader;
+class Texture;
+class Window;
 
 class TexturedCube final : public App
 {

@@ -1,11 +1,13 @@
 
 #include "TextRenderer.h"
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 #include <RenderingStudies/GL.h>
+
+#include "../Shader/Shader.h"
 
 TextRenderer::TextRenderer(std::string fontPath)
 {
@@ -57,12 +59,15 @@ TextRenderer::TextRenderer(std::string fontPath)
     FT_Done_FreeType(ft);
 
     GL(glGenVertexArrays(1, &m_VAO));
-    GL(glGenBuffers(1, &m_VBO));
     GL(glBindVertexArray(m_VAO));
+
+    GL(glGenBuffers(1, &m_VBO));
     GL(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
     GL(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW));
-    GL(glEnableVertexAttribArray(0));
+
     GL(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
+    GL(glEnableVertexAttribArray(0));
+
     GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
     GL(glBindVertexArray(0));
 }
@@ -115,8 +120,9 @@ void TextRenderer::Render(Shader& shader, std::string text, float32 x, float32 y
         x += (ch.Advance >> 6) * scale;
     }
 
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
     shader.Unbind();
 }

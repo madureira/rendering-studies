@@ -7,8 +7,9 @@
 
 #include <RenderingStudies/Types.h>
 
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+struct aiMesh;
+struct aiNode;
+struct aiScene;
 
 struct Vertex
 {

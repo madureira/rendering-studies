@@ -1,6 +1,11 @@
 #include "./Cube.h"
 
+#include <RenderingStudies/GL.h>
+
 #include "../../FileManager/FileManager.h"
+#include "../../Shader/Shader.h"
+#include "../../Window/Window.h"
+#include "../Camera.h"
 
 Cube::Cube(Window* window)
     : m_Window(window)
@@ -107,33 +112,30 @@ void Cube::CreateMesh()
     };
 
     // Generate Objects
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
-    glGenBuffers(1, &m_EBO);
+    GL(glGenVertexArrays(1, &m_VAO));
+    GL(glGenBuffers(1, &m_VBO));
+    GL(glGenBuffers(1, &m_EBO));
 
     // Bind Vertex Array Object
-    glBindVertexArray(m_VAO);
+    GL(glBindVertexArray(m_VAO));
 
     // Bind and set vertex buffer
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    GL(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
+    GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
 
     // Bind and set index buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
+    GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
 
     // Position attribute (location = 0 in shader)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void*)0);
-    glEnableVertexAttribArray(0);
+    GL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void*)0));
+    GL(glEnableVertexAttribArray(0));
 
     // Color attribute (location = 1 in shader)
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void*)(3 * sizeof(float32)));
-    glEnableVertexAttribArray(1);
+    GL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float32), (void*)(3 * sizeof(float32))));
+    GL(glEnableVertexAttribArray(1));
 
     // Unbind objects
-    glBindVertexArray(0);
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GL(glBindVertexArray(0));
 }

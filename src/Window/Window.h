@@ -2,14 +2,13 @@
 
 #include <string>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <RenderingStudies/Types.h>
 
-#include "../Shader/Shader.h"
-#include "../TextRenderer/TextRenderer.h"
-
+class Shader;
+class TextRenderer;
 enum class KeyAction;
 enum class KeyToken;
 
@@ -43,13 +42,13 @@ public:
     float32 GetTime() const;
     uint32 GetWidth() const;
     uint32 GetHeight() const;
-    bool IsKeyPressed(KeyToken key) const;
-    bool isKeyReleased(KeyToken key) const;
     float64 GetMouseX() const;
     float64 GetMouseY() const;
     float64 GetOffsetX() const;
     float64 GetOffsetY() const;
     float32 GetDeltaTime();
+    bool IsKeyPressed(KeyToken key) const;
+    bool isKeyReleased(KeyToken key) const;
 
 private:
     void Shutdown() const;

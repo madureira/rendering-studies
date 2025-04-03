@@ -10,5 +10,9 @@ out vec4 fColor;
 void main()
 {
     vec4 sampled = vec4(1.0, 1.0, 1.0, texture(uText, vTexCoord).r);
+    if (sampled.a < 0.1) // Discard transparent pixels
+    {
+        discard;
+    }
     fColor = vec4(uTextColor, 1.0) * sampled;
 }

@@ -1,9 +1,13 @@
 #include "Model.h"
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
+#include <RenderingStudies/GL.h>
 
 Model::Model(const std::string& path)
 {
@@ -85,35 +89,31 @@ Mesh Model::ProcessMesh(aiMesh* mesh)
 
 void Model::SetupMesh(Mesh* mesh) const
 {
-    glGenVertexArrays(1, &mesh->VAO);
-    glGenBuffers(1, &mesh->VBO);
-    glGenBuffers(1, &mesh->EBO);
+    GL(glGenVertexArrays(1, &mesh->VAO));
+    GL(glGenBuffers(1, &mesh->VBO));
+    GL(glGenBuffers(1, &mesh->EBO));
 
-    glBindVertexArray(mesh->VAO);
+    GL(glBindVertexArray(mesh->VAO));
 
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
-    glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), &mesh->vertices[0], GL_STATIC_DRAW);
+    GL(glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO));
+    GL(glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), &mesh->vertices[0], GL_STATIC_DRAW));
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(uint32), &mesh->indices[0], GL_STATIC_DRAW);
+    GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO));
+    GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(uint32), &mesh->indices[0], GL_STATIC_DRAW));
 
     // Position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    glEnableVertexAttribArray(0);
+    GL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0));
+    GL(glEnableVertexAttribArray(0));
 
     // Normal attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-    glEnableVertexAttribArray(1);
+    GL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal)));
+    GL(glEnableVertexAttribArray(1));
 
     // Texture coordinate attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-    glEnableVertexAttribArray(2);
+    GL(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords)));
+    GL(glEnableVertexAttribArray(2));
 
     // Unbind objects
-    glBindVertexArray(0);
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GL(glBindVertexArray(0));
 }

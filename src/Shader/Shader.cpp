@@ -1,6 +1,8 @@
 #include "Shader.h"
 
-#include <GL/glew.h>
+#include <glad/glad.h>
+
+#include <RenderingStudies/GL.h>
 
 #include "../FileManager/FileManager.h"
 
@@ -95,37 +97,37 @@ void Shader::SetMat4(const std::string& name, const glm::mat4& mat) const
 void Shader::Compile()
 {
     const char* vsCode = m_VertexCode.c_str();
-    m_VertexId = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(m_VertexId, 1, &vsCode, NULL);
-    glCompileShader(m_VertexId);
+    m_VertexId = GLR(glCreateShader(GL_VERTEX_SHADER));
+    GL(glShaderSource(m_VertexId, 1, &vsCode, NULL));
+    GL(glCompileShader(m_VertexId));
     CheckCompileError(m_VertexId, "Vertex Shader");
 
     const char* fsCode = m_FragmentCode.c_str();
-    m_FragmentId = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(m_FragmentId, 1, &fsCode, NULL);
-    glCompileShader(m_FragmentId);
+    m_FragmentId = GLR(glCreateShader(GL_FRAGMENT_SHADER));
+    GL(glShaderSource(m_FragmentId, 1, &fsCode, NULL));
+    GL(glCompileShader(m_FragmentId));
     CheckCompileError(m_FragmentId, "Fragment Shader");
 }
 
 void Shader::Link()
 {
-    m_ID = glCreateProgram();
-    glAttachShader(m_ID, m_VertexId);
-    glAttachShader(m_ID, m_FragmentId);
-    glLinkProgram(m_ID);
+    m_ID = GLR(glCreateProgram());
+    GL(glAttachShader(m_ID, m_VertexId));
+    GL(glAttachShader(m_ID, m_FragmentId));
+    GL(glLinkProgram(m_ID));
     CheckLinkingError();
-    glDeleteShader(m_VertexId);
-    glDeleteShader(m_FragmentId);
+    GL(glDeleteShader(m_VertexId));
+    GL(glDeleteShader(m_FragmentId));
 }
 
 void Shader::CheckCompileError(uint32 shader, const std::string type)
 {
     int32 success;
     char infoLog[1024];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    GL(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
     if (!success)
     {
-        glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+        GL(glGetShaderInfoLog(shader, 1024, NULL, infoLog));
         LOG_ERROR("Shader: Error compiling {}:\n{}", type, infoLog);
     }
 }
@@ -134,10 +136,10 @@ void Shader::CheckLinkingError()
 {
     int32 success;
     char infoLog[1024];
-    glGetProgramiv(m_ID, GL_LINK_STATUS, &success);
+    GL(glGetProgramiv(m_ID, GL_LINK_STATUS, &success));
     if (!success)
     {
-        glGetProgramInfoLog(m_ID, 1024, NULL, infoLog);
+        GL(glGetProgramInfoLog(m_ID, 1024, NULL, infoLog));
         LOG_ERROR("Shader: Error linking shader program: {}", infoLog);
     }
 }

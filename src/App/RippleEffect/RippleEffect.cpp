@@ -1,6 +1,11 @@
 #include "./RippleEffect.h"
 
+#include <RenderingStudies/GL.h>
+
 #include "../../FileManager/FileManager.h"
+#include "../../Shader/Shader.h"
+#include "../../Window/Window.h"
+#include "../Camera.h"
 
 RippleEffect::RippleEffect(Window* window)
     : m_Window(window)
@@ -111,27 +116,24 @@ void RippleEffect::CreateMesh()
     }
 
     // Generate and bind the VAO
-    glGenVertexArrays(1, &m_VAO);
-    glBindVertexArray(m_VAO);
+    GL(glGenVertexArrays(1, &m_VAO));
+    GL(glBindVertexArray(m_VAO));
 
     // Generate and bind the VBO
-    glGenBuffers(1, &m_VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float32), vertices.data(), GL_STATIC_DRAW);
+    GL(glGenBuffers(1, &m_VBO));
+    GL(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
+    GL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float32), vertices.data(), GL_STATIC_DRAW));
 
     // Generate and bind the EBO
-    glGenBuffers(1, &m_EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32), indices.data(), GL_STATIC_DRAW);
+    GL(glGenBuffers(1, &m_EBO));
+    GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
+    GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32), indices.data(), GL_STATIC_DRAW));
 
     // Set vertex attribute pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float32), (void*)0);
-    glEnableVertexAttribArray(0); // Position attribute
+    GL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float32), (void*)0));
+    GL(glEnableVertexAttribArray(0)); // Position attribute
 
     // Unbind objects
-    glBindVertexArray(0);
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GL(glBindVertexArray(0));
 }

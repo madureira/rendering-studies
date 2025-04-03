@@ -6,8 +6,8 @@
 #include <RenderingStudies/App.h>
 #include <RenderingStudies/Types.h>
 
-#include "../../Shader/Shader.h"
-#include "../../Window/Window.h"
+class Shader;
+class Window;
 
 class Triangle final : public App
 {

@@ -3,11 +3,11 @@
 #include <RenderingStudies/App.h>
 #include <RenderingStudies/Types.h>
 
-#include "../../Model/Model.h"
-#include "../../Shader/Shader.h"
-#include "../../Window/Window.h"
-#include "../Camera.h"
-#include "../Grid.h"
+class Camera;
+class Grid;
+class Model;
+class Shader;
+class Window;
 
 class BlenderModel final : public App
 {
@@ -17,6 +17,7 @@ private:
     Camera* m_Camera;
     Grid* m_Grid;
     Model* m_Model;
+    Model* m_Model2;
 
 public:
     BlenderModel(Window* window);
