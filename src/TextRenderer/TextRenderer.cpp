@@ -1,7 +1,6 @@
 
 #include "TextRenderer.h"
 
-#include <glad/glad.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -76,7 +75,7 @@ void TextRenderer::Render(Shader& shader, std::string text, float32 x, float32 y
 {
     shader.Bind();
 
-    shader.SetVec3("uTextColor", color.x, color.y, color.z);
+    shader.SetVec3("u_TextColor", color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(m_VAO);
 

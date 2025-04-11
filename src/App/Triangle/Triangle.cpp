@@ -1,4 +1,6 @@
-#include "./Triangle.h"
+#include "Triangle.h"
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <RenderingStudies/GL.h>
 
@@ -12,13 +14,13 @@ Triangle::Triangle(Window* window)
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
 
     // Camera setup
-    glm::vec3 cameraPosition(0.f, 0.f, 2.f);       // Camera is placed at (0, 0, 2)
+    glm::vec3 camera_Position(0.f, 0.f, 2.f);      // Camera is placed at (0, 0, 2)
     glm::vec3 cameraViewDirection(0.f, 0.f, -1.f); // Camera looks towards the negative Z-axis
 
     // View matrix
-    m_View = glm::lookAt(cameraPosition,      // Camera position
-        cameraPosition + cameraViewDirection, // Target position (camera looks here)
-        glm::vec3(0.f, 1.f, 0.f)              // Up vector (positive Y-axis)
+    m_View = glm::lookAt(camera_Position,      // Camera position
+        camera_Position + cameraViewDirection, // Target position (camera looks here)
+        glm::vec3(0.f, 1.f, 0.f)               // Up vector (positive Y-axis)
     );
 
     CreateMesh();
@@ -55,9 +57,9 @@ void Triangle::Update([[maybe_unused]] float32 deltaTime)
 
     m_Shader->Bind();
 
-    m_Shader->SetMat4("uModel", model);
-    m_Shader->SetMat4("uView", m_View);
-    m_Shader->SetMat4("uProjection", projection);
+    m_Shader->SetMat4("u_Model", model);
+    m_Shader->SetMat4("u_View", m_View);
+    m_Shader->SetMat4("u_Projection", projection);
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);

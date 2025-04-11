@@ -1,7 +1,5 @@
 #include "Texture.h"
 
-#include <glad/glad.h>
-
 #include <RenderingStudies/GL.h>
 
 #include "../FileManager/FileManager.h"

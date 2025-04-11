@@ -1,39 +1,39 @@
 #version 410 core
 
-layout(location = 0) in vec3 aPosition;
+layout(location = 0) in vec3 a_Position;
 
-uniform mat4 uModel;
-uniform mat4 uView;
-uniform mat4 uProjection;
+uniform mat4 u_Model;
+uniform mat4 u_View;
+uniform mat4 u_Projection;
 
-uniform float uTime;
-uniform float uAmplitude;
-uniform float uFrequency;
+uniform float u_Time;
+uniform float u_Amplitude;
+uniform float u_Frequency;
 
-const float cPhase = 1.0;
-const float cDamping = 0.5;
+const float PHASE = 1.0;
+const float DAMPING = 0.5;
 
-out float vHeight;
-out float vTime;
+out float v_Height;
+out float v_Time;
 
 void main()
 {
     // Calculate distance from the origin (or center of the RippleEffect)
-    float distance = length(aPosition.xz);
+    float distance = length(a_Position.xz);
 
     // Apply damping to the amplitude based on distance
-    float dampedAmplitude = uAmplitude * exp(-cDamping * distance);
+    float dampedAmplitude = u_Amplitude * exp(-DAMPING * distance);
 
     // Calculate the height of the vertex based on a sine wave
-    float height = dampedAmplitude * sin(uFrequency * distance - cPhase * uTime);
+    float height = dampedAmplitude * sin(u_Frequency * distance - PHASE * u_Time);
 
     // Transform the vertex position
-    vec4 worldPosition = uModel * vec4(aPosition.x, aPosition.y + height, aPosition.z, 1.0);
-    gl_Position = uProjection * uView * worldPosition;
+    vec4 worldPosition = u_Model * vec4(a_Position.x, a_Position.y + height, a_Position.z, 1.0);
+    gl_Position = u_Projection * u_View * worldPosition;
 
     // Pass the height to the fragment shader
-    vHeight = height;
+    v_Height = height;
 
     // Pass the time to the fragment shader
-    vTime = uTime;
+    v_Time = u_Time;
 }

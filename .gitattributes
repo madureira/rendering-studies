@@ -46,3 +46,4 @@
 *.exe binary
 *.ttf binary
 *.ico binary
+*.fbx binary

@@ -1,19 +1,19 @@
 #version 410 core
 
-layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec3 aColor;
-layout(location = 2) in vec2 aTexCoord;
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec3 a_Color;
+layout(location = 2) in vec2 a_TexCoord;
 
-uniform mat4 uModel;
-uniform mat4 uView;
-uniform mat4 uProjection;
+uniform mat4 u_Model;
+uniform mat4 u_View;
+uniform mat4 u_Projection;
 
-out vec3 vColor;
-out vec2 vTexCoord;
+out vec3 v_Color;
+out vec2 v_TexCoord;
 
 void main()
 {
-    gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
-    vColor = aColor;
-    vTexCoord = vec2(aTexCoord.x, aTexCoord.y);
+    gl_Position = u_Projection * u_View * u_Model * vec4(a_Position, 1.0);
+    v_Color = a_Color;
+    v_TexCoord = vec2(a_TexCoord.x, a_TexCoord.y);
 }

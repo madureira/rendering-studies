@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <glad/glad.h>
+#include <RenderingStudies/GL.h>
 #include <GLFW/glfw3.h>
 
 #include <RenderingStudies/Types.h>

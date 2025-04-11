@@ -1,47 +1,30 @@
 #version 410 core
 
 #ifdef GL_FRAGMENT_PRECISION_HIGH
-  precision highp float;
+precision highp float;
 #else
-  precision mediump float;
+precision mediump float;
 #endif
 
-layout (location = 0) in vec3 aPosition;
+layout(location = 0) in vec3 a_Position;
 
-uniform mat4 uView;
-uniform mat4 uProjection;
+uniform mat4 u_View;
+uniform mat4 u_Projection;
 
-out vec3 vNear;
-out vec3 vFar;
+out vec3 v_Near;
+out vec3 v_Far;
 
-vec3 unproject_point(float x, float y, float z)
+vec3 unprojectPoint(float x, float y, float z)
 {
-    mat4 viewInv = inverse(uView);
-    mat4 projInv = inverse(uProjection);
-    vec4 unproj_point = viewInv * projInv * vec4(x, y, z, 1.f);
-    return unproj_point.xyz / unproj_point.w;
+    mat4 viewInv = inverse(u_View);
+    mat4 projInv = inverse(u_Projection);
+    vec4 unprojPoint = viewInv * projInv * vec4(x, y, z, 1.f);
+    return unprojPoint.xyz / unprojPoint.w;
 }
 
 void main()
 {
-    vNear = unproject_point(aPosition.x, aPosition.y, 0.f);
-    vFar  = unproject_point(aPosition.x, aPosition.y,  1.f);
-    gl_Position = vec4(aPosition, 1.0f);
+    v_Near = unprojectPoint(a_Position.x, a_Position.y, 0.f);
+    v_Far = unprojectPoint(a_Position.x, a_Position.y, 1.f);
+    gl_Position = vec4(a_Position, 1.0f);
 }
-
-/*
-vec3 unproject_point(float x, float y, float z)
-{
-    mat4 inv = inverse(uProjection * uView);
-    vec4 unproj_point = inv * vec4(x, y, z, 1.f);
-    return unproj_point.xyz / unproj_point.w;
-}
-
-void main()
-{
-    vec2 p = aPosition;
-    vNear = unproject_point(p.x, p.y, -1.f);
-    vFar  = unproject_point(p.x, p.y,  1.f);
-    gl_Position = vec4(aPosition, 0.0f, 1.0f);
-}
-*/

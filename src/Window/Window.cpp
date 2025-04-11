@@ -3,10 +3,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-#include <RenderingStudies/GL.h>
 
 #include "../FileManager/FileManager.h"
 #include "../Shader/Shader.h"
@@ -162,7 +159,7 @@ Window::Window(const std::string& title, uint32 width, uint32 height)
 
     glm::mat4 projection = glm::ortho(0.0f, (float32)m_InitialWidth, 0.0f, (float32)m_InitialHeight);
     m_TextShader->Bind();
-    m_TextShader->SetMat4("uProjection", projection);
+    m_TextShader->SetMat4("u_Projection", projection);
     m_TextShader->Unbind();
 }
 

@@ -1,4 +1,4 @@
-#include "./TexturedCube.h"
+#include "TexturedCube.h"
 
 #include <RenderingStudies/GL.h>
 
@@ -65,9 +65,9 @@ void TexturedCube::Update(float32 deltaTime)
     m_Shader->Bind();
     m_Texture->Bind(0);
 
-    m_Shader->SetMat4("uModel", model);
-    m_Shader->SetMat4("uView", view);
-    m_Shader->SetMat4("uProjection", projection);
+    m_Shader->SetMat4("u_Model", model);
+    m_Shader->SetMat4("u_View", view);
+    m_Shader->SetMat4("u_Projection", projection);
 
     glBindVertexArray(m_VAO);
 

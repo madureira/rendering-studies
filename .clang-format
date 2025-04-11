@@ -138,7 +138,6 @@ AlwaysBreakBeforeMultilineStrings: false
 # If true, always break after the template<...> of a template declaration.
 AlwaysBreakTemplateDeclarations: false
 
-AllowAllMultilineArrays: true
 
 # BinPackArguments (bool)
 # If false, a function call’s arguments will either be all on the same line or will have one line each.
@@ -175,13 +174,8 @@ BraceWrapping:
   BeforeCatch: true
   BeforeElse: true
   IndentBraces: false
-  SplitEmptyFunctionBody: true
-  SplitEmptyRecordBody: true
-  SplitEmptyNamespaceBody: true
-  SplitEmptyEnumBody: true
-  SplitEmptyUnionBody: true
-  SplitEmptyLineComment: true
-  AfterLambda: true
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
   AfterExternBlock: true
   AfterCaseLabel: true
 

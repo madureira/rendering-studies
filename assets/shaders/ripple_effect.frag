@@ -1,16 +1,16 @@
 #version 410 core
 
-in float vHeight;
-in float vTime;
+in float v_Height;
+in float v_Time;
 
-out vec4 fColor;
+out vec4 frag_color;
 
 void main()
 {
     // Calculate the color based on the height and time
-    float r = 0.5 + 0.5 * sin(vHeight * 10.0 + vTime);
-    float g = 0.5 + 0.5 * sin(vHeight * 10.0 + vTime + 2.0);
-    float b = 0.5 + 0.5 * sin(vHeight * 10.0 + vTime + 4.0);
+    float r = 0.5 + 0.5 * sin(v_Height * 10.0 + v_Time);
+    float g = 0.5 + 0.5 * sin(v_Height * 10.0 + v_Time + 2.0);
+    float b = 0.5 + 0.5 * sin(v_Height * 10.0 + v_Time + 4.0);
 
-    fColor = vec4(r, g, b, 1.0); // Set the fragment color
+    frag_color = vec4(r, g, b, 1.0); // Set the fragment color
 }

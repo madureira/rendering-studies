@@ -64,18 +64,18 @@ void BlenderModel::Update(float32 deltaTime)
 
     m_Shader->Bind();
 
-    m_Shader->SetMat4("uView", view);
-    m_Shader->SetMat4("uProjection", projection);
+    m_Shader->SetMat4("u_View", view);
+    m_Shader->SetMat4("u_Projection", projection);
 
-    m_Shader->SetMat4("uModel", glm::mat4(1.0f));
+    m_Shader->SetMat4("u_Model", glm::mat4(1.0f));
     m_Model->Draw();
 
     glm::mat4 appleModel = glm::mat4(1.0f);
-    appleModel = glm::translate(appleModel, glm::vec3(-6.0f, 7.3f, 0.7f));
+    // appleModel = glm::rotate(appleModel, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
     appleModel = glm::scale(appleModel, glm::vec3(0.5f, 0.5f, 0.5f));
-    appleModel = glm::rotate(appleModel, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+    appleModel = glm::translate(appleModel, glm::vec3(-11.0f, 14.3f, 1.f));
 
-    m_Shader->SetMat4("uModel", appleModel);
+    m_Shader->SetMat4("u_Model", appleModel);
     m_Model2->Draw();
 
     m_Shader->Unbind();

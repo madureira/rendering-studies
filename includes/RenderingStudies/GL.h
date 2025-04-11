@@ -14,13 +14,20 @@ inline const char* getGLErrorString(GLenum error)
 {
     switch (error)
     {
-        case GL_NO_ERROR: return "NO_ERROR";
-        case GL_INVALID_ENUM: return "INVALID_ENUM";
-        case GL_INVALID_VALUE: return "INVALID_VALUE";
-        case GL_INVALID_OPERATION: return "INVALID_OPERATION";
-        case GL_OUT_OF_MEMORY: return "OUT_OF_MEMORY";
-        case GL_INVALID_FRAMEBUFFER_OPERATION: return "INVALID_FRAMEBUFFER_OPERATION";
-        default: return "UNKNOWN_ERROR";
+        case GL_NO_ERROR:
+            return "NO_ERROR";
+        case GL_INVALID_ENUM:
+            return "INVALID_ENUM";
+        case GL_INVALID_VALUE:
+            return "INVALID_VALUE";
+        case GL_INVALID_OPERATION:
+            return "INVALID_OPERATION";
+        case GL_OUT_OF_MEMORY:
+            return "OUT_OF_MEMORY";
+        case GL_INVALID_FRAMEBUFFER_OPERATION:
+            return "INVALID_FRAMEBUFFER_OPERATION";
+        default:
+            return "UNKNOWN_ERROR";
     }
 }
 
@@ -29,7 +36,7 @@ inline const char* getGLErrorString(GLenum error)
  */
 template <typename T>
 inline typename std::enable_if<!std::is_void<T>::value, T>::type
-GL_CALL(T result, const char* stmt, const char* file, int line)
+GL_CALL(T result, const char* stmt, const char* file, int32 line)
 {
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR)
@@ -49,7 +56,7 @@ GL_CALL(T result, const char* stmt, const char* file, int line)
 /**
  * @brief Checks for OpenGL errors after a function call (void return type).
  */
-inline void GL_CALL_VOID(const char* stmt, const char* file, int line)
+inline void GL_CALL_VOID(const char* stmt, const char* file, int32 line)
 {
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR)
@@ -67,7 +74,12 @@ inline void GL_CALL_VOID(const char* stmt, const char* file, int line)
 
 #ifdef DEBUG
 // Single macro for all OpenGL function calls
-#define GL(stmt) do { stmt; GL_CALL_VOID(#stmt, __FILE__, __LINE__); } while(0)
+#define GL(stmt)                                 \
+    do                                           \
+    {                                            \
+        stmt;                                    \
+        GL_CALL_VOID(#stmt, __FILE__, __LINE__); \
+    } while (0)
 
 // Macro for functions that return values
 #define GLR(stmt) GL_CALL(stmt, #stmt, __FILE__, __LINE__)

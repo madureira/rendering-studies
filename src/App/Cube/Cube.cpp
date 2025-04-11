@@ -1,4 +1,4 @@
-#include "./Cube.h"
+#include "Cube.h"
 
 #include <RenderingStudies/GL.h>
 
@@ -61,9 +61,9 @@ void Cube::Update(float32 deltaTime)
 
     m_Shader->Bind();
 
-    m_Shader->SetMat4("uModel", model);
-    m_Shader->SetMat4("uView", view);
-    m_Shader->SetMat4("uProjection", projection);
+    m_Shader->SetMat4("u_Model", model);
+    m_Shader->SetMat4("u_View", view);
+    m_Shader->SetMat4("u_Projection", projection);
 
     glBindVertexArray(m_VAO);
 

@@ -1,4 +1,4 @@
-#include "./RippleEffect.h"
+#include "RippleEffect.h"
 
 #include <RenderingStudies/GL.h>
 
@@ -61,13 +61,13 @@ void RippleEffect::Update(float32 deltaTime)
 
     m_Shader->Bind();
 
-    m_Shader->SetMat4("uModel", model);
-    m_Shader->SetMat4("uView", view);
-    m_Shader->SetMat4("uProjection", projection);
+    m_Shader->SetMat4("u_Model", model);
+    m_Shader->SetMat4("u_View", view);
+    m_Shader->SetMat4("u_Projection", projection);
 
-    m_Shader->SetFloat("uTime", m_Window->GetTime());
-    m_Shader->SetFloat("uAmplitude", 0.2f);
-    m_Shader->SetFloat("uFrequency", 5.0f);
+    m_Shader->SetFloat("u_Time", m_Window->GetTime());
+    m_Shader->SetFloat("u_Amplitude", 0.2f);
+    m_Shader->SetFloat("u_Frequency", 5.0f);
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

@@ -15,8 +15,6 @@
 #include <windows.h>
 #endif
 
-#include <glad/glad.h>
-
 #include <RenderingStudies/GL.h>
 
 std::string get_sysctl_value(const char* name);
@@ -175,8 +173,8 @@ public:
 
     static std::string GetGPUModel()
     {
-        std::string gpuModel = reinterpret_cast<char const*>(glGetString(GL_RENDERER));
-        return gpuModel;
+        std::string gpu_Model = reinterpret_cast<char const*>(glGetString(GL_RENDERER));
+        return gpu_Model;
     }
 
     static std::string GetGPUVendor()

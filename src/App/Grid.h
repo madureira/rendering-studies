@@ -1,10 +1,7 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <RenderingStudies/Types.h>
 #include <RenderingStudies/GL.h>
+#include <RenderingStudies/Types.h>
 
 #include "../Shader/Shader.h"
 
@@ -71,10 +68,10 @@ public:
     {
         m_Shader->Bind();
 
-        m_Shader->SetFloat("uNear", NEAR_CLIP);
-        m_Shader->SetFloat("uFar", FAR_CLIP);
-        m_Shader->SetMat4("uView", view);
-        m_Shader->SetMat4("uProjection", projection);
+        m_Shader->SetFloat("u_Near", NEAR_CLIP);
+        m_Shader->SetFloat("u_Far", FAR_CLIP);
+        m_Shader->SetMat4("u_View", view);
+        m_Shader->SetMat4("u_Projection", projection);
 
         glBindVertexArray(m_VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
