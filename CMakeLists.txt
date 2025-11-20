@@ -33,6 +33,9 @@ add_executable(${PROJECT_NAME} src/main.cpp ${CPP_SOURCES} ${HEADER_FILES})
 # Copy assets to the build directory
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/)
 
+# Copy config.ini to the build directory
+file(COPY config.ini DESTINATION ${CMAKE_BINARY_DIR}/)
+
 # Link libraries to the target
 target_link_libraries(${PROJECT_NAME} assimp::assimp)
 target_link_libraries(${PROJECT_NAME} Freetype::Freetype)

@@ -5,24 +5,25 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <RenderingStudies/Config.h>
 #include "../FileManager/FileManager.h"
 #include "../Shader/Shader.h"
 #include "../TextRenderer/TextRenderer.h"
 #include "../Utils/HardwareUtil.h"
 
-static const bool SHOW_FPS = true;
-static const bool FULLSCREEN = false;
-static const bool VSYNC_ON = false;
 static float64 s_LastTime;
 static int32 s_NbFrames;
 static bool s_Fullscreen;
 
-Window::Window(const std::string& title, uint32 width, uint32 height)
+Window::Window(const Config& config)
 {
-    m_InitialWidth = width;
-    m_InitialHeight = height;
-    m_Width = width;
-    m_Height = height;
+    m_InitialWidth = config.window_width;
+    m_InitialHeight = config.window_height;
+    m_Width = config.window_width;
+    m_Height = config.window_height;
+    m_FullScreen = config.window_fullscreen;
+    m_ShowFPS = config.show_fps;
+    m_VSyncOn = config.vsync_on;
 
     if (!glfwInit())
     {
@@ -50,7 +51,7 @@ Window::Window(const std::string& title, uint32 width, uint32 height)
     glfwWindowHint(GLFW_BLUE_BITS, pMode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, 60);
 
-    m_Window = glfwCreateWindow(width, height, title.c_str(), FULLSCREEN ? pMonitor : NULL, NULL);
+    m_Window = glfwCreateWindow(m_Width, m_Height, config.window_title.c_str(), m_FullScreen ? pMonitor : NULL, NULL);
     if (!m_Window)
     {
         LOG_ERROR("Window: error creating window");
@@ -61,10 +62,10 @@ Window::Window(const std::string& title, uint32 width, uint32 height)
     // Make OpenGL context current
     glfwMakeContextCurrent(m_Window);
     glfwSetWindowUserPointer(m_Window, this);
-    glfwSetWindowPos(m_Window, (pMode->width - width) / 2, (pMode->height - height) / 2);
+    glfwSetWindowPos(m_Window, (pMode->width - m_Width) / 2, (pMode->height - m_Height) / 2);
     glfwSetWindowSizeLimits(m_Window, 800, 600, 3840, 2160);
     glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSwapInterval(VSYNC_ON ? 1 : 0);
+    glfwSwapInterval(m_VSyncOn ? 1 : 0);
     glfwFocusWindow(m_Window);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
@@ -152,7 +153,7 @@ Window::Window(const std::string& title, uint32 width, uint32 height)
 
     m_TextShader = new Shader("assets/shaders/text.vert", "assets/shaders/text.frag");
 
-    if (SHOW_FPS)
+    if (m_ShowFPS)
     {
         m_TextRenderer = new TextRenderer("assets/fonts/roboto-regular.ttf");
     }
@@ -180,7 +181,7 @@ void Window::Clear() const
     // Clear color buffer and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (SHOW_FPS)
+    if (m_ShowFPS)
     {
         RenderFPS();
     }

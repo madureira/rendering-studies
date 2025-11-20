@@ -1,11 +1,11 @@
 #include "RippleEffect.h"
-
-#include <RenderingStudies/GL.h>
-
+#include <RenderingStudies/RegisterApp.h>
 #include "../../FileManager/FileManager.h"
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
 #include "../Camera.h"
+
+REGISTER_APP(RippleEffect)
 
 RippleEffect::RippleEffect(Window* window)
     : m_Window(window)

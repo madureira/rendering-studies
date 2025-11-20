@@ -1,11 +1,13 @@
 #include "BlenderModel.h"
-
+#include <RenderingStudies/RegisterApp.h>
 #include "../../FileManager/FileManager.h"
 #include "../../Model/Model.h"
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
 #include "../Camera.h"
 #include "../Grid.h"
+
+REGISTER_APP(BlenderModel)
 
 BlenderModel::BlenderModel(Window* window)
     : m_Window(window)

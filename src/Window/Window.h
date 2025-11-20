@@ -7,6 +7,7 @@
 
 #include <RenderingStudies/Types.h>
 
+struct Config;
 class Shader;
 class TextRenderer;
 enum class KeyAction;
@@ -28,11 +29,14 @@ private:
     uint32 m_InitialHeight;
     uint32 m_Width;
     uint32 m_Height;
+    bool m_FullScreen;
+    bool m_ShowFPS;
+    bool m_VSyncOn;
 
     float32 m_LastTime = 0.0f;
 
 public:
-    Window(const std::string& title, uint32 width, uint32 height);
+    Window(const Config& config);
     ~Window();
 
     bool IsOpen() const;

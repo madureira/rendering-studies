@@ -2,9 +2,7 @@
 
 #include <cstring>
 #include <type_traits>
-
 #include <glad/glad.h>
-
 #include "Types.h"
 
 /**

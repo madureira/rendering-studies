@@ -1,12 +1,11 @@
 #include "Triangle.h"
-
 #include <glm/gtc/matrix_transform.hpp>
-
-#include <RenderingStudies/GL.h>
-
+#include <RenderingStudies/RegisterApp.h>
 #include "../../FileManager/FileManager.h"
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
+
+REGISTER_APP(Triangle)
 
 Triangle::Triangle(Window* window)
     : m_Window(window)

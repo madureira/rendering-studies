@@ -1,10 +1,14 @@
-#include "App/AppFactory.h"
+#include <RenderingStudies/AppRegistry.h>
+#include <RenderingStudies/Config.h>
 #include "Window/Window.h"
 
 int main()
 {
-    Window window("Rendering Studies", 1200, 900);
-    App* app = AppFactory().Generate(AppName::BlenderModel, &window);
+    Config cfg = loadConfig("config.ini");
+
+    Window window(cfg);
+
+    auto app = AppRegistry::Instance().Create(cfg.app_name, &window);
 
     if (app == nullptr)
     {
@@ -18,8 +22,6 @@ int main()
         window.SwapBuffers();
         window.PollEvents();
     }
-
-    delete app;
 
     return EXIT_SUCCESS;
 }

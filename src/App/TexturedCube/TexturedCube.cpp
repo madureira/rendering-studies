@@ -1,12 +1,12 @@
 #include "TexturedCube.h"
-
-#include <RenderingStudies/GL.h>
-
+#include <RenderingStudies/RegisterApp.h>
 #include "../../FileManager/FileManager.h"
 #include "../../Shader/Shader.h"
 #include "../../Texture/Texture.h"
 #include "../../Window/Window.h"
 #include "../Camera.h"
+
+REGISTER_APP(TexturedCube)
 
 TexturedCube::TexturedCube(Window* window)
     : m_Window(window)
