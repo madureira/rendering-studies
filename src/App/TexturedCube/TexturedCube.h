@@ -25,6 +25,7 @@ public:
     ~TexturedCube();
 
     virtual void Update(float32 deltaTime) override;
+    virtual void Render() override;
 
 private:
     void CreateMesh();

@@ -34,6 +34,10 @@ Triangle::~Triangle()
 
 void Triangle::Update([[maybe_unused]] float32 deltaTime)
 {
+}
+
+void Triangle::Render()
+{
     float32 time = m_Window->GetTime();
     uint32 windowWidth = m_Window->GetWidth();
     uint32 windowHeight = m_Window->GetHeight();
@@ -44,6 +48,7 @@ void Triangle::Update([[maybe_unused]] float32 deltaTime)
     float32 blue = (std::sin(time * 0.7f) + 1.0f) / 4.0f;
 
     glClearColor(red, green, blue, 1.0f); // Use oscillating colors
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Update model matrix for rotating the triangle on Z-axis
     glm::mat4 model = glm::rotate(glm::mat4(1.f), std::sin(time * 0.8f) / 4.f, glm::vec3(0.f, 0.f, -1.f));

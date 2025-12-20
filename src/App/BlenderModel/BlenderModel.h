@@ -24,4 +24,5 @@ public:
     ~BlenderModel();
 
     virtual void Update(float32 deltaTime) override;
+    virtual void Render() override;
 };

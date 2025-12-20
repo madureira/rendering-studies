@@ -19,6 +19,7 @@ int main()
     {
         window.Clear();
         app->Update(window.GetDeltaTime());
+        app->Render();
         window.SwapBuffers();
         window.PollEvents();
     }

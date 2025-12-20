@@ -58,7 +58,10 @@ void BlenderModel::Update(float32 deltaTime)
     {
         m_Camera->ProcessKeyboard(CameraMove::RIGHT, deltaTime, speed);
     }
+}
 
+void BlenderModel::Render()
+{
     glm::mat4 view = m_Camera->GetViewMatrix();
     glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
 

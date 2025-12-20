@@ -29,9 +29,13 @@ inline bool parseBool(const std::string& raw)
     std::transform(v.begin(), v.end(), v.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
 
     if (v == "true" || v == "1")
+    {
         return true;
+    }
     if (v == "false" || v == "0")
+    {
         return false;
+    }
 
     throw std::runtime_error("Invalid boolean value in config: '" + raw + "'");
 }
@@ -60,11 +64,15 @@ inline Config loadConfig(const std::string& path)
     while (std::getline(file, line))
     {
         if (line.empty() || line[0] == '#')
+        {
             continue;
+        }
 
         const auto pos = line.find('=');
         if (pos == std::string::npos)
+        {
             continue;
+        }
 
         const std::string key = line.substr(0, pos);
         const std::string value = line.substr(pos + 1); // can contain spaces
