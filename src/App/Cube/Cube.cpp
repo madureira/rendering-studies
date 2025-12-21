@@ -26,7 +26,12 @@ Cube::~Cube()
 
 void Cube::Update(float32 deltaTime)
 {
-    m_Camera->ProcessMouseMovement(m_Window->GetMouseX(), m_Window->GetMouseY());
+    const MouseState& mouse = m_Window->GetMouse();
+
+    if (mouse.LeftDown())
+    {
+        m_Camera->ProcessMouseDelta((float32)mouse.dx, (float32)mouse.dy);
+    }
 
     float32 speed = 1.0f;
 

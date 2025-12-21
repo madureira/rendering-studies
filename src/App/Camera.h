@@ -33,10 +33,6 @@ private:
     float32 m_MouseSensitivity;
     float32 m_Zoom;
 
-    float32 m_LastX;
-    float32 m_LastY;
-    bool m_FirstMouse = true;
-
 public:
     Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)
         : m_Front(glm::vec3(0.0f, 0.0f, -1.0f))
@@ -103,37 +99,22 @@ public:
         }
     }
 
-    void ProcessMouseMovement(float32 mouseX, float32 mouseY, bool constrainPitch = true)
+    void ProcessMouseDelta(float32 dx, float32 dy, bool constrainPitch = true)
     {
-        if (m_FirstMouse)
-        {
-            m_LastX = mouseX;
-            m_LastY = mouseY;
-            m_FirstMouse = false;
-        }
+        float32 dampingFactor = 0.5f;
+        dx *= m_MouseSensitivity * dampingFactor;
+        dy *= m_MouseSensitivity * dampingFactor;
 
-        float32 xoffset = mouseX - m_LastX;
-        float32 yoffset = m_LastY - mouseY; // Reversed since Y-coordinates go from bottom to top
-        m_LastX = mouseX;
-        m_LastY = mouseY;
+        dx = std::clamp(dx, -50.0f, 50.0f);
+        dy = std::clamp(dy, -50.0f, 50.0f);
 
-        float32 dampingFactor = 0.5f; // Reduce sudden changes
-        xoffset *= m_MouseSensitivity * dampingFactor;
-        yoffset *= m_MouseSensitivity * dampingFactor;
-
-        m_Yaw += xoffset;
-        m_Pitch += yoffset;
+        m_Yaw += dx;
+        m_Pitch -= dy;
 
         if (constrainPitch)
         {
-            if (m_Pitch > 89.0f)
-            {
-                m_Pitch = 89.0f;
-            }
-            if (m_Pitch < -89.0f)
-            {
-                m_Pitch = -89.0f;
-            }
+            if (m_Pitch > 89.0f)  m_Pitch = 89.0f;
+            if (m_Pitch < -89.0f) m_Pitch = -89.0f;
         }
 
         UpdateCameraVectors();

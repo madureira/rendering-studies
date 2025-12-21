@@ -17,11 +17,12 @@ int main()
 
     while (window.IsOpen())
     {
+        window.BeginFrame();
+        window.PollEvents();
         window.Clear();
         app->Update(window.GetDeltaTime());
         app->Render();
         window.SwapBuffers();
-        window.PollEvents();
     }
 
     return EXIT_SUCCESS;

@@ -29,7 +29,12 @@ TexturedCube::~TexturedCube()
 
 void TexturedCube::Update(float32 deltaTime)
 {
-    m_Camera->ProcessMouseMovement(m_Window->GetMouseX(), m_Window->GetMouseY());
+    const MouseState& mouse = m_Window->GetMouse();
+
+    if (mouse.LeftDown())
+    {
+        m_Camera->ProcessMouseDelta((float32)mouse.dx, (float32)mouse.dy);
+    }
 
     float32 speed = 1.0f;
 
@@ -90,43 +95,44 @@ void TexturedCube::Render()
 void TexturedCube::CreateMesh()
 {
     float32 vertices[] = {
-        // Positions          // Colors           // Texture coords
+        // Positions           // TexCoords
         // Front face
-        -0.5f, -0.5f, 0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f, // bottom-left
-         0.5f, -0.5f, 0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom-right
-         0.5f,  0.5f, 0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 1.0f, // top-right
-        -0.5f,  0.5f, 0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f, // top-left
+        -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,   1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,   1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
 
         // Back face
-        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom-left
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,   1.0f, 0.0f, // bottom-right
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,   1.0f, 1.0f, // top-right
-        -0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 1.0f,   0.0f, 1.0f, // top-left
+        -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,   1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,   1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
 
         // Left face
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,   0.0f, 0.0f, // top-right
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // top-left
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f, // bottom-left
-        -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,   0.0f, 1.0f, // bottom-right
+        -0.5f,  0.5f,  0.5f,   0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,   1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,   1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,   0.0f, 1.0f,
 
         // Right face
-        0.5f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f, // top-left
-        0.5f,  0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // top-right
-        0.5f, -0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 1.0f, // bottom-right
-        0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f,   0.0f, 1.0f, // bottom-left
+         0.5f,  0.5f,  0.5f,   0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,   1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,   1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,   0.0f, 1.0f,
 
         // Bottom face
-        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,   0.0f, 0.0f, // top-right
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // top-left
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f, // bottom-left
-        -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,   0.0f, 1.0f, // bottom-right
+        -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,   1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,   1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,   0.0f, 1.0f,
 
         // Top face
-        -0.5f, 0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f, // top-right
-         0.5f, 0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // top-left
-         0.5f, 0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 1.0f, // bottom-left
-        -0.5f, 0.5f,  0.5f,   1.0f, 1.0f, 1.0f,   0.0f, 1.0f, // bottom-right
+        -0.5f,  0.5f, -0.5f,   0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,   1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,   1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
     };
+
 
     uint32 indices[] = {
         // Front face
@@ -159,20 +165,29 @@ void TexturedCube::CreateMesh()
     GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
     GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
 
+    const int32 stride = 5 * sizeof(float32);
+
     // Position attribute (location = 0 in shader)
-    GL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float32), (void*)0));
+    GL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0));
     GL(glEnableVertexAttribArray(0));
 
-    // Color attribute (location = 1 in shader)
-    GL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float32), (void*)(3 * sizeof(float32))));
+    // Texture coordinate attribute (location = 1 in shader)
+    GL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float32))));
     GL(glEnableVertexAttribArray(1));
 
-    // Texture coordinate attribute (location = 2 in shader)
-    GL(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float32), (void*)(6 * sizeof(float32))));
-    GL(glEnableVertexAttribArray(2));
-
     // Load and create a texture
-    m_Texture = new Texture("assets/images/container.jpg");
+    TextureParams texParams{};
+    texParams.srgb = false;
+    texParams.generateMipmaps = true;
+    texParams.flipY = true;
+
+    m_Texture = new Texture("assets/images/container.jpg", texParams);
+
+    m_Shader->Bind();
+    m_Shader->SetInt("u_Texture", 0);
+    //m_Shader->SetInt("u_UseTint", 1);
+    //m_Shader->SetVec4("u_Tint", 2,2,2,2);
+    m_Shader->Unbind();
 
     GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
     GL(glBindVertexArray(0));

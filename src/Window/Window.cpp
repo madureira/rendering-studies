@@ -11,10 +11,6 @@
 #include "../TextRenderer/TextRenderer.h"
 #include "../Utils/HardwareUtil.h"
 
-static float64 s_LastTime;
-static int32 s_NbFrames;
-static bool s_Fullscreen;
-
 Window::Window(const Config& config)
 {
     m_InitialWidth = config.window_width;
@@ -24,6 +20,10 @@ Window::Window(const Config& config)
     m_FullScreen = config.window_fullscreen;
     m_ShowFPS = config.show_fps;
     m_VSyncOn = config.vsync_on;
+
+    glfwSetErrorCallback([](int32 error, const char* description) {
+        LOG_ERROR("GLFW ERROR: code: {}, message: {}", error, description);
+    });
 
     if (!glfwInit())
     {
@@ -50,6 +50,7 @@ Window::Window(const Config& config)
     glfwWindowHint(GLFW_GREEN_BITS, pMode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, pMode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, 60);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     m_Window = glfwCreateWindow(m_Width, m_Height, config.window_title.c_str(), m_FullScreen ? pMonitor : NULL, NULL);
     if (!m_Window)
@@ -64,14 +65,14 @@ Window::Window(const Config& config)
     glfwSetWindowUserPointer(m_Window, this);
     glfwSetWindowPos(m_Window, (pMode->width - m_Width) / 2, (pMode->height - m_Height) / 2);
     glfwSetWindowSizeLimits(m_Window, 800, 600, 3840, 2160);
-    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSwapInterval(m_VSyncOn ? 1 : 0);
     glfwFocusWindow(m_Window);
-    glfwWindowHint(GLFW_SAMPLES, 4);
 
-    glfwSetErrorCallback([](int32 error, const char* description) {
-        LOG_ERROR("GLFW ERROR: code: {}, message: {}", error, description);
-    });
+    double mx, my;
+    glfwGetCursorPos(m_Window, &mx, &my);
+    m_Mouse.x = mx;
+    m_Mouse.y = my;
 
     glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* pNativeWindow, int32 width, int32 height) {
         Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
@@ -81,18 +82,6 @@ Window::Window(const Config& config)
 
     glfwSetFramebufferSizeCallback(m_Window, []([[maybe_unused]] GLFWwindow* pNativeWindow, int32 width, int32 height) {
         glViewport(0, 0, width, height);
-    });
-
-    glfwSetCursorPosCallback(m_Window, [](GLFWwindow* pNativeWindow, float64 xpos, float64 ypos) {
-        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
-        window.m_MouseX = xpos;
-        window.m_MouseY = ypos;
-    });
-
-    glfwSetScrollCallback(m_Window, [](GLFWwindow* pNativeWindow, float64 xoffset, float64 yoffset) {
-        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
-        window.m_OffsetX = xoffset;
-        window.m_OffsetY = yoffset;
     });
 
     glfwSetKeyCallback(m_Window, [](GLFWwindow* pNativeWindow, int32 key, [[maybe_unused]] int32 scancode, int32 action, [[maybe_unused]] int32 mods) {
@@ -109,6 +98,16 @@ Window::Window(const Config& config)
         }
     });
 
+    glfwSetCursorPosCallback(m_Window, [](GLFWwindow* pNativeWindow, float64 xpos, float64 ypos) {
+        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
+        window.OnCursorPos(xpos, ypos);
+    });
+
+    glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* pNativeWindow, int32 button, int32 action, int32 mods) {
+        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
+        window.OnMouseButton(button, action, mods);
+    });
+
     // Initialize GLAD
     if (!gladLoadGL())
     {
@@ -117,24 +116,7 @@ Window::Window(const Config& config)
         return;
     }
 
-    LOG_INFO("================================================");
-    LOG_INFO("OS: {}", HardwareUtil::GetOS());
-    LOG_INFO("================================================");
-    LOG_INFO("CPU Model: {}", HardwareUtil::GetCPUModel());
-    LOG_INFO("CPU Architecture: {}", HardwareUtil::GetCPUArchitecture());
-    LOG_INFO("CPU Cores: {}", HardwareUtil::GetCPUCores());
-    LOG_INFO("================================================");
-    LOG_INFO("Physical Memory: {} GB", HardwareUtil::GetTotalMemory());
-    LOG_INFO("Used Memory: {} GB", HardwareUtil::GetUsedMemory());
-    LOG_INFO("Free Memory: {} GB", HardwareUtil::GetFreeMemory());
-    LOG_INFO("================================================");
-    LOG_INFO("GPU Model: {}", HardwareUtil::GetGPUModel());
-    LOG_INFO("GPU Vendor: {}", HardwareUtil::GetGPUVendor());
-    LOG_INFO("GPU Memory: {} GB", HardwareUtil::GetEstimateGPUMemory());
-    LOG_INFO("================================================");
-    LOG_INFO("OpenGL Version: {}", HardwareUtil::GetGLVersion());
-    LOG_INFO("GLSL Version: {}", HardwareUtil::GetGLSLVersion());
-    LOG_INFO("================================================");
+    ShowHardwareInfo();
 
     if (!glfwGetCurrentContext())
     {
@@ -174,6 +156,11 @@ bool Window::IsOpen() const
     return !glfwWindowShouldClose(m_Window);
 }
 
+void Window::BeginFrame()
+{
+    m_Mouse.BeginFrame();
+}
+
 void Window::Clear() const
 {
     // Gray background
@@ -199,11 +186,6 @@ void Window::PollEvents() const
     glfwPollEvents();
 }
 
-float32 Window::GetTime() const
-{
-    return (float32)glfwGetTime();
-}
-
 uint32 Window::GetWidth() const
 {
     return m_Width;
@@ -214,30 +196,15 @@ uint32 Window::GetHeight() const
     return m_Height;
 }
 
-float64 Window::GetMouseX() const
+float64 Window::GetTime() const
 {
-    return m_MouseX;
+    return glfwGetTime();
 }
 
-float64 Window::GetMouseY() const
+float64 Window::GetDeltaTime() const
 {
-    return m_MouseY;
-}
-
-float64 Window::GetOffsetX() const
-{
-    return m_OffsetX;
-}
-
-float64 Window::GetOffsetY() const
-{
-    return m_OffsetY;
-}
-
-float32 Window::GetDeltaTime()
-{
-    float32 currentTime = (float32)glfwGetTime();
-    float32 deltaTime = currentTime - m_LastTime;
+    float64 currentTime = glfwGetTime();
+    float64 deltaTime = currentTime - m_LastTime;
     m_LastTime = currentTime;
     return deltaTime;
 }
@@ -247,34 +214,43 @@ bool Window::IsKeyPressed(KeyToken key) const
     return glfwGetKey(m_Window, (int32)key) == (int32)KeyAction::Press;
 }
 
-bool Window::isKeyReleased(KeyToken key) const
+bool Window::IsKeyReleased(KeyToken key) const
 {
     return glfwGetKey(m_Window, (int32)key) == (int32)KeyAction::Release;
 }
 
+const MouseState& Window::GetMouse() const
+{
+    return m_Mouse;
+}
+
 void Window::Shutdown() const
 {
-    glfwDestroyWindow(m_Window);
+    if (m_Window)
+    {
+        glfwDestroyWindow(m_Window);
+    }
+
     glfwTerminate();
 }
 
 void Window::RenderFPS() const
 {
     float64 currentTime = glfwGetTime();
-    s_NbFrames++;
+    m_FpsNbFrames++;
 
     static std::string fpsText;
-    if (currentTime - s_LastTime >= 1.0) // If 1 second has passed
+    if (currentTime - m_FpsLastTime >= 1.0) // If 1 second has passed
     {
-        float64 fps = float64(s_NbFrames) / (currentTime - s_LastTime);
+        float64 fps = float64(m_FpsNbFrames) / (currentTime - m_FpsLastTime);
 
         // Convert FPS to string with 2 decimal places
         std::stringstream fpsStream;
         fpsStream << std::fixed << std::setprecision(2) << fps;
         fpsText = "FPS: " + fpsStream.str();
 
-        s_NbFrames = 0;
-        s_LastTime = currentTime;
+        m_FpsNbFrames = 0;
+        m_FpsLastTime = currentTime;
     }
 
     static const float32 scale = 0.3f;
@@ -282,19 +258,24 @@ void Window::RenderFPS() const
     static const float32 rowHeight = 20.0f;
     const float32 fpsTextPosY = m_InitialHeight - rowHeight;
 
+    if (!m_TextRenderer)
+    {
+        return;
+    }
+
     m_TextRenderer->Render(*m_TextShader, fpsText, originX, fpsTextPosY, scale, glm::vec3(0.5f, 0.8f, 0.2f));
 }
 
 void Window::Fullscreen() const
 {
-    s_Fullscreen = !s_Fullscreen;
+    m_FullScreen = !m_FullScreen;
 
     const int32 MONITOR_INDEX = 0;
     int32 monitors;
     GLFWmonitor* pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
     const GLFWvidmode* pMode = glfwGetVideoMode(pMonitor);
 
-    if (s_Fullscreen)
+    if (m_FullScreen)
     {
         glfwSetWindowMonitor(m_Window, pMonitor, 0, 0, pMode->width, pMode->height, pMode->refreshRate);
     }
@@ -315,4 +296,112 @@ void Window::SetPolygonMode() const
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
+}
+
+void Window::OnCursorPos(float64 x, float64 y)
+{
+    m_Mouse.dx += (x - m_Mouse.x);
+    m_Mouse.dy += (y - m_Mouse.y);
+    m_Mouse.x = x;
+    m_Mouse.y = y;
+}
+
+void Window::OnMouseButton(int32 button, int32 action, [[maybe_unused]] int32 mods)
+{
+    if (button < 0 || button > Input::kMouseButtonLast)
+    {
+        return;
+    }
+
+    auto& b = m_Mouse.Button(button);
+
+    if (action == GLFW_PRESS)
+    {
+        if (!b.down)
+        {
+            b.down = true;
+            b.pressed = true;
+        }
+    }
+    else if (action == GLFW_RELEASE)
+    {
+        if (b.down)
+        {
+            b.down = false;
+            b.released = true;
+        }
+    }
+}
+
+void Window::ShowHardwareInfo() const
+{
+    LOG_INFO("================================================");
+    LOG_INFO("SYSTEM");
+    LOG_INFO("OS: {}", HardwareUtil::GetOS());
+    LOG_INFO("CPU Model: {}", HardwareUtil::GetCPUModel());
+    LOG_INFO("CPU Architecture: {}", HardwareUtil::GetCPUArchitecture());
+    LOG_INFO("CPU Cores: {}", HardwareUtil::GetCPUCores());
+
+    const double totalMem = HardwareUtil::GetTotalMemory();
+    const double freeMem = HardwareUtil::GetFreeMemory();
+    const double usedMem = HardwareUtil::GetUsedMemory();
+
+    if (totalMem > 0.0)
+    {
+        LOG_INFO("Physical Memory: {:.2f} GB", totalMem);
+        if (usedMem >= 0.0)
+            LOG_INFO("Used Memory: {:.2f} GB", usedMem);
+        if (freeMem >= 0.0)
+            LOG_INFO("Free Memory: {:.2f} GB", freeMem);
+    }
+    else
+    {
+        LOG_INFO("Physical Memory: Unknown");
+    }
+
+    LOG_INFO("================================================");
+    LOG_INFO("GRAPHICS");
+    const auto gfx = HardwareUtil::QueryGraphicsInfo();
+    LOG_INFO("GPU Vendor: {}", gfx.vendor);
+    LOG_INFO("GPU Renderer: {}", gfx.renderer);
+    LOG_INFO("OpenGL Version: {}", gfx.glVersion);
+    LOG_INFO("GLSL Version: {}", gfx.glslVersion);
+
+    if (gfx.dedicatedVramMiB.has_value())
+    {
+        LOG_INFO("GPU Dedicated VRAM: {} MiB", *gfx.dedicatedVramMiB);
+    }
+    else if (gfx.totalAvailableVramMiB.has_value())
+    {
+        LOG_INFO("GPU Available VRAM: {} MiB", *gfx.totalAvailableVramMiB);
+    }
+    else
+    {
+        // fallback (your older heuristic)
+        const double est = HardwareUtil::GetEstimateGPUMemory();
+        if (est > 0.0)
+            LOG_INFO("GPU Memory (estimated): {:.2f} GB", est);
+        else
+            LOG_INFO("GPU Memory: Unknown (integrated / not exposed)");
+    }
+
+    LOG_INFO("Max Texture Size: {}", gfx.maxTextureSize);
+    LOG_INFO("Max Samples: {}", gfx.maxSamples);
+    LOG_INFO("Max Anisotropy: {:.2f}", gfx.maxAnisotropy);
+
+    LOG_INFO("Debug Context: {}", gfx.debugContext ? "true" : "false");
+    LOG_INFO("Compute Supported: {}", gfx.supportsCompute ? "true" : "false");
+    if (gfx.supportsCompute)
+    {
+        LOG_INFO("Max Compute Work Group Count: [{}, {}, {}]",
+            gfx.maxComputeWorkGroupCount[0],
+            gfx.maxComputeWorkGroupCount[1],
+            gfx.maxComputeWorkGroupCount[2]);
+        LOG_INFO("Max Compute Work Group Size:  [{}, {}, {}]",
+            gfx.maxComputeWorkGroupSize[0],
+            gfx.maxComputeWorkGroupSize[1],
+            gfx.maxComputeWorkGroupSize[2]);
+    }
+
+    LOG_INFO("================================================");
 }

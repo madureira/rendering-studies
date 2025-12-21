@@ -1,51 +1,122 @@
 #include "Texture.h"
 
 #include <RenderingStudies/GL.h>
-
 #include "../FileManager/FileManager.h"
 
-Texture::Texture(const std::string& path)
+static GLenum WrapFromParam(int32 v)
 {
-    uchar* data = FileManager::LoadTexture(path, m_Width, m_Height, m_Channels, true);
+    // keep it simple for now
+    // v == 0 => REPEAT, else CLAMP_TO_EDGE
+    return (v == 0) ? GL_REPEAT : GL_CLAMP_TO_EDGE;
+}
 
-    if (data)
+Texture::Texture(const std::string& path, const TextureParams& params)
+{
+    uchar* data = FileManager::LoadTexture(path, m_Width, m_Height, m_Channels, params.flipY);
+
+    if (!data)
     {
-        GL(glGenTextures(1, &m_ID));
-        GL(glBindTexture(GL_TEXTURE_2D, m_ID));
+        LOG_ERROR("Texture: failed to load '{}'", path);
+        return;
+    }
 
-        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GLenum dataFormat = 0;
+    GLenum internalFormat = 0;
 
-        if (m_Channels == 3)
-        {
-            GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
-        }
-        else if (m_Channels == 4)
-        {
-            GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
-        }
-        else
-        {
-            LOG_ERROR("Texture format not supported");
-        }
-
-        GL(glGenerateMipmap(GL_TEXTURE_2D));
+    if (m_Channels == 1)
+    {
+        dataFormat = GL_RED;
+        internalFormat = GL_R8;
+    }
+    else if (m_Channels == 3)
+    {
+        dataFormat = GL_RGB;
+        internalFormat = params.srgb ? GL_SRGB8 : GL_RGB8;
+    }
+    else if (m_Channels == 4)
+    {
+        dataFormat = GL_RGBA;
+        internalFormat = params.srgb ? GL_SRGB8_ALPHA8 : GL_RGBA8;
     }
     else
     {
-        LOG_ERROR("Failed to load texture");
+        LOG_ERROR("Texture: unsupported channel count {} for '{}'", m_Channels, path);
+        FileManager::FreeTexture(data);
+        return;
+    }
+
+    GL(glGenTextures(1, &m_ID));
+    GL(glBindTexture(GL_TEXTURE_2D, m_ID));
+
+    GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, WrapFromParam(params.wrapS)));
+    GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, WrapFromParam(params.wrapT)));
+
+    if (params.generateMipmaps)
+    {
+        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    }
+    else
+    {
+        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+        GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    }
+
+    GL(glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        internalFormat,
+        m_Width,
+        m_Height,
+        0,
+        dataFormat,
+        GL_UNSIGNED_BYTE,
+        data));
+
+    if (params.generateMipmaps)
+    {
+        GL(glGenerateMipmap(GL_TEXTURE_2D));
     }
 
     FileManager::FreeTexture(data);
-
-    Texture::Unbind();
+    GL(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 Texture::~Texture()
 {
-    glDeleteTextures(1, &m_ID);
+    if (m_ID != 0)
+    {
+        glDeleteTextures(1, &m_ID);
+        m_ID = 0;
+    }
+}
+
+Texture::Texture(Texture&& other) noexcept
+{
+    *this = std::move(other);
+}
+
+Texture& Texture::operator=(Texture&& other) noexcept
+{
+    if (this == &other)
+        return *this;
+
+    if (m_ID != 0)
+    {
+        glDeleteTextures(1, &m_ID);
+    }
+
+    m_ID = other.m_ID;
+    m_Width = other.m_Width;
+    m_Height = other.m_Height;
+    m_Channels = other.m_Channels;
+
+    other.m_ID = 0;
+    other.m_Width = 0;
+    other.m_Height = 0;
+    other.m_Channels = 0;
+
+    return *this;
 }
 
 void Texture::Bind(uint32 slot) const
@@ -54,7 +125,7 @@ void Texture::Bind(uint32 slot) const
     glBindTexture(GL_TEXTURE_2D, m_ID);
 }
 
-void Texture::Unbind() const
+void Texture::Unbind()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }

@@ -1,31 +1,56 @@
 #pragma once
 
 #include <string>
-
 #include <RenderingStudies/Types.h>
+
+struct TextureParams
+{
+    bool flipY = true;
+    bool generateMipmaps = true;
+    bool srgb = false;          // use true for albedo/baseColor textures
+    int32 wrapS = 0;            // 0 = repeat (map below)
+    int32 wrapT = 0;
+};
 
 class Texture final
 {
 private:
-    uint32 m_ID;
-    int32 m_Width;
-    int32 m_Height;
-    int32 m_Channels;
+    uint32 m_ID = 0;
+    int32 m_Width = 0;
+    int32 m_Height = 0;
+    int32 m_Channels = 0;
 
 public:
-    Texture(const std::string& path);
+    explicit Texture(const std::string& path, const TextureParams& params = TextureParams{});
     ~Texture();
 
-    void Bind(uint32 slot = 0) const;
-    void Unbind() const;
+    Texture(const Texture&) = delete;
+    Texture& operator=(const Texture&) = delete;
 
-    inline int32 GetWidth() const
+    Texture(Texture&& other) noexcept;
+    Texture& operator=(Texture&& other) noexcept;
+
+    void Bind(uint32 slot = 0) const;
+    void Unbind();
+
+    uint32 GetID() const
+    {
+        return m_ID;
+    }
+    int32 GetWidth() const
     {
         return m_Width;
     }
-
-    inline int32 GetHeight() const
+    int32 GetHeight() const
     {
         return m_Height;
+    }
+    int32 GetChannels() const
+    {
+        return m_Channels;
+    }
+    bool IsValid() const
+    {
+        return m_ID != 0;
     }
 };
