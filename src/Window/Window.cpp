@@ -5,11 +5,10 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <RenderingStudies/Config.h>
-#include "../FileManager/FileManager.h"
 #include "../Shader/Shader.h"
 #include "../TextRenderer/TextRenderer.h"
 #include "../Utils/HardwareUtil.h"
+#include <RenderingStudies/Config.h>
 
 Window::Window(const Config& config)
 {
@@ -367,13 +366,13 @@ void Window::ShowHardwareInfo() const
     LOG_INFO("OpenGL Version: {}", gfx.glVersion);
     LOG_INFO("GLSL Version: {}", gfx.glslVersion);
 
-    if (gfx.dedicatedVramMiB.has_value())
+    if (gfx.dedicatedVramMiB != 0)
     {
-        LOG_INFO("GPU Dedicated VRAM: {} MiB", *gfx.dedicatedVramMiB);
+        LOG_INFO("GPU Dedicated VRAM: {} MiB", gfx.dedicatedVramMiB);
     }
-    else if (gfx.totalAvailableVramMiB.has_value())
+    else if (gfx.totalAvailableVramMiB != 0)
     {
-        LOG_INFO("GPU Available VRAM: {} MiB", *gfx.totalAvailableVramMiB);
+        LOG_INFO("GPU Available VRAM: {} MiB", gfx.totalAvailableVramMiB);
     }
     else
     {

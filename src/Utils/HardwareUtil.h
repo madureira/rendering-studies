@@ -25,7 +25,6 @@
 #include <cstdint>
 #include <cstring>
 #include <fstream>
-#include <optional>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -99,8 +98,8 @@ struct GraphicsInfo
     std::string glslVersion;
 
     // VRAM (best-effort; may be unknown on many platforms, especially integrated GPUs)
-    std::optional<int32> dedicatedVramMiB; // e.g. NVX
-    std::optional<int32> totalAvailableVramMiB;
+    int32 dedicatedVramMiB; // e.g. NVX
+    int32 totalAvailableVramMiB;
 
     // Limits / capabilities
     int32 maxTextureSize = 0;
@@ -219,14 +218,14 @@ public:
         // Requires GL context to be current (same as QueryGraphicsInfo)
         const GraphicsInfo g = QueryGraphicsInfo();
 
-        if (g.dedicatedVramMiB.has_value())
+        if (g.dedicatedVramMiB != 0)
         {
-            return double(*g.dedicatedVramMiB) / 1024.0; // MiB -> GiB
+            return double(g.dedicatedVramMiB) / 1024.0; // MiB -> GiB
         }
 
-        if (g.totalAvailableVramMiB.has_value())
+        if (g.totalAvailableVramMiB != 0)
         {
-            return double(*g.totalAvailableVramMiB) / 1024.0; // MiB -> GiB
+            return double(g.totalAvailableVramMiB) / 1024.0; // MiB -> GiB
         }
 
         // Fallback heuristic
@@ -278,13 +277,12 @@ private:
             return "Unknown";
         }
 
-        std::string out;
-        out.resize(size);
-
-        if (sysctlbyname(name, out.data(), &size, nullptr, 0) != 0)
-        {
+        std::vector<char> buf(size);
+        if (sysctlbyname(name, buf.data(), &size, nullptr, 0) != 0) {
             return "Unknown";
         }
+
+        std::string out = std::string(buf.data());
 
         // sysctl strings often include '\0'
         if (!out.empty() && out.back() == '\0')
@@ -423,7 +421,7 @@ private:
         return false;
     }
 
-    static inline std::optional<int32> TryQueryVramNVX(GLenum token)
+    static inline int32 TryQueryVramNVX(GLenum token)
     {
         // Values are reported in KB
         GLint kb = 0;
@@ -432,10 +430,10 @@ private:
         {
             return int32(kb / 1024); // MiB
         }
-        return std::nullopt;
+        return 0;
     }
 
-    static inline std::optional<int32> TryQueryVramATI()
+    static inline int32 TryQueryVramATI()
     {
         // GL_ATI_meminfo returns KB values in arrays, but it’s "free memory" rather than total dedicated.
         // Exposes it as "totalAvailableVramMiB" if present (best-effort).
@@ -445,7 +443,7 @@ private:
         {
             return int32(v[0] / 1024); // MiB
         }
-        return std::nullopt;
+        return 0;
     }
 };
 

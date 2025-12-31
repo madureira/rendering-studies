@@ -1,6 +1,5 @@
 #include "BlenderModel.h"
 #include <RenderingStudies/RegisterApp.h>
-#include "../../FileManager/FileManager.h"
 #include "../../Model/Model.h"
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"

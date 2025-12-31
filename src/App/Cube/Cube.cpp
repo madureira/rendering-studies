@@ -1,6 +1,5 @@
 #include "Cube.h"
 #include <RenderingStudies/RegisterApp.h>
-#include "../../FileManager/FileManager.h"
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
 #include "../Camera.h"

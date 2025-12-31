@@ -1,0 +1,2 @@
+-Iincludes
+-std=c++11

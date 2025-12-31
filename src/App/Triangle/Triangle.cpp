@@ -1,7 +1,6 @@
 #include "Triangle.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <RenderingStudies/RegisterApp.h>
-#include "../../FileManager/FileManager.h"
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
 

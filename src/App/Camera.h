@@ -105,8 +105,8 @@ public:
         dx *= m_MouseSensitivity * dampingFactor;
         dy *= m_MouseSensitivity * dampingFactor;
 
-        dx = std::clamp(dx, -50.0f, 50.0f);
-        dy = std::clamp(dy, -50.0f, 50.0f);
+        dx = glm::clamp(dx, -50.0f, 50.0f);
+        dy = glm::clamp(dy, -50.0f, 50.0f);
 
         m_Yaw += dx;
         m_Pitch -= dy;

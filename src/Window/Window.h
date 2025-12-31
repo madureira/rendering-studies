@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include <RenderingStudies/GL.h>
 #include <GLFW/glfw3.h>
 

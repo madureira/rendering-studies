@@ -1,5 +1,7 @@
 #pragma once
 
+#include <RenderingStudies/GL.h>
+
 enum class KeyAction
 {
     Press = GLFW_PRESS,
