@@ -19,9 +19,10 @@ private:
     uint32 m_VAO;
     uint32 m_VBO;
     uint32 m_EBO;
+    uint32 m_IndexCount = 0;
 
-    std::vector<float32> vertices;
-    std::vector<uint32> indices;
+    std::vector<float32> m_Vertices;
+    std::vector<uint32> m_Indices;
 
 public:
     RippleEffect(Window* window);

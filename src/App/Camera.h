@@ -33,6 +33,11 @@ private:
     float32 m_MouseSensitivity;
     float32 m_Zoom;
 
+    mutable glm::mat4 m_ProjectionCache{1.0f};
+    mutable uint32 m_LastWindowWidth = 0;
+    mutable uint32 m_LastWindowHeight = 0;
+    mutable float32 m_LastZoom = 0.0f;
+
 public:
     Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)
         : m_Front(glm::vec3(0.0f, 0.0f, -1.0f))
@@ -60,13 +65,15 @@ public:
             windowHeight = 1; // Prevent division by zero
         }
 
-        float32 aspectRatio = (float32)windowWidth / (float32)windowHeight;
-
-        return glm::perspective(glm::radians(m_Zoom), // Field of view (45 degrees in radians)
-            aspectRatio,                              // Aspect ratio (width / height)
-            NEAR_CLIP,                                // Near clipping plane
-            FAR_CLIP                                  // Far clipping plane
-        );
+        if (windowWidth != m_LastWindowWidth || windowHeight != m_LastWindowHeight || m_Zoom != m_LastZoom)
+        {
+            float32 aspectRatio = (float32)windowWidth / (float32)windowHeight;
+            m_ProjectionCache = glm::perspective(glm::radians(m_Zoom), aspectRatio, NEAR_CLIP, FAR_CLIP);
+            m_LastWindowWidth = windowWidth;
+            m_LastWindowHeight = windowHeight;
+            m_LastZoom = m_Zoom;
+        }
+        return m_ProjectionCache;
     }
 
     float32 GetZoom()

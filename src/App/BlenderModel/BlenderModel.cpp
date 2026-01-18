@@ -16,6 +16,11 @@ BlenderModel::BlenderModel(Window* window)
     m_Grid = new Grid();
     m_Model = new Model("assets/models/dragon.obj");
     m_Model2 = new Model("assets/models/apple.fbx");
+
+    m_AppleModel = glm::mat4(1.0f);
+    // m_AppleModel = glm::rotate(m_AppleModel, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+    m_AppleModel = glm::scale(m_AppleModel, glm::vec3(0.5f, 0.5f, 0.5f));
+    m_AppleModel = glm::translate(m_AppleModel, glm::vec3(-11.0f, 14.3f, 1.f));
 }
 
 BlenderModel::~BlenderModel()
@@ -79,12 +84,7 @@ void BlenderModel::Render()
     m_Shader->SetMat4("u_Model", glm::mat4(1.0f));
     m_Model->Draw();
 
-    glm::mat4 appleModel = glm::mat4(1.0f);
-    // appleModel = glm::rotate(appleModel, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
-    appleModel = glm::scale(appleModel, glm::vec3(0.5f, 0.5f, 0.5f));
-    appleModel = glm::translate(appleModel, glm::vec3(-11.0f, 14.3f, 1.f));
-
-    m_Shader->SetMat4("u_Model", appleModel);
+    m_Shader->SetMat4("u_Model", m_AppleModel);
     m_Model2->Draw();
 
     m_Shader->Unbind();

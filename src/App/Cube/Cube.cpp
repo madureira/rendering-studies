@@ -74,14 +74,11 @@ void Cube::Render()
 
     glBindVertexArray(m_VAO);
 
-    glCullFace(GL_BACK);
+    glDisable(GL_CULL_FACE);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glEnable(GL_CULL_FACE);
 
-    glCullFace(GL_FRONT);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-    // Undind
-    glCullFace(GL_BACK);
+    // Unbind
     glBindVertexArray(0);
     m_Shader->Unbind();
 }

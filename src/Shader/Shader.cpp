@@ -144,9 +144,10 @@ void Shader::CheckLinkingError()
 
 int32 Shader::GetUniformLocation(const std::string& name) const
 {
-    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+    auto it = m_UniformLocationCache.find(name);
+    if (it != m_UniformLocationCache.end())
     {
-        return m_UniformLocationCache[name];
+        return it->second;
     }
 
     int32 location = glGetUniformLocation(m_ID, name.c_str());

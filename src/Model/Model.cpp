@@ -17,8 +17,8 @@ void Model::Draw() const
     {
         glBindVertexArray(mesh.VAO);
         glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
     }
+    glBindVertexArray(0);
 }
 
 void Model::LoadModel(const std::string& path)
@@ -51,6 +51,8 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 Mesh Model::ProcessMesh(aiMesh* mesh)
 {
     Mesh newMesh;
+    newMesh.vertices.reserve(mesh->mNumVertices);
+    newMesh.indices.reserve(mesh->mNumFaces * 3);
 
     for (uint32 i = 0; i < mesh->mNumVertices; i++)
     {

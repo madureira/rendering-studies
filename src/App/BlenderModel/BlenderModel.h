@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <RenderingStudies/App.h>
 #include <RenderingStudies/Types.h>
 
@@ -18,6 +19,7 @@ private:
     Grid* m_Grid;
     Model* m_Model;
     Model* m_Model2;
+    glm::mat4 m_AppleModel;
 
 public:
     BlenderModel(Window* window);

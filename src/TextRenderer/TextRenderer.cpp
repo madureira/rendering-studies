@@ -49,7 +49,7 @@ TextRenderer::TextRenderer(std::string fontPath)
         GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
         Character character = { texture, glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows), glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top), (GLuint)face->glyph->advance.x };
-        m_Characters.insert(std::pair<GLchar, Character>(c, character));
+        m_Characters[c] = character;
     }
 
     GL(glBindTexture(GL_TEXTURE_2D, 0));
@@ -71,19 +71,21 @@ TextRenderer::TextRenderer(std::string fontPath)
     GL(glBindVertexArray(0));
 }
 
-void TextRenderer::Render(Shader& shader, std::string text, float32 x, float32 y, float32 scale, glm::vec3 color)
+void TextRenderer::Render(Shader& shader, const std::string& text, float32 x, float32 y, float32 scale, glm::vec3 color)
 {
     shader.Bind();
 
     shader.SetVec3("u_TextColor", color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(m_VAO);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
     std::string::const_iterator c;
 
     for (c = text.begin(); c != text.end(); c++)
     {
-        Character ch = m_Characters[*c];
+        const Character& ch = m_Characters[static_cast<unsigned char>(*c)];
 
         float32 xpos = x + ch.Bearing.x * scale;
         float32 ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
@@ -102,17 +104,9 @@ void TextRenderer::Render(Shader& shader, std::string text, float32 x, float32 y
 
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 
-        GLint width, height;
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
-
-        if (width > 0 && height > 0)
+        if (ch.Size.x > 0 && ch.Size.y > 0)
         {
-            glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
             glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
 

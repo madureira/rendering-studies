@@ -10,15 +10,15 @@ layout(location = 0) in vec3 a_Position;
 
 uniform mat4 u_View;
 uniform mat4 u_Projection;
+uniform mat4 u_ViewInv;
+uniform mat4 u_ProjectionInv;
 
 out vec3 v_Near;
 out vec3 v_Far;
 
 vec3 unprojectPoint(float x, float y, float z)
 {
-    mat4 viewInv = inverse(u_View);
-    mat4 projInv = inverse(u_Projection);
-    vec4 unprojPoint = viewInv * projInv * vec4(x, y, z, 1.f);
+    vec4 unprojPoint = u_ViewInv * u_ProjectionInv * vec4(x, y, z, 1.f);
     return unprojPoint.xyz / unprojPoint.w;
 }
 

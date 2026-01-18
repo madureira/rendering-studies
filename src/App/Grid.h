@@ -55,6 +55,11 @@ public:
         // Unbind objects
         GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
         GL(glBindVertexArray(0));
+
+        m_Shader->Bind();
+        m_Shader->SetFloat("u_Near", NEAR_CLIP);
+        m_Shader->SetFloat("u_Far", FAR_CLIP);
+        m_Shader->Unbind();
     }
     ~Grid()
     {
@@ -68,10 +73,10 @@ public:
     {
         m_Shader->Bind();
 
-        m_Shader->SetFloat("u_Near", NEAR_CLIP);
-        m_Shader->SetFloat("u_Far", FAR_CLIP);
         m_Shader->SetMat4("u_View", view);
         m_Shader->SetMat4("u_Projection", projection);
+        m_Shader->SetMat4("u_ViewInv", glm::inverse(view));
+        m_Shader->SetMat4("u_ProjectionInv", glm::inverse(projection));
 
         glBindVertexArray(m_VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

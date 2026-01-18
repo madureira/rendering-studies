@@ -11,6 +11,10 @@ RippleEffect::RippleEffect(Window* window)
 {
     m_Shader = new Shader("assets/shaders/ripple_effect.vert", "assets/shaders/ripple_effect.frag");
     m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+    m_Shader->Bind();
+    m_Shader->SetFloat("u_Amplitude", 0.2f);
+    m_Shader->SetFloat("u_Frequency", 5.0f);
+    m_Shader->Unbind();
     CreateMesh();
 }
 
@@ -73,11 +77,9 @@ void RippleEffect::Render()
     m_Shader->SetMat4("u_Projection", projection);
 
     m_Shader->SetFloat("u_Time", m_Window->GetTime());
-    m_Shader->SetFloat("u_Amplitude", 0.2f);
-    m_Shader->SetFloat("u_Frequency", 5.0f);
 
     glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, 0);
 
     // Unbind the VAO
     glBindVertexArray(0);
@@ -89,6 +91,12 @@ void RippleEffect::CreateMesh()
     uint8 gridSize = 128; // Number of subdivisions
     float32 size = 20.0f; // Size of the plane
 
+    const uint32 vertCount = (gridSize + 1) * (gridSize + 1);
+    m_Vertices.reserve(vertCount * 3);
+
+    const uint32 quadCount = gridSize * gridSize;
+    m_Indices.reserve(quadCount * 6);
+
     for (uint8 y = 0; y <= gridSize; ++y)
     {
         for (uint8 x = 0; x <= gridSize; ++x)
@@ -97,9 +105,9 @@ void RippleEffect::CreateMesh()
             float32 yPos = 0.0f; // Initial height
             float32 zPos = (y / (float32)gridSize) * size - size / 2.0f;
 
-            vertices.push_back(xPos);
-            vertices.push_back(yPos);
-            vertices.push_back(zPos);
+            m_Vertices.push_back(xPos);
+            m_Vertices.push_back(yPos);
+            m_Vertices.push_back(zPos);
         }
     }
 
@@ -112,15 +120,17 @@ void RippleEffect::CreateMesh()
             uint32 bottomLeft = (y + 1) * (gridSize + 1) + x;
             uint32 bottomRight = bottomLeft + 1;
 
-            indices.push_back(topLeft);
-            indices.push_back(bottomLeft);
-            indices.push_back(topRight);
+            m_Indices.push_back(topLeft);
+            m_Indices.push_back(bottomLeft);
+            m_Indices.push_back(topRight);
 
-            indices.push_back(topRight);
-            indices.push_back(bottomLeft);
-            indices.push_back(bottomRight);
+            m_Indices.push_back(topRight);
+            m_Indices.push_back(bottomLeft);
+            m_Indices.push_back(bottomRight);
         }
     }
+
+    m_IndexCount = static_cast<uint32>(m_Indices.size());
 
     // Generate and bind the VAO
     GL(glGenVertexArrays(1, &m_VAO));
@@ -129,12 +139,12 @@ void RippleEffect::CreateMesh()
     // Generate and bind the VBO
     GL(glGenBuffers(1, &m_VBO));
     GL(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
-    GL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float32), vertices.data(), GL_STATIC_DRAW));
+    GL(glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(float32), m_Vertices.data(), GL_STATIC_DRAW));
 
     // Generate and bind the EBO
     GL(glGenBuffers(1, &m_EBO));
     GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
-    GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32), indices.data(), GL_STATIC_DRAW));
+    GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(uint32), m_Indices.data(), GL_STATIC_DRAW));
 
     // Set vertex attribute pointers
     GL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float32), (void*)0));
