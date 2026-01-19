@@ -8,9 +8,6 @@
 class Grid
 {
 private:
-    const float32 NEAR_CLIP = 0.01f;
-    const float32 FAR_CLIP = 10000.0f;
-
     Shader* m_Shader;
     uint32 m_VAO;
     uint32 m_VBO;
@@ -55,11 +52,6 @@ public:
         // Unbind objects
         GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
         GL(glBindVertexArray(0));
-
-        m_Shader->Bind();
-        m_Shader->SetFloat("u_Near", NEAR_CLIP);
-        m_Shader->SetFloat("u_Far", FAR_CLIP);
-        m_Shader->Unbind();
     }
     ~Grid()
     {
@@ -69,7 +61,7 @@ public:
         glDeleteBuffers(1, &m_EBO);
     }
 
-    auto Draw(glm::mat4 const& view, glm::mat4 const& projection) const -> void
+    auto Draw(glm::mat4 const& view, glm::mat4 const& projection, glm::vec3 const& cameraPos) const -> void
     {
         m_Shader->Bind();
 
@@ -77,6 +69,7 @@ public:
         m_Shader->SetMat4("u_Projection", projection);
         m_Shader->SetMat4("u_ViewInv", glm::inverse(view));
         m_Shader->SetMat4("u_ProjectionInv", glm::inverse(projection));
+        m_Shader->SetVec3("u_CameraPos", cameraPos);
 
         glBindVertexArray(m_VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

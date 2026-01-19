@@ -73,8 +73,9 @@ void BlenderModel::Render()
 {
     glm::mat4 view = m_Camera->GetViewMatrix();
     glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    glm::vec3 cameraPos = m_Camera->GetPosition();
 
-    m_Grid->Draw(view, projection);
+    m_Grid->Draw(view, projection, cameraPos);
 
     m_Shader->Bind();
 

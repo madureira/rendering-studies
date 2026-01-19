@@ -53,6 +53,11 @@ public:
         UpdateCameraVectors();
     }
 
+    glm::vec3 GetPosition() const
+    {
+        return m_Position;
+    }
+
     glm::mat4 GetViewMatrix()
     {
         return glm::lookAt(m_Position, m_Position + m_Front, m_Up);
