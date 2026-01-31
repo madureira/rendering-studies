@@ -167,16 +167,15 @@ void Window::Clear() const
     // Clear color buffer and depth buffer
     GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-    if (m_ShowFPS)
-    {
-        RenderFPS();
-    }
-
     SetPolygonMode();
 }
 
 void Window::SwapBuffers() const
 {
+    if (m_ShowFPS)
+    {
+        RenderFPS();
+    }
     glfwSwapBuffers(m_Window);
 }
 

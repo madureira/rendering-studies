@@ -1,10 +1,9 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include <RenderingStudies/App.h>
 #include <RenderingStudies/Types.h>
 
+class Camera;
 class Shader;
 class Window;
 
@@ -12,13 +11,12 @@ class Triangle final : public App
 {
 private:
     Window* m_Window;
+    Camera* m_Camera;
     Shader* m_Shader;
 
     uint32 m_VAO;
     uint32 m_VBO;
     uint32 m_EBO;
-
-    glm::mat4 m_View;
 
 public:
     Triangle(Window* window);

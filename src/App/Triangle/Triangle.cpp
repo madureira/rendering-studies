@@ -4,6 +4,7 @@
 #include <RenderingStudies/GL.h>
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
+#include "../../Camera/Camera.h"
 
 REGISTER_APP(Triangle)
 
@@ -11,22 +12,14 @@ Triangle::Triangle(Window* window)
     : m_Window(window)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
-
-    // Camera setup
-    glm::vec3 camera_Position(0.f, 0.f, 2.f);      // Camera is placed at (0, 0, 2)
-    glm::vec3 cameraViewDirection(0.f, 0.f, -1.f); // Camera looks towards the negative Z-axis
-
-    // View matrix
-    m_View = glm::lookAt(camera_Position,      // Camera position
-        camera_Position + cameraViewDirection, // Target position (camera looks here)
-        glm::vec3(0.f, 1.f, 0.f)               // Up vector (positive Y-axis)
-    );
-
+    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     CreateMesh();
 }
 
 Triangle::~Triangle()
 {
+    delete m_Camera;
+    delete m_Shader;
     GL(glDeleteVertexArrays(1, &m_VAO));
     GL(glDeleteBuffers(1, &m_VBO));
     GL(glDeleteBuffers(1, &m_EBO));
@@ -34,13 +27,44 @@ Triangle::~Triangle()
 
 void Triangle::Update([[maybe_unused]] float32 deltaTime)
 {
+    const MouseState& mouse = m_Window->GetMouse();
+
+    if (mouse.LeftDown())
+    {
+        m_Camera->ProcessMouseDelta((float32)mouse.dx, (float32)mouse.dy);
+    }
+
+    float32 speed = 1.0f;
+
+    if (m_Window->IsKeyPressed(KeyToken::LeftShift))
+    {
+        speed = 3.f;
+    }
+
+    if (m_Window->IsKeyPressed(KeyToken::Up) || m_Window->IsKeyPressed(KeyToken::W))
+    {
+        m_Camera->ProcessKeyboard(CameraMove::FORWARD, deltaTime, speed);
+    }
+
+    if (m_Window->IsKeyPressed(KeyToken::Down) || m_Window->IsKeyPressed(KeyToken::S))
+    {
+        m_Camera->ProcessKeyboard(CameraMove::BACKWARD, deltaTime, speed);
+    }
+
+    if (m_Window->IsKeyPressed(KeyToken::Left) || m_Window->IsKeyPressed(KeyToken::A))
+    {
+        m_Camera->ProcessKeyboard(CameraMove::LEFT, deltaTime, speed);
+    }
+
+    if (m_Window->IsKeyPressed(KeyToken::Right) || m_Window->IsKeyPressed(KeyToken::D))
+    {
+        m_Camera->ProcessKeyboard(CameraMove::RIGHT, deltaTime, speed);
+    }
 }
 
 void Triangle::Render()
 {
     float32 time = m_Window->GetTime();
-    uint32 windowWidth = m_Window->GetWidth();
-    uint32 windowHeight = m_Window->GetHeight();
 
     // Vary color based on time
     float32 red = (std::sin(time * 0.5f) + 1.0f) / 4.0f;
@@ -52,17 +76,13 @@ void Triangle::Render()
 
     // Update model matrix for rotating the triangle on Z-axis
     glm::mat4 model = glm::rotate(glm::mat4(1.f), std::sin(time * 0.8f) / 4.f, glm::vec3(0.f, 0.f, -1.f));
-
-    glm::mat4 projection = glm::perspective((float32)M_PI_2,
-        (float32)windowWidth / (float32)windowHeight, // Aspect ratio (width / height)
-        0.01f,                                        // Near clipping plane
-        100.0f                                        // Far clipping plane
-    );
+    glm::mat4 view = m_Camera->GetViewMatrix();
+    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
 
     m_Shader->Bind();
 
     m_Shader->SetMat4("u_Model", model);
-    m_Shader->SetMat4("u_View", m_View);
+    m_Shader->SetMat4("u_View", view);
     m_Shader->SetMat4("u_Projection", projection);
 
     GL(glBindVertexArray(m_VAO));
