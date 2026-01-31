@@ -47,6 +47,16 @@ const vec3 kAxisXColor = vec3(0.9, 0.15, 0.15); // X axis (red)
 const vec3 kAxisYColor = vec3(0.15, 0.9, 0.15); // Y axis (green)
 const vec3 kAxisZColor = vec3(0.15, 0.3, 0.9);  // Z axis (blue)
 
+// Axis line settings (in pixels)
+const float kAxisXZLineWidth = 3.5;
+const float kAxisYLineWidth = 1.0;
+const float kAxisIntensity = 0.95;
+const float kAxisYBelowGroundIntensity = 0.5;
+
+// Axis fade settings
+const float kAxisFadeMultiplier = 40.0;
+const float kAxisYFadeMultiplier = 50.0;
+
 // Grid line settings
 const float kGridLineWidth = 0.02;   // Grid line width as fraction of cell (0.02 = 2%)
 const float kGrid1Intensity = 0.5;   // 1-unit grid intensity
@@ -58,16 +68,6 @@ const float kGrid10FadeStart = 2.0;
 const float kGrid10FadeEnd = 10.0;
 const float kGrid100FadeStart = 20.0;
 const float kGrid100FadeEnd = 100.0;
-
-// Axis line settings (in pixels)
-const float kAxisXZLineWidth = 3.5;
-const float kAxisYLineWidth = 1.0;
-const float kAxisIntensity = 0.95;
-const float kAxisYBelowGroundIntensity = 0.5;
-
-// Axis fade settings
-const float kAxisFadeMultiplier = 40.0;
-const float kAxisYFadeMultiplier = 50.0;
 
 // ============================================================================
 // PRISTINE GRID
