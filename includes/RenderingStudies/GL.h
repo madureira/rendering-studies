@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Log.h"
 #include "Types.h"
 #include <cstring>
 #include <glad/glad.h>

@@ -49,3 +49,6 @@ target_link_libraries(${PROJECT_NAME} glm::glm)
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 
 target_include_directories(${PROJECT_NAME} PRIVATE includes)
+
+# Precompiled header for faster builds
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/includes/RenderingStudies/pch.h)

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <spdlog/spdlog.h>
 
 typedef int8_t int8;
 typedef int16_t int16;
@@ -18,6 +17,3 @@ typedef double float64;
 typedef long double float128;
 
 typedef unsigned char uchar;
-
-#define LOG_INFO(...) spdlog::info(__VA_ARGS__)
-#define LOG_ERROR(...) spdlog::error(__VA_ARGS__)

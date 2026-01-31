@@ -1,9 +1,12 @@
 #pragma once
 
+#include "Log.h"
 #include "Types.h"
+
+#include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <limits>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -18,10 +21,11 @@ struct Config
     std::string app_name;
 };
 
+namespace
+{
 inline bool parseBool(const std::string& raw)
 {
     std::string v = raw;
-    // optional: trim spaces
     v.erase(v.begin(), std::find_if(v.begin(), v.end(), [](unsigned char c) { return !std::isspace(c); }));
     v.erase(std::find_if(v.rbegin(), v.rend(), [](unsigned char c) { return !std::isspace(c); }).base(),
         v.end());
@@ -39,6 +43,7 @@ inline bool parseBool(const std::string& raw)
 
     throw std::runtime_error("Invalid boolean value in config: '" + raw + "'");
 }
+} // namespace
 
 inline Config loadConfig(const std::string& path)
 {
@@ -68,14 +73,14 @@ inline Config loadConfig(const std::string& path)
             continue;
         }
 
-        const auto pos = line.find('=');
+        const std::string::size_type pos = line.find('=');
         if (pos == std::string::npos)
         {
             continue;
         }
 
         const std::string key = line.substr(0, pos);
-        const std::string value = line.substr(pos + 1); // can contain spaces
+        const std::string value = line.substr(pos + 1);
 
         if (key == "app")
         {
@@ -83,14 +88,12 @@ inline Config loadConfig(const std::string& path)
         }
         else if (key == "window_title")
         {
-            // value can have spaces, we just keep the whole substring
             window_title = value;
         }
         else if (key == "window_width")
         {
-            int v = std::stoi(value); // throws if invalid
-            if (v < std::numeric_limits<int16>::min() ||
-                v > std::numeric_limits<int16>::max())
+            int v = std::stoi(value);
+            if (v < std::numeric_limits<int16>::min() || v > std::numeric_limits<int16>::max())
             {
                 throw std::runtime_error("window_width out of int16 range");
             }
@@ -100,8 +103,7 @@ inline Config loadConfig(const std::string& path)
         else if (key == "window_height")
         {
             int v = std::stoi(value);
-            if (v < std::numeric_limits<int16>::min() ||
-                v > std::numeric_limits<int16>::max())
+            if (v < std::numeric_limits<int16>::min() || v > std::numeric_limits<int16>::max())
             {
                 throw std::runtime_error("window_height out of int16 range");
             }
@@ -139,6 +141,5 @@ inline Config loadConfig(const std::string& path)
 
     LOG_INFO("Rendering app: {}", app_name);
 
-    // Order matches the struct: width, height, title, app_name
     return Config{ window_title, window_width, window_height, window_fullscreen, show_fps, vsync_on, app_name };
 }

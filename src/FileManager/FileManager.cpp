@@ -1,5 +1,6 @@
 #include "FileManager.h"
 
+#include <RenderingStudies/Log.h>
 #include <fstream>
 #include <sstream>
 

@@ -3,7 +3,7 @@
 #include <RenderingStudies/GL.h>
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
-#include "../Camera.h"
+#include "../../Camera/Camera.h"
 
 REGISTER_APP(RippleEffect)
 

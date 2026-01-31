@@ -1,10 +1,11 @@
 #include "BlenderModel.h"
 #include <RenderingStudies/RegisterApp.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include "../../Model/Model.h"
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
-#include "../Camera.h"
-#include "../Grid.h"
+#include "../../Camera/Camera.h"
+#include "../../Grid/Grid.h"
 
 REGISTER_APP(BlenderModel)
 

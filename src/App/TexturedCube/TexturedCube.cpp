@@ -4,7 +4,7 @@
 #include "../../Shader/Shader.h"
 #include "../../Texture/Texture.h"
 #include "../../Window/Window.h"
-#include "../Camera.h"
+#include "../../Camera/Camera.h"
 
 REGISTER_APP(TexturedCube)
 

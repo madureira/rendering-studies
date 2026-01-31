@@ -1,5 +1,6 @@
 #pragma once
 
+// Include OpenGL (glad) before GLFW; GLFW may pull system OpenGL otherwise.
 #include <RenderingStudies/GL.h>
 #include <GLFW/glfw3.h>
 
