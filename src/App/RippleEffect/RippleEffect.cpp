@@ -1,5 +1,6 @@
 #include "RippleEffect.h"
 #include <RenderingStudies/RegisterApp.h>
+#include <RenderingStudies/GL.h>
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
 #include "../Camera.h"
@@ -22,9 +23,9 @@ RippleEffect::~RippleEffect()
 {
     delete m_Camera;
     delete m_Shader;
-    glDeleteVertexArrays(1, &m_VAO);
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_EBO);
+    GL(glDeleteVertexArrays(1, &m_VAO));
+    GL(glDeleteBuffers(1, &m_VBO));
+    GL(glDeleteBuffers(1, &m_EBO));
 }
 
 void RippleEffect::Update(float32 deltaTime)
@@ -78,11 +79,11 @@ void RippleEffect::Render()
 
     m_Shader->SetFloat("u_Time", m_Window->GetTime());
 
-    glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, 0);
+    GL(glBindVertexArray(m_VAO));
+    GL(glDrawElements(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, 0));
 
     // Unbind the VAO
-    glBindVertexArray(0);
+    GL(glBindVertexArray(0));
     m_Shader->Unbind();
 }
 

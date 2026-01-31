@@ -1,9 +1,9 @@
 #pragma once
 
-#include <cstring>
-#include <type_traits>
-#include <glad/glad.h>
 #include "Types.h"
+#include <cstring>
+#include <glad/glad.h>
+#include <type_traits>
 
 /**
  * @brief Converts OpenGL error codes to human-readable strings.

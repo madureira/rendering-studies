@@ -15,10 +15,10 @@ void Model::Draw() const
 {
     for (const auto& mesh : m_Meshes)
     {
-        glBindVertexArray(mesh.VAO);
-        glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
+        GL(glBindVertexArray(mesh.VAO));
+        GL(glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0));
     }
-    glBindVertexArray(0);
+    GL(glBindVertexArray(0));
 }
 
 void Model::LoadModel(const std::string& path)

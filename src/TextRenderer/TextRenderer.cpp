@@ -76,10 +76,10 @@ void TextRenderer::Render(Shader& shader, const std::string& text, float32 x, fl
     shader.Bind();
 
     shader.SetVec3("u_TextColor", color.x, color.y, color.z);
-    glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(m_VAO);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+    GL(glActiveTexture(GL_TEXTURE0));
+    GL(glBindVertexArray(m_VAO));
+    GL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+    GL(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
 
     std::string::const_iterator c;
 
@@ -102,20 +102,20 @@ void TextRenderer::Render(Shader& shader, const std::string& text, float32 x, fl
             { xpos + w, ypos + h, 1.0, 0.0 }
         };
 
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        GL(glBindTexture(GL_TEXTURE_2D, ch.TextureID));
 
         if (ch.Size.x > 0 && ch.Size.y > 0)
         {
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
+            GL(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices));
+            GL(glDrawArrays(GL_TRIANGLES, 0, 6));
         }
 
         x += (ch.Advance >> 6) * scale;
     }
 
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    GL(glBindTexture(GL_TEXTURE_2D, 0));
+    GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GL(glBindVertexArray(0));
 
     shader.Unbind();
 }

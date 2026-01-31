@@ -64,9 +64,9 @@ public:
     ~Grid()
     {
         delete m_Shader;
-        glDeleteVertexArrays(1, &m_VAO);
-        glDeleteBuffers(1, &m_VBO);
-        glDeleteBuffers(1, &m_EBO);
+        GL(glDeleteVertexArrays(1, &m_VAO));
+        GL(glDeleteBuffers(1, &m_VBO));
+        GL(glDeleteBuffers(1, &m_EBO));
     }
 
     auto Draw(const Camera& camera, const glm::mat4& projection) const -> void
@@ -100,10 +100,10 @@ public:
         m_Shader->SetVec2("u_GridFract10", gridFract10);
         m_Shader->SetVec2("u_GridFract100", gridFract100);
 
-        glBindVertexArray(m_VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        GL(glBindVertexArray(m_VAO));
+        GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
-        glBindVertexArray(0);
+        GL(glBindVertexArray(0));
         m_Shader->Unbind();
     }
 };

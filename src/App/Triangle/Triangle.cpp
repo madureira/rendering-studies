@@ -1,6 +1,7 @@
 #include "Triangle.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <RenderingStudies/RegisterApp.h>
+#include <RenderingStudies/GL.h>
 #include "../../Shader/Shader.h"
 #include "../../Window/Window.h"
 
@@ -26,9 +27,9 @@ Triangle::Triangle(Window* window)
 
 Triangle::~Triangle()
 {
-    glDeleteVertexArrays(1, &m_VAO);
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_EBO);
+    GL(glDeleteVertexArrays(1, &m_VAO));
+    GL(glDeleteBuffers(1, &m_VBO));
+    GL(glDeleteBuffers(1, &m_EBO));
 }
 
 void Triangle::Update([[maybe_unused]] float32 deltaTime)
@@ -46,8 +47,8 @@ void Triangle::Render()
     float32 green = (std::sin(time * 0.3f) + 1.0f) / 4.0f;
     float32 blue = (std::sin(time * 0.7f) + 1.0f) / 4.0f;
 
-    glClearColor(red, green, blue, 1.0f); // Use oscillating colors
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    GL(glClearColor(red, green, blue, 1.0f)); // Use oscillating colors
+    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
     // Update model matrix for rotating the triangle on Z-axis
     glm::mat4 model = glm::rotate(glm::mat4(1.f), std::sin(time * 0.8f) / 4.f, glm::vec3(0.f, 0.f, -1.f));
@@ -64,11 +65,11 @@ void Triangle::Render()
     m_Shader->SetMat4("u_View", m_View);
     m_Shader->SetMat4("u_Projection", projection);
 
-    glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    GL(glBindVertexArray(m_VAO));
+    GL(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0));
 
     // Unbind
-    glBindVertexArray(0);
+    GL(glBindVertexArray(0));
     m_Shader->Unbind();
 }
 

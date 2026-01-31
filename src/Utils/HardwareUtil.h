@@ -399,7 +399,7 @@ private:
 
     static inline std::string SafeGlString(GLenum name)
     {
-        const GLubyte* s = glGetString(name);
+        const GLubyte* s = GLR(glGetString(name));
         return s ? reinterpret_cast<const char*>(s) : "Unknown";
     }
 
@@ -409,10 +409,10 @@ private:
             return false;
 
         GLint n = 0;
-        glGetIntegerv(GL_NUM_EXTENSIONS, &n);
+        GL(glGetIntegerv(GL_NUM_EXTENSIONS, &n));
         for (GLint i = 0; i < n; ++i)
         {
-            const char* e = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, (GLuint)i));
+            const char* e = reinterpret_cast<const char*>(GLR(glGetStringi(GL_EXTENSIONS, (GLuint)i)));
             if (e && std::strcmp(e, ext) == 0)
             {
                 return true;
@@ -425,7 +425,7 @@ private:
     {
         // Values are reported in KB
         GLint kb = 0;
-        glGetIntegerv(token, &kb);
+        GL(glGetIntegerv(token, &kb));
         if (kb > 0)
         {
             return int32(kb / 1024); // MiB
@@ -438,7 +438,7 @@ private:
         // GL_ATI_meminfo returns KB values in arrays, but it’s "free memory" rather than total dedicated.
         // Exposes it as "totalAvailableVramMiB" if present (best-effort).
         GLint v[4] = { 0, 0, 0, 0 };
-        glGetIntegerv(0x87FC /*GL_TEXTURE_FREE_MEMORY_ATI*/, v);
+        GL(glGetIntegerv(0x87FC /*GL_TEXTURE_FREE_MEMORY_ATI*/, v));
         if (v[0] > 0)
         {
             return int32(v[0] / 1024); // MiB
@@ -725,20 +725,20 @@ inline GraphicsInfo HardwareUtil::QueryGraphicsInfo()
     g.glslVersion = SafeGlString(GL_SHADING_LANGUAGE_VERSION);
 
     // Limits
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &g.maxTextureSize);
-    glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &g.max3DTextureSize);
-    glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &g.maxArrayTextureLayers);
-    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &g.maxDrawBuffers);
-    glGetIntegerv(GL_MAX_SAMPLES, &g.maxSamples);
+    GL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &g.maxTextureSize));
+    GL(glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &g.max3DTextureSize));
+    GL(glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &g.maxArrayTextureLayers));
+    GL(glGetIntegerv(GL_MAX_DRAW_BUFFERS, &g.maxDrawBuffers));
+    GL(glGetIntegerv(GL_MAX_SAMPLES, &g.maxSamples));
 
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &g.maxVertexAttribs);
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &g.maxCombinedTextureUnits);
-    glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &g.maxUniformBlockSizeBytes);
-    glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &g.maxUniformBufferBindings);
+    GL(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &g.maxVertexAttribs));
+    GL(glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &g.maxCombinedTextureUnits));
+    GL(glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &g.maxUniformBlockSizeBytes));
+    GL(glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &g.maxUniformBufferBindings));
 
     // Debug context flag
     GLint flags = 0;
-    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+    GL(glGetIntegerv(GL_CONTEXT_FLAGS, &flags));
     g.debugContext = (flags & GL_CONTEXT_FLAG_DEBUG_BIT) != 0;
 
     // Anisotropy
@@ -746,25 +746,25 @@ inline GraphicsInfo HardwareUtil::QueryGraphicsInfo()
     {
         g.supportsAnisotropy = true;
         GLfloat v = 0.0f;
-        glGetFloatv(0x84FF /*GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT*/, &v);
+        GL(glGetFloatv(0x84FF /*GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT*/, &v));
         g.maxAnisotropy = (float32)v;
     }
 
     // Compute shaders support (GL 4.3+ or ARB extension)
     GLint major = 0, minor = 0;
-    glGetIntegerv(GL_MAJOR_VERSION, &major);
-    glGetIntegerv(GL_MINOR_VERSION, &minor);
+    GL(glGetIntegerv(GL_MAJOR_VERSION, &major));
+    GL(glGetIntegerv(GL_MINOR_VERSION, &minor));
 
     g.supportsCompute = (major > 4) || (major == 4 && minor >= 3) || HasGlExtension("GL_ARB_compute_shader");
     if (g.supportsCompute)
     {
-        glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &g.maxComputeWorkGroupCount[0]);
-        glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &g.maxComputeWorkGroupCount[1]);
-        glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &g.maxComputeWorkGroupCount[2]);
+        GL(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &g.maxComputeWorkGroupCount[0]));
+        GL(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &g.maxComputeWorkGroupCount[1]));
+        GL(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &g.maxComputeWorkGroupCount[2]));
 
-        glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &g.maxComputeWorkGroupSize[0]);
-        glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &g.maxComputeWorkGroupSize[1]);
-        glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &g.maxComputeWorkGroupSize[2]);
+        GL(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &g.maxComputeWorkGroupSize[0]));
+        GL(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &g.maxComputeWorkGroupSize[1]));
+        GL(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &g.maxComputeWorkGroupSize[2]));
     }
 
     // VRAM best-effort (extensions)

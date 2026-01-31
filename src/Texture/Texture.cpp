@@ -86,7 +86,7 @@ Texture::~Texture()
 {
     if (m_ID != 0)
     {
-        glDeleteTextures(1, &m_ID);
+        GL(glDeleteTextures(1, &m_ID));
         m_ID = 0;
     }
 }
@@ -103,7 +103,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
 
     if (m_ID != 0)
     {
-        glDeleteTextures(1, &m_ID);
+        GL(glDeleteTextures(1, &m_ID));
     }
 
     m_ID = other.m_ID;
@@ -121,11 +121,11 @@ Texture& Texture::operator=(Texture&& other) noexcept
 
 void Texture::Bind(uint32 slot) const
 {
-    glActiveTexture(GL_TEXTURE0 + slot);
-    glBindTexture(GL_TEXTURE_2D, m_ID);
+    GL(glActiveTexture(GL_TEXTURE0 + slot));
+    GL(glBindTexture(GL_TEXTURE_2D, m_ID));
 }
 
 void Texture::Unbind()
 {
-    glBindTexture(GL_TEXTURE_2D, 0);
+    GL(glBindTexture(GL_TEXTURE_2D, 0));
 }

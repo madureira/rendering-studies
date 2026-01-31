@@ -1,5 +1,6 @@
 #include "TexturedCube.h"
 #include <RenderingStudies/RegisterApp.h>
+#include <RenderingStudies/GL.h>
 #include "../../Shader/Shader.h"
 #include "../../Texture/Texture.h"
 #include "../../Window/Window.h"
@@ -21,9 +22,9 @@ TexturedCube::~TexturedCube()
     delete m_Camera;
     delete m_Shader;
 
-    glDeleteVertexArrays(1, &m_VAO);
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_EBO);
+    GL(glDeleteVertexArrays(1, &m_VAO));
+    GL(glDeleteBuffers(1, &m_VBO));
+    GL(glDeleteBuffers(1, &m_EBO));
 }
 
 void TexturedCube::Update(float32 deltaTime)
@@ -76,14 +77,14 @@ void TexturedCube::Render()
     m_Shader->SetMat4("u_View", view);
     m_Shader->SetMat4("u_Projection", projection);
 
-    glBindVertexArray(m_VAO);
+    GL(glBindVertexArray(m_VAO));
 
-    glDisable(GL_CULL_FACE);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glEnable(GL_CULL_FACE);
+    GL(glDisable(GL_CULL_FACE));
+    GL(glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0));
+    GL(glEnable(GL_CULL_FACE));
 
     // Unbind
-    glBindVertexArray(0);
+    GL(glBindVertexArray(0));
     m_Shader->Unbind();
     m_Texture->Unbind();
 }

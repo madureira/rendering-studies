@@ -80,7 +80,7 @@ Window::Window(const Config& config)
     });
 
     glfwSetFramebufferSizeCallback(m_Window, []([[maybe_unused]] GLFWwindow* pNativeWindow, int32 width, int32 height) {
-        glViewport(0, 0, width, height);
+        GL(glViewport(0, 0, width, height));
     });
 
     glfwSetKeyCallback(m_Window, [](GLFWwindow* pNativeWindow, int32 key, [[maybe_unused]] int32 scancode, int32 action, [[maybe_unused]] int32 mods) {
@@ -163,9 +163,9 @@ void Window::BeginFrame()
 void Window::Clear() const
 {
     // Gray background
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    GL(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     // Clear color buffer and depth buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
     if (m_ShowFPS)
     {
@@ -289,11 +289,11 @@ void Window::SetPolygonMode() const
 {
     if (IsKeyPressed(KeyToken::Space))
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        GL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
     }
     else
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        GL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
     }
 }
 
