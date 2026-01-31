@@ -2,9 +2,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <RenderingStudies/RegisterApp.h>
 #include <RenderingStudies/GL.h>
-#include "../../Shader/Shader.h"
-#include "../../Window/Window.h"
-#include "../../Camera/Camera.h"
+#include "../../Engine/Shader/Shader.h"
+#include "../../Engine/Window/Window.h"
+#include "../../Engine/Camera/Camera.h"
+#include "../../Engine/Utils/InputProcessorUtil.h"
 
 REGISTER_APP(Triangle)
 
@@ -27,39 +28,7 @@ Triangle::~Triangle()
 
 void Triangle::Update([[maybe_unused]] float32 deltaTime)
 {
-    const MouseState& mouse = m_Window->GetMouse();
-
-    if (mouse.LeftDown())
-    {
-        m_Camera->ProcessMouseDelta((float32)mouse.dx, (float32)mouse.dy);
-    }
-
-    float32 speed = 1.0f;
-
-    if (m_Window->IsKeyPressed(KeyToken::LeftShift))
-    {
-        speed = 3.f;
-    }
-
-    if (m_Window->IsKeyPressed(KeyToken::Up) || m_Window->IsKeyPressed(KeyToken::W))
-    {
-        m_Camera->ProcessKeyboard(CameraMove::FORWARD, deltaTime, speed);
-    }
-
-    if (m_Window->IsKeyPressed(KeyToken::Down) || m_Window->IsKeyPressed(KeyToken::S))
-    {
-        m_Camera->ProcessKeyboard(CameraMove::BACKWARD, deltaTime, speed);
-    }
-
-    if (m_Window->IsKeyPressed(KeyToken::Left) || m_Window->IsKeyPressed(KeyToken::A))
-    {
-        m_Camera->ProcessKeyboard(CameraMove::LEFT, deltaTime, speed);
-    }
-
-    if (m_Window->IsKeyPressed(KeyToken::Right) || m_Window->IsKeyPressed(KeyToken::D))
-    {
-        m_Camera->ProcessKeyboard(CameraMove::RIGHT, deltaTime, speed);
-    }
+    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime);
 }
 
 void Triangle::Render()

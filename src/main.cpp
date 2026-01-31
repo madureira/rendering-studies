@@ -1,6 +1,6 @@
 #include <RenderingStudies/AppRegistry.h>
 #include <RenderingStudies/Config.h>
-#include "Window/Window.h"
+#include "Engine/Window/Window.h"
 
 int main()
 {

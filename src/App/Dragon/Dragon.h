@@ -1,6 +1,5 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <RenderingStudies/App.h>
 #include <RenderingStudies/Types.h>
 
@@ -10,7 +9,7 @@ class Model;
 class Shader;
 class Window;
 
-class BlenderModel final : public App
+class Dragon final : public App
 {
 private:
     Window* m_Window;
@@ -18,12 +17,10 @@ private:
     Camera* m_Camera;
     Grid* m_Grid;
     Model* m_Model;
-    Model* m_Model2;
-    glm::mat4 m_AppleModel;
 
 public:
-    BlenderModel(Window* window);
-    ~BlenderModel();
+    Dragon(Window* window);
+    ~Dragon();
 
     virtual void Update(float32 deltaTime) override;
     virtual void Render() override;
