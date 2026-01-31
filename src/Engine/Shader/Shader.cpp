@@ -12,6 +12,16 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
     Link();
 }
 
+Shader::Shader(const std::string& vertexPath, const std::string& tessControlPath, const std::string& tessEvalPath, const std::string& fragmentPath)
+{
+    m_VertexCode = FileManager::ReadText(vertexPath);
+    m_TessControlCode = FileManager::ReadText(tessControlPath);
+    m_TessEvalCode = FileManager::ReadText(tessEvalPath);
+    m_FragmentCode = FileManager::ReadText(fragmentPath);
+    Compile();
+    Link();
+}
+
 Shader::~Shader()
 {
     if (m_ID != 0)
@@ -100,6 +110,21 @@ void Shader::Compile()
     GL(glCompileShader(m_VertexId));
     CheckCompileError(m_VertexId, "Vertex Shader");
 
+    if (!m_TessControlCode.empty() && !m_TessEvalCode.empty())
+    {
+        const char* tcsCode = m_TessControlCode.c_str();
+        m_TessControlId = GLR(glCreateShader(GL_TESS_CONTROL_SHADER));
+        GL(glShaderSource(m_TessControlId, 1, &tcsCode, NULL));
+        GL(glCompileShader(m_TessControlId));
+        CheckCompileError(m_TessControlId, "Tessellation Control Shader");
+
+        const char* tesCode = m_TessEvalCode.c_str();
+        m_TessEvalId = GLR(glCreateShader(GL_TESS_EVALUATION_SHADER));
+        GL(glShaderSource(m_TessEvalId, 1, &tesCode, NULL));
+        GL(glCompileShader(m_TessEvalId));
+        CheckCompileError(m_TessEvalId, "Tessellation Evaluation Shader");
+    }
+
     const char* fsCode = m_FragmentCode.c_str();
     m_FragmentId = GLR(glCreateShader(GL_FRAGMENT_SHADER));
     GL(glShaderSource(m_FragmentId, 1, &fsCode, NULL));
@@ -111,10 +136,20 @@ void Shader::Link()
 {
     m_ID = GLR(glCreateProgram());
     GL(glAttachShader(m_ID, m_VertexId));
+    if (!m_TessControlCode.empty() && !m_TessEvalCode.empty())
+    {
+        GL(glAttachShader(m_ID, m_TessControlId));
+        GL(glAttachShader(m_ID, m_TessEvalId));
+    }
     GL(glAttachShader(m_ID, m_FragmentId));
     GL(glLinkProgram(m_ID));
     CheckLinkingError();
     GL(glDeleteShader(m_VertexId));
+    if (!m_TessControlCode.empty() && !m_TessEvalCode.empty())
+    {
+        GL(glDeleteShader(m_TessControlId));
+        GL(glDeleteShader(m_TessEvalId));
+    }
     GL(glDeleteShader(m_FragmentId));
 }
 

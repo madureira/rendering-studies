@@ -12,15 +12,20 @@ class Shader final
 private:
     std::string m_VertexCode;
     std::string m_FragmentCode;
+    std::string m_TessControlCode;
+    std::string m_TessEvalCode;
 
-    uint32 m_ID;
-    uint32 m_VertexId;
-    uint32 m_FragmentId;
+    uint32 m_ID = 0;
+    uint32 m_VertexId = 0;
+    uint32 m_FragmentId = 0;
+    uint32 m_TessControlId = 0;
+    uint32 m_TessEvalId = 0;
 
     mutable std::unordered_map<std::string, int32> m_UniformLocationCache;
 
 public:
     Shader(const std::string& vertexPath, const std::string& fragmentPath);
+    Shader(const std::string& vertexPath, const std::string& tessControlPath, const std::string& tessEvalPath, const std::string& fragmentPath);
     ~Shader();
 
     void Bind();

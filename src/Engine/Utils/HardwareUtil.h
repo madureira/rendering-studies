@@ -19,6 +19,13 @@
 #define GL_MAX_COMPUTE_WORK_GROUP_SIZE 0x91BF
 #endif
 
+#ifndef GL_MAX_TESS_GEN_LEVEL
+#define GL_MAX_TESS_GEN_LEVEL 0x8E7F
+#endif
+#ifndef GL_MAX_PATCH_VERTICES
+#define GL_MAX_PATCH_VERTICES 0x8E7D
+#endif
+
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -119,6 +126,10 @@ struct GraphicsInfo
     bool supportsCompute = false;
     int32 maxComputeWorkGroupCount[3] = { 0, 0, 0 };
     int32 maxComputeWorkGroupSize[3] = { 0, 0, 0 };
+
+    // Tessellation (OpenGL 4.0+)
+    int32 maxTessGenLevel = 0;
+    int32 maxPatchVertices = 0;
 
     bool debugContext = false;
 };
@@ -765,6 +776,13 @@ inline GraphicsInfo HardwareUtil::QueryGraphicsInfo()
         GL(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &g.maxComputeWorkGroupSize[0]));
         GL(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &g.maxComputeWorkGroupSize[1]));
         GL(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &g.maxComputeWorkGroupSize[2]));
+    }
+
+    // Tessellation (OpenGL 4.0+)
+    if (major > 4 || (major == 4 && minor >= 0))
+    {
+        GL(glGetIntegerv(GL_MAX_TESS_GEN_LEVEL, &g.maxTessGenLevel));
+        GL(glGetIntegerv(GL_MAX_PATCH_VERTICES, &g.maxPatchVertices));
     }
 
     // VRAM best-effort (extensions)

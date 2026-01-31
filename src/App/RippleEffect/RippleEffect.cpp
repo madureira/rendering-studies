@@ -1,21 +1,39 @@
 #include "RippleEffect.h"
-#include <RenderingStudies/RegisterApp.h>
-#include <RenderingStudies/GL.h>
-#include "../../Engine/Shader/Shader.h"
-#include "../../Engine/Window/Window.h"
 #include "../../Engine/Camera/Camera.h"
+#include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Utils/InputProcessorUtil.h"
+#include "../../Engine/Window/Window.h"
+#include <RenderingStudies/GL.h>
+#include <RenderingStudies/RegisterApp.h>
 
 REGISTER_APP(RippleEffect)
 
 RippleEffect::RippleEffect(Window* window)
     : m_Window(window)
 {
-    m_Shader = new Shader("assets/shaders/ripple_effect.vert", "assets/shaders/ripple_effect.frag");
-    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+    // Tessellation pipeline (vert + TCS + TES + frag): grid from CreateMesh(), each cell drawn as a patch.
+    m_Shader = new Shader(
+        "assets/shaders/ripple_effect.vert",
+        "assets/shaders/ripple_effect.tesc",
+        "assets/shaders/ripple_effect.tese",
+        "assets/shaders/ripple_effect.frag"
+    );
+
+    // Isometric-style: elevated, diagonal, looking at origin (not straight top-down).
+    // Position in +X,+Y,+Z octant; yaw 225° + pitch ~-35° so front points at (0,0,0).
+    const float32 isoDist = 14.0f; // distance in XZ
+    const float32 isoHeight = 12.0f;
+    m_Camera = new Camera(
+        glm::vec3(isoDist, isoHeight, isoDist),
+        glm::vec3(0.0f, 1.0f, 0.0f),
+        225.0f,  // yaw: look from (+X,+Z) back toward origin
+        -35.264f // pitch: ~35° down from horizontal (classic isometric)
+    );
+
     m_Shader->Bind();
     m_Shader->SetFloat("u_Amplitude", 0.2f);
     m_Shader->SetFloat("u_Frequency", 5.0f);
+    m_Shader->SetInt("u_TessLevel", 32);
     m_Shader->Unbind();
     CreateMesh();
 }
@@ -42,14 +60,16 @@ void RippleEffect::Render()
 
     m_Shader->Bind();
 
+    // Set shader uniforms
     m_Shader->SetMat4("u_Model", model);
     m_Shader->SetMat4("u_View", view);
     m_Shader->SetMat4("u_Projection", projection);
 
     m_Shader->SetFloat("u_Time", m_Window->GetTime());
 
+    GL(glPatchParameteri(GL_PATCH_VERTICES, 4));
     GL(glBindVertexArray(m_VAO));
-    GL(glDrawElements(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, 0));
+    GL(glDrawElements(GL_PATCHES, m_IndexCount, GL_UNSIGNED_INT, 0));
 
     // Unbind the VAO
     GL(glBindVertexArray(0));
@@ -58,14 +78,15 @@ void RippleEffect::Render()
 
 void RippleEffect::CreateMesh()
 {
-    uint8 gridSize = 128; // Number of subdivisions
+    uint8 gridSize = 16;  // Number of subdivisions
     float32 size = 20.0f; // Size of the plane
 
     const uint32 vertCount = (gridSize + 1) * (gridSize + 1);
     m_Vertices.reserve(vertCount * 3);
 
     const uint32 quadCount = gridSize * gridSize;
-    m_Indices.reserve(quadCount * 6);
+    // 4 indices per quad (one patch per cell for tessellation)
+    m_Indices.reserve(quadCount * 4);
 
     for (uint8 y = 0; y <= gridSize; ++y)
     {
@@ -81,6 +102,7 @@ void RippleEffect::CreateMesh()
         }
     }
 
+    // Patch order for TES bilinear interp: p0=(0,0), p1=(1,0), p2=(1,1), p3=(0,1) -> bottomLeft, bottomRight, topRight, topLeft
     for (uint8 y = 0; y < gridSize; ++y)
     {
         for (uint8 x = 0; x < gridSize; ++x)
@@ -90,13 +112,10 @@ void RippleEffect::CreateMesh()
             uint32 bottomLeft = (y + 1) * (gridSize + 1) + x;
             uint32 bottomRight = bottomLeft + 1;
 
-            m_Indices.push_back(topLeft);
-            m_Indices.push_back(bottomLeft);
-            m_Indices.push_back(topRight);
-
-            m_Indices.push_back(topRight);
             m_Indices.push_back(bottomLeft);
             m_Indices.push_back(bottomRight);
+            m_Indices.push_back(topRight);
+            m_Indices.push_back(topLeft);
         }
     }
 

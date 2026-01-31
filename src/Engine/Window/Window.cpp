@@ -401,5 +401,16 @@ void Window::ShowHardwareInfo() const
             gfx.maxComputeWorkGroupSize[2]);
     }
 
+    if (gfx.maxTessGenLevel > 0)
+    {
+        LOG_INFO("GL_MAX_TESS_GEN_LEVEL: {}", gfx.maxTessGenLevel);
+        LOG_INFO("GL_MAX_PATCH_VERTICES: {}", gfx.maxPatchVertices);
+    }
+
+    LOG_INFO("Max Vertex Attribs: {}", gfx.maxVertexAttribs);
+    LOG_INFO("Max Combined Texture Image Units: {}", gfx.maxCombinedTextureUnits);
+    LOG_INFO("Max Uniform Block Size: {} bytes", gfx.maxUniformBlockSizeBytes);
+
     LOG_INFO("================================================");
+
 }
