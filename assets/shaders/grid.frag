@@ -1,10 +1,6 @@
 #version 410 core
 
-#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
-#else
-precision mediump float;
-#endif
 
 in vec3 v_Near;
 in vec3 v_Far;
@@ -15,240 +11,209 @@ uniform mat4 u_Projection;
 
 out vec4 frag_color;
 
-// Grid parameters
-const float kLineWidth = 0.008;    // Line width as fraction of cell (thinner)
-const vec3 kGridColor = vec3(0.4); // Gray grid lines
+// ============================================================================
+// CONFIGURATION - Adjust these values to customize the grid appearance
+// ============================================================================
 
-// Fog parameters
-const vec3 kFogColor = vec3(0.18, 0.18, 0.10); // Dark gray fog (match background)
-const float kFogStart = 1000.0;                // Distance where fog starts
-const float kFogEnd = 2000.0;                  // Distance where fog is full
+// Colors
+const vec3 kGridColor = vec3(0.5);              // Grid lines color
+const vec3 kAxisXColor = vec3(0.9, 0.15, 0.15); // X axis (red)
+const vec3 kAxisYColor = vec3(0.15, 0.9, 0.15); // Y axis (green)
+const vec3 kAxisZColor = vec3(0.15, 0.3, 0.9);  // Z axis (blue)
 
-// Axis colors
-const vec3 kAxisXColor = vec3(1.0, 0.2, 0.2); // Red for X axis
-const vec3 kAxisZColor = vec3(0.2, 0.2, 1.0); // Blue for Z axis
-const vec3 kAxisYColor = vec3(0.2, 1.0, 0.2); // Green for Y axis
+// Grid line settings
+const float kGridLineWidth = 0.02;              // Grid line width as fraction of cell (0.02 = 2%)
+const float kGrid1Intensity = 0.5;              // 1-unit grid intensity
+const float kGrid10Intensity = 0.65;            // 10-unit grid intensity
+const float kGrid100Intensity = 0.8;            // 100-unit grid intensity
 
-// Axis line widths (in pixels)
-const float kAxisXWidth = 3.5; // X axis (red) width
-const float kAxisZWidth = 3.0; // Z axis (blue) width
-const float kAxisYWidth = 2.0; // Y axis (green) width
+// Grid level fade thresholds (camera height)
+const float kGrid10FadeStart = 2.0;             // Height where 10-unit grid starts appearing
+const float kGrid10FadeEnd = 10.0;              // Height where 10-unit grid is fully visible
+const float kGrid100FadeStart = 20.0;           // Height where 100-unit grid starts appearing
+const float kGrid100FadeEnd = 100.0;            // Height where 100-unit grid is fully visible
 
-// Simple anti-aliased grid - Ben Golus technique
-// Uses camera-relative position for stable derivatives at large distances
-float pristineGrid(vec2 worldPos, vec2 relativePos, float lineWidth)
+// Axis line settings (in pixels)
+const float kAxisXZLineWidth = 3.5;             // X and Z axis line width in pixels
+const float kAxisYLineWidth = 1.0;              // Y axis line width in pixels
+const float kAxisIntensity = 0.95;              // Axis line opacity
+const float kAxisYBelowGroundIntensity = 0.5;   // Y axis opacity below ground
+
+// Axis fade settings
+const float kAxisFadeMultiplier = 40.0;         // Axis fade distance = camHeight * this value
+const float kAxisYFadeMultiplier = 50.0;        // Y axis fade distance multiplier
+
+// ============================================================================
+// PRISTINE GRID - Based on "The Best Darn Grid Shader (Yet)" by Ben Golus
+// https://bgolus.medium.com/the-best-darn-grid-shader-yet-727f9278b9d8
+// ============================================================================
+
+float pristineGrid(vec2 uv, vec2 lineWidth)
 {
-    // Use relative position for derivatives (stable at large distances)
-    vec2 uvDeriv = fwidth(relativePos);
-
-    // Clamp derivatives to prevent issues at extreme distances
-    uvDeriv = clamp(uvDeriv, vec2(1e-7), vec2(1.0));
-
-    // Line width, clamped to derivative for proper AA
-    vec2 targetWidth = vec2(lineWidth);
+    // Use length of derivatives instead of fwidth for correct diagonal handling
+    vec4 uvDDXY = vec4(dFdx(uv), dFdy(uv));
+    vec2 uvDeriv = vec2(length(uvDDXY.xz), length(uvDDXY.yw));
+    
+    // Handle line widths > 0.5 by inverting
+    bvec2 invertLine = greaterThan(lineWidth, vec2(0.5));
+    vec2 targetWidth = mix(lineWidth, vec2(1.0) - lineWidth, vec2(invertLine));
+    
+    // Clamp draw width between derivatives and 0.5
     vec2 drawWidth = clamp(targetWidth, uvDeriv, vec2(0.5));
-
-    // AA range
+    
+    // Anti-aliasing width (1.5 pixels for proper smoothstep AA)
     vec2 lineAA = uvDeriv * 1.5;
-
-    // Distance from lines - use worldPos for pattern (fract handles large values)
-    vec2 gridUV = abs(fract(worldPos) * 2.0 - 1.0) * 0.5;
-
-    // Anti-aliased line
+    
+    // Grid UV - distance from line centers
+    vec2 gridUV = abs(fract(uv) * 2.0 - 1.0);
+    gridUV = mix(vec2(1.0) - gridUV, gridUV, vec2(invertLine));
+    
+    // Draw anti-aliased lines
     vec2 grid2 = smoothstep(drawWidth + lineAA, drawWidth - lineAA, gridUV);
-    grid2 = clamp(grid2, 0.0, 1.0);
-
-    // Combine both axes
-    float grid = max(grid2.x, grid2.y);
-
-    // Sub-pixel fade to prevent moiré
-    float maxDeriv = max(uvDeriv.x, uvDeriv.y);
-    float fade = 1.0 - smoothstep(0.5, 1.0, maxDeriv);
-
-    return grid * fade;
+    
+    // Fade based on target vs actual width (phone-wire AA technique)
+    grid2 *= clamp(targetWidth / drawWidth, 0.0, 1.0);
+    
+    // Suppress Moiré by fading to solid color when grid cells < 1 pixel
+    grid2 = mix(grid2, targetWidth, clamp(uvDeriv * 2.0 - 1.0, 0.0, 1.0));
+    
+    // Invert back if needed
+    grid2 = mix(grid2, vec2(1.0) - grid2, vec2(invertLine));
+    
+    // Combine axes with premultiplied alpha blend
+    return mix(grid2.x, 1.0, grid2.y);
 }
 
-// Simple two-level grid with camera-relative coordinates
-float simpleGrid(vec2 worldPos, vec2 relativePos)
-{
-    // Base grid (1 unit)
-    float grid1 = pristineGrid(worldPos, relativePos, kLineWidth);
-
-    // Major grid (10 units)
-    float grid10 = pristineGrid(worldPos * 0.1, relativePos * 0.1, kLineWidth);
-
-    // Combine: major grid is more prominent
-    return max(grid1 * 0.4, grid10 * 0.7);
-}
-
-// Axis line with camera-relative anti-aliasing
-// worldCoord: actual world coordinate (for detecting axis at 0)
-// relativeCoord: camera-relative coordinate (for stable derivatives)
-float axisLine(float worldCoord, float relativeCoord, float pixelWidth)
-{
-    // Use relative coordinate for stable derivative
-    float deriv = fwidth(relativeCoord);
-    float stableDeriv = clamp(deriv, 1e-7, 1.0);
-
-    // Distance in pixels from the axis (use world coord for actual distance from origin)
-    float distInPixels = abs(worldCoord) / stableDeriv;
-
-    // Half width in pixels
-    float halfWidthPix = pixelWidth * 0.5;
-
-    // AA range in pixels (fixed, not dependent on world scale)
-    float aaPix = 1.0;
-
-    // Calculate line alpha with stable pixel-space AA
-    float lineAlpha = 1.0 - smoothstep(halfWidthPix - aaPix, halfWidthPix + aaPix, distInPixels);
-
-    return clamp(lineAlpha, 0.0, 1.0);
-}
+// ============================================================================
+// DEPTH
+// ============================================================================
 
 float computeDepth(vec3 pos)
 {
-    vec4 clipSpacePos = u_Projection * u_View * vec4(pos, 1.0);
-    float clipSpaceDepth = (clipSpacePos.z / clipSpacePos.w);
-    float far = gl_DepthRange.far;
-    float near = gl_DepthRange.near;
-    float depth = (((far - near) * clipSpaceDepth) + near + far) / 2.0;
-    return depth;
+    vec4 clip = u_Projection * u_View * vec4(pos, 1.0);
+    float ndc = clip.z / clip.w;
+    return (gl_DepthRange.diff * ndc + gl_DepthRange.near + gl_DepthRange.far) * 0.5;
 }
 
+// ============================================================================
+// MAIN
+// ============================================================================
 
 void main()
 {
-    vec3 rayOrigin = v_Near;
-    vec3 rayDir = normalize(v_Far - v_Near);
-
-    // --- Y axis (green) - rendered independently of grid plane ---
-    // Compute closest point on the view ray to the world Y axis (x=0, z=0)
-    // Split into positive (above grid) and negative (below grid) parts
-    float yAxisAlphaPositive = 0.0; // Y >= 0, rendered on top
-    float yAxisAlphaNegative = 0.0; // Y < 0, rendered behind grid
-    {
-        vec2 o = rayOrigin.xz;
-        vec2 d = rayDir.xz;
-
-        float dd = dot(d, d);
-        if (dd > 1e-10)
-        {
-            float tClosest = -dot(o, d) / dd;
-
-            // Only render if in front of camera
-            if (tClosest > 0.0)
-            {
-                vec3 axisPos = rayOrigin + tClosest * rayDir;
-
-                // Camera-relative position for stable derivatives
-                vec2 relativeXZ = axisPos.xz - v_CameraPos.xz;
-
-                float distWorld = length(axisPos.xz);
-                vec2 dxz = fwidth(relativeXZ);
-                float worldPerPixel = clamp(max(dxz.x, dxz.y), 1e-7, 1.0);
-
-                // Convert to stable pixel-space distance
-                float distInPixels = distWorld / worldPerPixel;
-
-                // Half width in pixels
-                float halfWidthPix = kAxisYWidth * 0.5;
-
-                // Fixed AA range in pixels
-                float aaPix = 0.75;
-
-                // Calculate line alpha with stable pixel-space AA
-                float yAxisAlpha = 1.0 - smoothstep(halfWidthPix - aaPix, halfWidthPix + aaPix, distInPixels);
-                yAxisAlpha = clamp(yAxisAlpha, 0.0, 1.0);
-
-                // Split based on Y position
-                if (axisPos.y >= 0.0)
-                {
-                    yAxisAlphaPositive = yAxisAlpha;
-                }
-                else
-                {
-                    yAxisAlphaNegative = yAxisAlpha;
-                }
-            }
-        }
-    }
-
-    // --- Grid on Y=0 plane ---
     float t = -v_Near.y / (v_Far.y - v_Near.y);
     vec3 fragPos3D = v_Near + t * (v_Far - v_Near);
-
-    // Check if we hit the grid plane
-    bool onGridPlane = (t > 0.0);
-
-    // Start with Y axis negative part (behind the grid)
-    if (yAxisAlphaNegative > 0.0)
-    {
-        frag_color = vec4(kAxisYColor, yAxisAlphaNegative * 0.6); // Slightly dimmer behind grid
-        gl_FragDepth = 0.999;                                     // Far depth so grid can occlude it
-    }
-    else
-    {
-        frag_color = vec4(0.0);
-        gl_FragDepth = 1.0;
-    }
-
-    if (onGridPlane)
+    
+    frag_color = vec4(0.0);
+    gl_FragDepth = 1.0;
+    
+    if (t > 0.0)
     {
         gl_FragDepth = computeDepth(fragPos3D);
-
-        // Camera-relative position for stable calculations at large distances
-        vec2 relativePos = fragPos3D.xz - v_CameraPos.xz;
-
-        // --- Simple Grid (1 unit + 10 unit) ---
-        // Use world position for pattern, relative position for derivatives
-        float gridAlpha = simpleGrid(fragPos3D.xz, relativePos);
-
-        // Base grid color
-        vec3 gridColor = kGridColor;
-
-        // --- X/Z Axis lines (on the grid plane) ---
-        // Z axis (blue) - where X = 0
-        float zAxisAlpha = axisLine(fragPos3D.x, relativePos.x, kAxisZWidth);
-
+        
+        // ============================================================
+        // MULTI-SCALE GRID using Pristine Grid technique
+        // ============================================================
+        
+        vec2 lineWidth = vec2(kGridLineWidth);
+        
+        // Calculate grid at multiple scales
+        float grid1 = pristineGrid(fragPos3D.xz, lineWidth);
+        float grid10 = pristineGrid(fragPos3D.xz * 0.1, lineWidth);
+        float grid100 = pristineGrid(fragPos3D.xz * 0.01, lineWidth);
+        
+        // Camera height determines which grid levels are visible
+        float camHeight = max(abs(v_CameraPos.y), 0.5);
+        
+        // Fade factors for each level based on camera height
+        float fade1 = 1.0;
+        float fade10 = smoothstep(kGrid10FadeStart, kGrid10FadeEnd, camHeight);
+        float fade100 = smoothstep(kGrid100FadeStart, kGrid100FadeEnd, camHeight);
+        
+        // Combine grids with height-based visibility
+        float gridAlpha = max(max(
+            grid1 * kGrid1Intensity * fade1, 
+            grid10 * kGrid10Intensity * fade10), 
+            grid100 * kGrid100Intensity * fade100);
+        
+        vec3 color = kGridColor;
+        float alpha = gridAlpha;
+        
+        // ============================================================
+        // AXIS LINES (X and Z)
+        // ============================================================
+        
+        vec4 uvDDXY_x = vec4(dFdx(fragPos3D.xz), dFdy(fragPos3D.xz));
+        vec2 derivX = vec2(length(uvDDXY_x.xz), length(uvDDXY_x.yw));
+        
         // X axis (red) - where Z = 0
-        float xAxisAlpha = axisLine(fragPos3D.z, relativePos.y, kAxisXWidth);
-
-        // Build final color
-        vec3 finalColor = gridColor;
-        float finalAlpha = gridAlpha;
-
-        // Overlay Z axis (blue)
-        if (zAxisAlpha > 0.0)
-        {
-            finalColor = mix(finalColor, kAxisZColor, zAxisAlpha);
-            finalAlpha = max(finalAlpha, zAxisAlpha);
-        }
-
-        // Overlay X axis (red)
-        if (xAxisAlpha > 0.0)
-        {
-            finalColor = mix(finalColor, kAxisXColor, xAxisAlpha);
-            finalAlpha = max(finalAlpha, xAxisAlpha);
-        }
-
-        // --- Fog effect ---
-        // Calculate distance from camera to fragment (using relative position)
+        float xAxisWidth = derivX.y * kAxisXZLineWidth;
+        float xAxis = 1.0 - smoothstep(0.0, xAxisWidth, abs(fragPos3D.z));
+        
+        // Z axis (blue) - where X = 0
+        float zAxisWidth = derivX.x * kAxisXZLineWidth;
+        float zAxis = 1.0 - smoothstep(0.0, zAxisWidth, abs(fragPos3D.x));
+        
+        // Distance fade for axes
         float distFromCamera = length(fragPos3D - v_CameraPos);
-        float fogFactor = smoothstep(kFogStart, kFogEnd, distFromCamera);
-
-        // Apply fog: blend color towards fog color and reduce alpha
-        finalColor = mix(finalColor, kFogColor, fogFactor);
-        finalAlpha = finalAlpha * (1.0 - fogFactor * 0.8); // Fade out but not completely
-
-        // Blend grid on top of any Y axis negative part
-        frag_color.rgb = mix(frag_color.rgb, finalColor, finalAlpha);
-        frag_color.a = max(frag_color.a, finalAlpha);
+        float axisFadeDist = camHeight * kAxisFadeMultiplier;
+        float axisFade = 1.0 - smoothstep(axisFadeDist * 0.3, axisFadeDist, distFromCamera);
+        
+        // Apply X axis
+        if (xAxis > 0.01)
+        {
+            float xAxisFinal = xAxis * axisFade;
+            color = mix(color, kAxisXColor, xAxisFinal);
+            alpha = max(alpha, xAxisFinal * kAxisIntensity);
+        }
+        
+        // Apply Z axis
+        if (zAxis > 0.01)
+        {
+            float zAxisFinal = zAxis * axisFade;
+            color = mix(color, kAxisZColor, zAxisFinal);
+            alpha = max(alpha, zAxisFinal * kAxisIntensity);
+        }
+        
+        frag_color = vec4(color, alpha);
     }
-
-    // --- Overlay Y axis positive part (above grid) on top of everything ---
-    if (yAxisAlphaPositive > 0.0)
+    
+    // ============================================================
+    // Y AXIS (vertical line at origin)
+    // ============================================================
+    vec3 rayDir = normalize(v_Far - v_Near);
+    vec2 rayXZ = rayDir.xz;
+    float denom = dot(rayXZ, rayXZ);
+    
+    if (denom > 1e-8)
     {
-        frag_color.rgb = mix(frag_color.rgb, kAxisYColor, yAxisAlphaPositive);
-        frag_color.a = max(frag_color.a, yAxisAlphaPositive);
+        float tY = -dot(v_Near.xz, rayXZ) / denom;
+        if (tY > 0.0)
+        {
+            vec3 closest = v_Near + tY * rayDir;
+            float distXZ = length(closest.xz);
+            
+            // Compute line width based on distance to camera
+            float camDist = length(closest - v_CameraPos);
+            float pixelWorldSize = camDist * 0.001;
+            float lineW = pixelWorldSize * kAxisYLineWidth;
+            float lineAA = pixelWorldSize * 0.6;
+            
+            float yAxis = 1.0 - smoothstep(lineW - lineAA, lineW + lineAA, distXZ);
+            
+            // Distance fade
+            float camHeight = max(abs(v_CameraPos.y), 0.5);
+            float yAxisFadeDist = camHeight * kAxisYFadeMultiplier;
+            float yAxisFade = 1.0 - smoothstep(yAxisFadeDist * 0.3, yAxisFadeDist, camDist);
+            
+            yAxis *= yAxisFade;
+            
+            if (yAxis > 0.01)
+            {
+                float intensity = closest.y >= 0.0 ? kAxisIntensity : kAxisYBelowGroundIntensity;
+                frag_color.rgb = mix(frag_color.rgb, kAxisYColor, yAxis * intensity);
+                frag_color.a = max(frag_color.a, yAxis * intensity);
+            }
+        }
     }
 }
