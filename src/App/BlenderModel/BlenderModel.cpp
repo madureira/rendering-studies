@@ -45,7 +45,7 @@ void BlenderModel::Update(float32 deltaTime)
 
     if (m_Window->IsKeyPressed(KeyToken::LeftShift))
     {
-        speed = 15.f;
+        speed = 30.f;
     }
 
     if (m_Window->IsKeyPressed(KeyToken::Up) || m_Window->IsKeyPressed(KeyToken::W))
@@ -73,9 +73,8 @@ void BlenderModel::Render()
 {
     glm::mat4 view = m_Camera->GetViewMatrix();
     glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
-    glm::vec3 cameraPos = m_Camera->GetPosition();
 
-    m_Grid->Draw(view, projection, cameraPos);
+    m_Grid->Draw(*m_Camera, projection);
 
     m_Shader->Bind();
 

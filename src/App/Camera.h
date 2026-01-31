@@ -21,7 +21,10 @@ private:
     const float32 NEAR_CLIP = 0.01f;
     const float32 FAR_CLIP = 10000.0f;
 
-    glm::vec3 m_Position;
+    // Double precision position to maintain accuracy at large world coordinates.
+    // Cast to float (vec3) when passing to OpenGL/shaders.
+    glm::dvec3 m_Position;
+
     glm::vec3 m_Up;
     glm::vec3 m_Front;
     glm::vec3 m_Right;
@@ -33,19 +36,19 @@ private:
     float32 m_MouseSensitivity;
     float32 m_Zoom;
 
-    mutable glm::mat4 m_ProjectionCache{1.0f};
+    mutable glm::mat4 m_ProjectionCache{ 1.0f };
     mutable uint32 m_LastWindowWidth = 0;
     mutable uint32 m_LastWindowHeight = 0;
     mutable float32 m_LastZoom = 0.0f;
 
 public:
     Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)
-        : m_Front(glm::vec3(0.0f, 0.0f, -1.0f))
+        : m_Position(position)
+        , m_Front(glm::vec3(0.0f, 0.0f, -1.0f))
         , m_MovementSpeed(SPEED)
         , m_MouseSensitivity(SENSITIVITY)
         , m_Zoom(ZOOM)
     {
-        m_Position = position;
         m_WorldUp = up;
         m_Yaw = yaw;
         m_Pitch = pitch;
@@ -53,21 +56,39 @@ public:
         UpdateCameraVectors();
     }
 
+    // Returns position as float (for OpenGL/shaders)
     glm::vec3 GetPosition() const
+    {
+        return glm::vec3(m_Position);
+    }
+
+    // Returns position as double (for high-precision calculations)
+    glm::dvec3 GetPositionHP() const
     {
         return m_Position;
     }
 
-    glm::mat4 GetViewMatrix()
+    glm::vec3 GetFront() const
     {
-        return glm::lookAt(m_Position, m_Position + m_Front, m_Up);
+        return m_Front;
+    }
+
+    glm::vec3 GetUp() const
+    {
+        return m_Up;
+    }
+
+    glm::mat4 GetViewMatrix() const
+    {
+        glm::vec3 pos = glm::vec3(m_Position);
+        return glm::lookAt(pos, pos + m_Front, m_Up);
     }
 
     glm::mat4 GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight)
     {
         if (windowHeight == 0)
         {
-            windowHeight = 1; // Prevent division by zero
+            windowHeight = 1;
         }
 
         if (windowWidth != m_LastWindowWidth || windowHeight != m_LastWindowHeight || m_Zoom != m_LastZoom)
@@ -81,33 +102,35 @@ public:
         return m_ProjectionCache;
     }
 
-    float32 GetZoom()
+    float32 GetZoom() const
     {
         return m_Zoom;
     }
 
     void ProcessKeyboard(CameraMove direction, float32 deltaTime, float32 speed = 1.0f)
     {
-        float32 velocity = m_MovementSpeed * deltaTime * speed;
+        float64 velocity = static_cast<float64>(m_MovementSpeed * deltaTime * speed);
+        glm::dvec3 front = glm::dvec3(m_Front);
+        glm::dvec3 right = glm::dvec3(m_Right);
 
         if (direction == CameraMove::FORWARD)
         {
-            m_Position += m_Front * velocity;
+            m_Position += front * velocity;
         }
 
         if (direction == CameraMove::BACKWARD)
         {
-            m_Position -= m_Front * velocity;
+            m_Position -= front * velocity;
         }
 
         if (direction == CameraMove::LEFT)
         {
-            m_Position -= m_Right * velocity;
+            m_Position -= right * velocity;
         }
 
         if (direction == CameraMove::RIGHT)
         {
-            m_Position += m_Right * velocity;
+            m_Position += right * velocity;
         }
     }
 
@@ -125,8 +148,10 @@ public:
 
         if (constrainPitch)
         {
-            if (m_Pitch > 89.0f)  m_Pitch = 89.0f;
-            if (m_Pitch < -89.0f) m_Pitch = -89.0f;
+            if (m_Pitch > 89.0f)
+                m_Pitch = 89.0f;
+            if (m_Pitch < -89.0f)
+                m_Pitch = -89.0f;
         }
 
         UpdateCameraVectors();
