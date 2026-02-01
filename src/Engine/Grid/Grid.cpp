@@ -57,29 +57,27 @@ Grid::~Grid()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void Grid::Draw(const Camera& camera, const glm::mat4& projection) const
+void Grid::Draw(const Camera& camera, const glm::mat4& viewRel, const glm::mat4& projection, const glm::dvec3& origin) const
 {
     glm::dvec3 positionHP = camera.GetPositionHP();
 
-    glm::dvec3 gridOrigin = positionHP;
-    gridOrigin.y = 0.0;
+    // Camera position relative to the floating origin
+    glm::vec3 relativePos = glm::vec3(positionHP - origin);
 
-    glm::vec3 relativePos = glm::vec3(positionHP - gridOrigin);
-
-    glm::mat4 relativeView = glm::lookAt(relativePos, relativePos + camera.GetFront(), camera.GetUp());
-
+    // Compute fractions in double precision for precise grid alignment
     glm::vec2 gridFract1 = CalculateFract(positionHP, 1.0);
     glm::vec2 gridFract10 = CalculateFract(positionHP, 10.0);
     glm::vec2 gridFract100 = CalculateFract(positionHP, 100.0);
 
     m_Shader->Bind();
 
-    m_Shader->SetMat4("u_View", relativeView);
+    // Use the same viewRel as the rest of the scene (depth coherence)
+    m_Shader->SetMat4("u_View", viewRel);
     m_Shader->SetMat4("u_Projection", projection);
-    m_Shader->SetMat4("u_ViewInv", glm::inverse(relativeView));
+    m_Shader->SetMat4("u_ViewInv", glm::inverse(viewRel));
     m_Shader->SetMat4("u_ProjectionInv", glm::inverse(projection));
     m_Shader->SetVec3("u_CameraPos", relativePos);
-    m_Shader->SetVec3("u_GridOrigin", glm::vec3(gridOrigin));
+    m_Shader->SetVec3("u_GridOrigin", glm::vec3(origin));
     m_Shader->SetVec2("u_GridFract1", gridFract1);
     m_Shader->SetVec2("u_GridFract10", gridFract10);
     m_Shader->SetVec2("u_GridFract100", gridFract100);

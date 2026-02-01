@@ -42,6 +42,14 @@ glm::mat4 Camera::GetViewMatrix() const
     return glm::lookAt(pos, pos + m_Front, m_Up);
 }
 
+glm::mat4 Camera::GetViewMatrixRelative(const glm::dvec3& origin) const
+{
+    // Subtract origin in double precision, then convert to float.
+    // Keeps values small and preserves precision.
+    glm::vec3 posRel = glm::vec3(m_Position - origin);
+    return glm::lookAt(posRel, posRel + m_Front, m_Up);
+}
+
 glm::mat4 Camera::GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight)
 {
     if (windowHeight == 0)

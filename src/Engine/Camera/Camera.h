@@ -17,7 +17,7 @@ private:
     const float32 SPEED = 2.5f;
     const float32 SENSITIVITY = 0.05f;
     const float32 ZOOM = 45.0f;
-    const float32 NEAR_CLIP = 0.01f;
+    const float32 NEAR_CLIP = 0.1f; // Increased from 0.01 for better depth buffer precision
     const float32 FAR_CLIP = 10000.0f;
 
     glm::dvec3 m_Position;
@@ -47,6 +47,7 @@ public:
     glm::vec3 GetFront() const;
     glm::vec3 GetUp() const;
     glm::mat4 GetViewMatrix() const;
+    glm::mat4 GetViewMatrixRelative(const glm::dvec3& origin) const;
     glm::mat4 GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight);
     float32 GetZoom() const;
 
