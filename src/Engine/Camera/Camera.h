@@ -17,7 +17,7 @@ private:
     const float32 SPEED = 2.5f;
     const float32 SENSITIVITY = 0.05f;
     const float32 ZOOM = 45.0f;
-    const float32 NEAR_CLIP = 0.1f; // Increased from 0.01 for better depth buffer precision
+    const float32 NEAR_CLIP = 0.1f;
     const float32 FAR_CLIP = 10000.0f;
 
     glm::dvec3 m_Position;
@@ -51,7 +51,7 @@ public:
     glm::mat4 GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight);
     float32 GetZoom() const;
 
-    void ProcessKeyboard(CameraMove direction, float32 deltaTime, float32 speed = 1.0f);
-    void ProcessMouseDelta(float32 dx, float32 dy, bool constrainPitch = true);
-    void ProcessMouseScroll(float32 yoffset);
+    void Move(CameraMove direction, float32 deltaTime, float32 speed = 1.0f);
+    void Look(float32 dx, float32 dy, bool constrainPitch = true);
+    void Zoom(float32 yoffset);
 };

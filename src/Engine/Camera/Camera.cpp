@@ -73,7 +73,7 @@ float32 Camera::GetZoom() const
     return m_Zoom;
 }
 
-void Camera::ProcessKeyboard(CameraMove direction, float32 deltaTime, float32 speed)
+void Camera::Move(CameraMove direction, float32 deltaTime, float32 speed)
 {
     float64 velocity = static_cast<float64>(m_MovementSpeed * deltaTime * speed);
     glm::dvec3 front = glm::dvec3(m_Front);
@@ -100,7 +100,7 @@ void Camera::ProcessKeyboard(CameraMove direction, float32 deltaTime, float32 sp
     }
 }
 
-void Camera::ProcessMouseDelta(float32 dx, float32 dy, bool constrainPitch)
+void Camera::Look(float32 dx, float32 dy, bool constrainPitch)
 {
     float32 dampingFactor = 0.5f;
     dx *= m_MouseSensitivity * dampingFactor;
@@ -123,7 +123,7 @@ void Camera::ProcessMouseDelta(float32 dx, float32 dy, bool constrainPitch)
     UpdateCameraVectors();
 }
 
-void Camera::ProcessMouseScroll(float32 yoffset)
+void Camera::Zoom(float32 yoffset)
 {
     m_Zoom -= yoffset;
 

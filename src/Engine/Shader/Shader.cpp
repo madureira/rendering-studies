@@ -32,6 +32,11 @@ Shader::~Shader()
 
 void Shader::Bind()
 {
+    if (m_ID == 0)
+    {
+        LOG_ERROR("Shader: Bind() called but program is 0 (shader failed to link or was deleted).");
+        return;
+    }
     GL(glUseProgram(m_ID));
 }
 
@@ -47,59 +52,107 @@ uint32 Shader::GetProgram() const
 
 void Shader::SetBool(const std::string& name, bool value) const
 {
-    GL(glUniform1i(GetUniformLocation(name), (int32)value));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniform1i(loc, (int32)value));
+    }
 }
 
 void Shader::SetInt(const std::string& name, int32 value) const
 {
-    GL(glUniform1i(GetUniformLocation(name), value));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniform1i(loc, value));
+    }
 }
 
 void Shader::SetFloat(const std::string& name, float32 value) const
 {
-    GL(glUniform1f(GetUniformLocation(name), value));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniform1f(loc, value));
+    }
 }
 
 void Shader::SetVec2(const std::string& name, const glm::vec2& value) const
 {
-    GL(glUniform2fv(GetUniformLocation(name), 1, &value[0]));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniform2fv(loc, 1, &value[0]));
+    }
 }
 void Shader::SetVec2(const std::string& name, float32 x, float32 y) const
 {
-    GL(glUniform2f(GetUniformLocation(name), x, y));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniform2f(loc, x, y));
+    }
 }
 
 void Shader::SetVec3(const std::string& name, const glm::vec3& value) const
 {
-    GL(glUniform3fv(GetUniformLocation(name), 1, &value[0]));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniform3fv(loc, 1, &value[0]));
+    }
 }
 void Shader::SetVec3(const std::string& name, float32 x, float32 y, float32 z) const
 {
-    GL(glUniform3f(GetUniformLocation(name), x, y, z));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniform3f(loc, x, y, z));
+    }
 }
 
 void Shader::SetVec4(const std::string& name, const glm::vec4& value) const
 {
-    GL(glUniform4fv(GetUniformLocation(name), 1, &value[0]));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniform4fv(loc, 1, &value[0]));
+    }
 }
 void Shader::SetVec4(const std::string& name, float32 x, float32 y, float32 z, float32 w) const
 {
-    GL(glUniform4f(GetUniformLocation(name), x, y, z, w));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniform4f(loc, x, y, z, w));
+    }
 }
 
 void Shader::SetMat2(const std::string& name, const glm::mat2& mat) const
 {
-    GL(glUniformMatrix2fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniformMatrix2fv(loc, 1, GL_FALSE, &mat[0][0]));
+    }
 }
 
 void Shader::SetMat3(const std::string& name, const glm::mat3& mat) const
 {
-    GL(glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniformMatrix3fv(loc, 1, GL_FALSE, &mat[0][0]));
+    }
 }
 
 void Shader::SetMat4(const std::string& name, const glm::mat4& mat) const
 {
-    GL(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]));
+    int32 loc = GetUniformLocation(name);
+    if (loc >= 0)
+    {
+        GL(glUniformMatrix4fv(loc, 1, GL_FALSE, &mat[0][0]));
+    }
 }
 
 void Shader::Compile()
@@ -173,7 +226,9 @@ void Shader::CheckLinkingError()
     if (!success)
     {
         GL(glGetProgramInfoLog(m_ID, 1024, NULL, infoLog));
-        LOG_ERROR("Shader: Error linking shader program: {}", infoLog);
+        LOG_ERROR("Shader: Error linking shader program:\n{}", infoLog);
+        GL(glDeleteProgram(m_ID));
+        m_ID = 0;
     }
 }
 
