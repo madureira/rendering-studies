@@ -2,9 +2,16 @@
 
 #include "../Camera/Camera.h"
 #include "../Window/Window.h"
+#include <imgui.h>
 
 void InputProcessorUtil::moveCamera(Camera* camera, Window* window, float32 deltaTime, float32 speed, float32 acceleratedSpeed)
 {
+    ImGuiIO& io = ImGui::GetIO();
+
+    if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
+        return;
+    }
+
     const MouseState& mouse = window->GetMouse();
 
     if (mouse.LeftDown())

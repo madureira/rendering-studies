@@ -5,6 +5,7 @@ glad/0.1.36
 glfw/3.4
 glm/cci.20230113
 spdlog/1.15.1
+imgui/1.92.5
 
 [options]
 glad/*:spec=gl

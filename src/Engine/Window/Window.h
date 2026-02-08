@@ -47,6 +47,10 @@ public:
     bool IsKeyPressed(KeyToken key) const;
     bool IsKeyReleased(KeyToken key) const;
     const MouseState& GetMouse() const;
+    inline GLFWwindow* getNativeWindow() const
+    {
+        return m_Window;
+    }
 
 
 private:

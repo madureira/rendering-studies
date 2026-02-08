@@ -18,6 +18,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # Find libraries
+find_package(imgui CONFIG REQUIRED)
 find_package(assimp REQUIRED)
 find_package(freetype REQUIRED)
 find_package(glad REQUIRED)
@@ -32,7 +33,20 @@ file(GLOB_RECURSE CPP_SOURCES src/*.cpp)
 file(GLOB_RECURSE HEADER_FILES src/*.h)
 
 # Create the library target
-add_executable(${PROJECT_NAME} src/main.cpp ${CPP_SOURCES} ${HEADER_FILES})
+add_executable(
+    ${PROJECT_NAME}
+    src/main.cpp
+
+    # ImGui backends (vendor these files)
+    external/imgui/backends/imgui_impl_glfw.cpp
+    external/imgui/backends/imgui_impl_opengl3.cpp
+
+    ${CPP_SOURCES} ${HEADER_FILES}
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+  external/imgui/backends
+)
 
 # Copy assets to the build directory
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/)
@@ -41,6 +55,7 @@ file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/)
 file(COPY config.ini DESTINATION ${CMAKE_BINARY_DIR}/)
 
 # Link libraries to the target
+target_link_libraries(${PROJECT_NAME} imgui::imgui)
 target_link_libraries(${PROJECT_NAME} assimp::assimp)
 target_link_libraries(${PROJECT_NAME} Freetype::Freetype)
 target_link_libraries(${PROJECT_NAME} glad::glad)
