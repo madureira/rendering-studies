@@ -22,6 +22,7 @@ struct MouseState
     float64 y = 0.0;
     float64 dx = 0.0;
     float64 dy = 0.0;
+    float64 scrollY = 0.0;
 
     MouseButtonState buttons[Input::kMouseButtonLast + 1]{};
 
@@ -29,6 +30,7 @@ struct MouseState
     {
         dx = 0.0;
         dy = 0.0;
+        scrollY = 0.0;
 
         for (auto& button : buttons)
         {

@@ -6,13 +6,13 @@ layout(location = 1) in vec3 a_Normal;
 uniform mat4 u_Model;
 uniform mat4 u_View;
 uniform mat4 u_Projection;
+uniform vec3 u_CameraPosition;
+uniform vec3 u_LightPosition;
 
 out vec3 v_Color;
 
 vec3 ADSLightModel(in vec3 normal, in vec3 position)
 {
-    const vec3 lightPosition = vec3(0.5, 1.0, 0.3);
-
     const vec3 lightAmbient = vec3(0.2, 0.2, 0.2);
     const vec3 lightDiffuse = vec3(1.0, 1.0, 1.0);
     const vec3 lightSpecular = vec3(1.0, 1.0, 1.0);
@@ -25,9 +25,9 @@ vec3 ADSLightModel(in vec3 normal, in vec3 position)
 
     // normal, light, view, and light reflection vectors
     vec3 norm = normalize(normal);
-    vec3 lightv = normalize(lightPosition);
-    vec3 viewv = normalize(vec3(0.0, 0.0, 0.0) - position);
-    vec3 refl = reflect(vec3(0.0, 0.0, 0.0) - lightv, norm);
+    vec3 lightv = normalize(u_LightPosition);
+    vec3 viewv = normalize(u_CameraPosition - position);
+    vec3 refl = reflect(-lightv, norm);
 
     // ambient light computation
     vec3 ambient = materialAmbient * lightAmbient;

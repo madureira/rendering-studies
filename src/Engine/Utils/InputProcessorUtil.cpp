@@ -44,4 +44,14 @@ void InputProcessorUtil::moveCamera(Camera* camera, Window* window, float32 delt
     {
         camera->Move(CameraMove::RIGHT, deltaTime, speed);
     }
+
+    const float64 scrollY = mouse.scrollY;
+    if (scrollY > 0.0)
+    {
+        camera->Move(CameraMove::FORWARD, 0.15f, (float32)scrollY * 2.0f);
+    }
+    else if (scrollY < 0.0)
+    {
+        camera->Move(CameraMove::BACKWARD, 0.15f, (float32)(-scrollY) * 2.0f);
+    }
 }

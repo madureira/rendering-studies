@@ -61,4 +61,5 @@ private:
     void SetPolygonMode() const;
     void OnCursorPos(float64 x, float64 y);
     void OnMouseButton(int32 button, int32 action, int32 mods);
+    void OnScroll(float64 xoffset, float64 yoffset);
 };

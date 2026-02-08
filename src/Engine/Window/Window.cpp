@@ -107,6 +107,11 @@ Window::Window(const Config& config)
         window.OnMouseButton(button, action, mods);
     });
 
+    glfwSetScrollCallback(m_Window, [](GLFWwindow* pNativeWindow, float64 xoffset, float64 yoffset) {
+        Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
+        window.OnScroll(xoffset, yoffset);
+    });
+
     // Initialize GLAD
     if (!gladLoadGL())
     {
@@ -329,6 +334,11 @@ void Window::OnMouseButton(int32 button, int32 action, [[maybe_unused]] int32 mo
             b.released = true;
         }
     }
+}
+
+void Window::OnScroll([[maybe_unused]] float64 xoffset, float64 yoffset)
+{
+    m_Mouse.scrollY += yoffset;
 }
 
 void Window::ShowHardwareInfo() const

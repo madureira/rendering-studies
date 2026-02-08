@@ -3,12 +3,13 @@
 flat in vec3 v_Normal;
 in vec3 v_FragPos;
 
+uniform vec3 u_LightPosition;
+
 out vec4 frag_color;
 
 void main()
 {
-    // Simple directional light from above-front
-    vec3 lightDir = normalize(vec3(0.5, 1.0, 0.3));
+    vec3 lightDir = normalize(u_LightPosition);
 
     // Compute diffuse lightig using the flat normal
     float diffuse = max(dot(v_Normal, lightDir), 0.0);

@@ -17,6 +17,11 @@ static const char* shaderOptions[] = {
     "gouraud",
     "phong"
 };
+static glm::vec3 lightPosition = { 0.5f, 0.6f, 0.5f };
+static glm::vec3 rotDeg = { 0.0f, 0.0f, 0.0f }; // x=pitch, y=yaw, z=roll
+static glm::vec3 scale = { 1.0f, 1.0f, 1.0 };
+static bool lockScale = true;
+static float scaleAll = 1.0f;
 
 TeapotShading::TeapotShading(Window* window)
     : m_Window(window)
@@ -46,11 +51,42 @@ void TeapotShading::Update(float32 deltaTime)
     // UI:
     ImGui::Begin("Teapot Shading");
     ImGui::AlignTextToFramePadding();
+
     ImGui::TextUnformatted("Shading type");
     ImGui::SameLine();
-    // Control the combo width
-    ImGui::SetNextItemWidth(120);
     ImGui::Combo("##Shading type", &currentShader, shaderOptions, IM_ARRAYSIZE(shaderOptions));
+
+    ImGui::TextUnformatted("Light position");
+    ImGui::SameLine();
+    ImGui::SliderFloat3("##Light position", &lightPosition.x, -10.0f, 10.0f);
+
+    ImGui::TextUnformatted("Rotation (deg)");
+    ImGui::SameLine();
+    ImGui::SliderFloat3("##Rotation (deg)", &rotDeg.x, -180.0f, 180.0f);
+
+    ImGui::TextUnformatted("Scale");
+    ImGui::SameLine();
+    if (lockScale)
+    {
+        if (ImGui::SliderFloat("##ScaleAll", &scaleAll, 0.1f, 10.0f))
+        {
+            scale = glm::vec3(scaleAll);
+        }
+    }
+    else
+    {
+        ImGui::SliderFloat3("##Scale", &scale.x, 0.1f, 10.0f);
+    }
+    ImGui::SameLine();
+    if (ImGui::Checkbox("Lock", &lockScale))
+    {
+        if (lockScale)
+        {
+            scaleAll = scale.x;
+            scale = glm::vec3(scaleAll);
+        }
+    }
+
     ImGui::End();
 }
 
@@ -70,9 +106,20 @@ void TeapotShading::Render()
     glm::vec3 modelPosRel = glm::vec3(glm::dvec3(0.0) - origin);
     glm::mat4 modelRel = glm::translate(glm::mat4(1.0f), modelPosRel);
 
+    glm::vec3 r = glm::radians(rotDeg);
+
+    // Rotation order: yaw (Y), pitch (X), roll (Z)
+    modelRel = glm::rotate(modelRel, r.y, glm::vec3(0, 1, 0));
+    modelRel = glm::rotate(modelRel, r.x, glm::vec3(1, 0, 0));
+    modelRel = glm::rotate(modelRel, r.z, glm::vec3(0, 0, 1));
+
+    modelRel = glm::scale(modelRel, scale);
+
     m_Shader[currentShader]->SetMat4("u_Model", modelRel);
     m_Shader[currentShader]->SetMat4("u_View", viewRel);
     m_Shader[currentShader]->SetMat4("u_Projection", projection);
+    m_Shader[currentShader]->SetVec3("u_CameraPosition", glm::vec3(m_Camera->GetPositionHP()));
+    m_Shader[currentShader]->SetVec3("u_LightPosition", lightPosition);
 
     m_Model->Draw();
 }
