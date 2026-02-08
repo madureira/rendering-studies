@@ -8,7 +8,8 @@ void InputProcessorUtil::moveCamera(Camera* camera, Window* window, float32 delt
 {
     ImGuiIO& io = ImGui::GetIO();
 
-    if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
+    if (io.WantCaptureMouse || io.WantCaptureKeyboard)
+    {
         return;
     }
 

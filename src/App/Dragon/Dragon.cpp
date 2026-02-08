@@ -14,16 +14,16 @@ Dragon::Dragon(Window* window)
     : m_Window(window)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
+    m_Model = new Model("assets/models/dragon.obj");
     m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f);
     m_Grid = new Grid();
-    m_Model = new Model("assets/models/dragon.obj");
 }
 
 Dragon::~Dragon()
 {
-    delete m_Model;
     delete m_Grid;
     delete m_Camera;
+    delete m_Model;
     delete m_Shader;
 }
 

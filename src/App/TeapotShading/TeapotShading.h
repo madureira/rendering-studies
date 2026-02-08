@@ -9,18 +9,18 @@ class Model;
 class Shader;
 class Window;
 
-class TeapotFlatShading final : public App
+class TeapotShading final : public App
 {
 private:
     Window* m_Window;
-    Shader* m_Shader;
+    Shader* m_Shader[3];
     Camera* m_Camera;
     Grid* m_Grid;
     Model* m_Model;
 
 public:
-    TeapotFlatShading(Window* window);
-    ~TeapotFlatShading();
+    TeapotShading(Window* window);
+    ~TeapotShading();
 
     virtual void Update(float32 deltaTime) override;
     virtual void Render() override;

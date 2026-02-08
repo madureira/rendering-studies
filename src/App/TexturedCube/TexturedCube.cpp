@@ -13,14 +13,20 @@ TexturedCube::TexturedCube(Window* window)
     : m_Window(window)
 {
     m_Shader = new Shader("assets/shaders/texture.vert", "assets/shaders/texture.frag");
+    // Load and create a texture
+    TextureParams texParams{};
+    texParams.srgb = false;
+    texParams.generateMipmaps = true;
+    texParams.flipY = true;
+    m_Texture = new Texture("assets/images/container.jpg", texParams);
     m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     CreateMesh();
 }
 
 TexturedCube::~TexturedCube()
 {
-    delete m_Texture;
     delete m_Camera;
+    delete m_Texture;
     delete m_Shader;
 
     GL(glDeleteVertexArrays(1, &m_VAO));
@@ -140,14 +146,6 @@ void TexturedCube::CreateMesh()
     // Texture coordinate attribute (location = 1 in shader)
     GL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float32))));
     GL(glEnableVertexAttribArray(1));
-
-    // Load and create a texture
-    TextureParams texParams{};
-    texParams.srgb = false;
-    texParams.generateMipmaps = true;
-    texParams.flipY = true;
-
-    m_Texture = new Texture("assets/images/container.jpg", texParams);
 
     m_Shader->Bind();
     m_Shader->SetInt("u_Texture", 0);
