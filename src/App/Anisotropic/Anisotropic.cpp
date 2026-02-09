@@ -11,13 +11,14 @@
 
 REGISTER_APP(Anisotropic)
 
-static glm::vec3 lightPosition = { 0.5f, 0.6f, 0.5f };
-static glm::vec3 rotDeg        = { 0.0f, 0.0f, 0.0f };
+// Light direction (directional light; the vector points toward the light)
+static glm::vec3 lightDir = { 0.5f, 0.6f, 0.5f };
+static glm::vec3 rotDeg   = { 0.0f, 0.0f, 0.0f };
 
 // Material parameters
-static float s_roughness  = 0.45f;   // perceptual roughness [0..1]
-static float s_anisotropy = 0.85f;   // anisotropy [-1..1]; positive = streak along T
-static float s_metallic   = 1.0f;    // 1.0 = full metal
+static float s_roughness  = 1.0f;
+static float s_anisotropy = 0.75f;
+static float s_metallic   = 1.0f;
 
 // Steel base reflectance (F0 for metal)
 static glm::vec3 s_albedo = { 0.56f, 0.57f, 0.58f };
@@ -26,7 +27,7 @@ Anisotropic::Anisotropic(Window* window)
     : m_Window(window)
 {
     m_Shader = new Shader("assets/shaders/anisotropic.vert", "assets/shaders/anisotropic.frag");
-    m_Model  = new Model("assets/models/sphere_smooth.obj");
+    m_Model  = new Model("assets/models/sphere.obj");
     m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f);
     m_Grid   = new Grid();
 }
@@ -46,9 +47,9 @@ void Anisotropic::Update(float32 deltaTime)
     ImGui::Begin("Anisotropic Shading");
     ImGui::AlignTextToFramePadding();
 
-    ImGui::TextUnformatted("Light position");
+    ImGui::TextUnformatted("Light direction");
     ImGui::SameLine();
-    ImGui::SliderFloat3("##Light position", &lightPosition.x, -10.0f, 10.0f);
+    ImGui::SliderFloat3("##Light direction", &lightDir.x, -10.0f, 10.0f);
 
     ImGui::TextUnformatted("Rotation (deg)");
     ImGui::SameLine();
@@ -68,6 +69,8 @@ void Anisotropic::Render()
 {
     glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
 
+    // Floating-origin: all positions are relative to 'origin' to preserve
+    // floating-point precision far from the world origin.
     glm::dvec3 origin = m_Camera->GetPositionHP();
     origin.y = 0.0;
 
@@ -77,14 +80,13 @@ void Anisotropic::Render()
 
     m_Shader->Bind();
 
+    // Model position in origin-relative space
     glm::vec3 modelPosRel = glm::vec3(glm::dvec3(0.0) - origin);
     glm::mat4 modelRel = glm::translate(glm::mat4(1.0f), modelPosRel);
 
     float radius = 1.0f;
     float gap    = 0.01f;
-    glm::vec3 spherePos = glm::vec3(0.0f, radius + gap, 0.0f);
-
-    modelRel = glm::translate(modelRel, spherePos);
+    modelRel = glm::translate(modelRel, glm::vec3(0.0f, radius + gap, 0.0f));
 
     glm::vec3 r = glm::radians(rotDeg);
 
@@ -96,13 +98,14 @@ void Anisotropic::Render()
     m_Shader->SetMat4("u_Model",      modelRel);
     m_Shader->SetMat4("u_View",       viewRel);
     m_Shader->SetMat4("u_Projection", projection);
-    m_Shader->SetVec3("u_CameraPosition", glm::vec3(m_Camera->GetPositionHP()));
 
-    // Slightly warm directional light (treated as direction, like Phong shader)
-    glm::vec3 lightColor = glm::vec3(3.5f, 3.4f, 3.2f);
+    // Camera position in origin-relative space (same space as WorldPos in shaders)
+    glm::vec3 cameraPosRel = glm::vec3(m_Camera->GetPositionHP() - origin);
+    m_Shader->SetVec3("u_CameraPosition", cameraPosRel);
 
-    m_Shader->SetVec3 ("u_LightPosition", lightPosition);
-    m_Shader->SetVec3 ("u_LightColor", lightColor);
+    // Directional light: direction vector (not a position), independent of origin
+    m_Shader->SetVec3 ("u_LightDir",   glm::normalize(lightDir));
+    m_Shader->SetVec3 ("u_LightColor", glm::vec3(3.5f, 3.4f, 3.2f));
     m_Shader->SetVec3 ("u_Albedo",     s_albedo);
     m_Shader->SetFloat("u_Roughness",  s_roughness);
     m_Shader->SetFloat("u_Anisotropy", s_anisotropy);

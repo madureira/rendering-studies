@@ -7,8 +7,9 @@ uniform mat4 u_Model;
 uniform mat4 u_View;
 uniform mat4 u_Projection;
 
+// All outputs are in origin-relative world space
 out vec3 v_Normal;
-out vec3 v_Position;
+out vec3 v_WorldPos;
 
 void main()
 {
@@ -16,8 +17,8 @@ void main()
 
     vec4 worldPos = u_Model * vec4(a_Position, 1.0);
 
-    v_Normal = normalize(normalMatrix * a_Normal);
-    v_Position = worldPos.xyz;
+    v_Normal   = normalize(normalMatrix * a_Normal);
+    v_WorldPos = worldPos.xyz;
 
     gl_Position = u_Projection * u_View * worldPos;
 }

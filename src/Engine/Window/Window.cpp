@@ -95,6 +95,11 @@ Window::Window(const Config& config)
         {
             glfwSetWindowShouldClose(pNativeWindow, GLFW_TRUE);
         }
+
+        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+        {
+            window.m_WireframeMode = !window.m_WireframeMode;
+        }
     });
 
     glfwSetCursorPosCallback(m_Window, [](GLFWwindow* pNativeWindow, float64 xpos, float64 ypos) {
@@ -291,7 +296,7 @@ void Window::Fullscreen() const
 
 void Window::SetPolygonMode() const
 {
-    if (IsKeyPressed(KeyToken::Space))
+    if (m_WireframeMode)
     {
         GL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
     }

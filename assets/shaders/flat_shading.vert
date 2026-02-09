@@ -7,17 +7,17 @@ uniform mat4 u_Model;
 uniform mat4 u_View;
 uniform mat4 u_Projection;
 
+// All outputs are in origin-relative world space
 flat out vec3 v_Normal;
-out vec3 v_FragPos;
+out vec3 v_WorldPos;
 
 void main()
 {
-    // Transform position
     vec4 worldPos = u_Model * vec4(a_Position, 1.0);
-    v_FragPos = worldPos.xyz;
+    v_WorldPos = worldPos.xyz;
     gl_Position = u_Projection * u_View * worldPos;
 
-    // Transform normal (using normal matrix to handle non-uniform scaling)
+    // Normal matrix handles non-uniform scaling
     mat3 normalMatrix = mat3(transpose(inverse(u_Model)));
     v_Normal = normalize(normalMatrix * a_Normal);
 }

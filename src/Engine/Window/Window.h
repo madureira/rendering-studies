@@ -27,6 +27,7 @@ private:
     bool m_VSyncOn;
     MouseState m_Mouse;
     mutable bool m_FullScreen;
+    bool m_WireframeMode = false;
     mutable float64 m_LastTime = 0.0f;
     mutable float64 m_FpsLastTime = 0.0;
     mutable int32 m_FpsNbFrames = 0;

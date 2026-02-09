@@ -17,8 +17,10 @@ static const char* shaderOptions[] = {
     "gouraud",
     "phong"
 };
-static glm::vec3 lightPosition = { 0.5f, 0.6f, 0.5f };
-static glm::vec3 rotDeg = { 0.0f, 0.0f, 0.0f }; // x=pitch, y=yaw, z=roll
+
+// Light direction (directional light; the vector points toward the light)
+static glm::vec3 lightDir = { 0.5f, 0.6f, 0.5f };
+static glm::vec3 rotDeg = { 0.0f, 0.0f, 0.0f };
 static glm::vec3 scale = { 1.0f, 1.0f, 1.0 };
 static bool lockScale = true;
 static float scaleAll = 1.0f;
@@ -48,7 +50,6 @@ void TeapotShading::Update(float32 deltaTime)
 {
     InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime, 5.0f, 30.f);
 
-    // UI:
     ImGui::Begin("Teapot Shading");
     ImGui::AlignTextToFramePadding();
 
@@ -56,9 +57,9 @@ void TeapotShading::Update(float32 deltaTime)
     ImGui::SameLine();
     ImGui::Combo("##Shading type", &currentShader, shaderOptions, IM_ARRAYSIZE(shaderOptions));
 
-    ImGui::TextUnformatted("Light position");
+    ImGui::TextUnformatted("Light direction");
     ImGui::SameLine();
-    ImGui::SliderFloat3("##Light position", &lightPosition.x, -10.0f, 10.0f);
+    ImGui::SliderFloat3("##Light direction", &lightDir.x, -10.0f, 10.0f);
 
     ImGui::TextUnformatted("Rotation (deg)");
     ImGui::SameLine();
@@ -94,6 +95,8 @@ void TeapotShading::Render()
 {
     glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
 
+    // Floating-origin: all positions are relative to 'origin' to preserve
+    // floating-point precision far from the world origin.
     glm::dvec3 origin = m_Camera->GetPositionHP();
     origin.y = 0.0;
 
@@ -103,6 +106,7 @@ void TeapotShading::Render()
 
     m_Shader[currentShader]->Bind();
 
+    // Model position in origin-relative space
     glm::vec3 modelPosRel = glm::vec3(glm::dvec3(0.0) - origin);
     glm::mat4 modelRel = glm::translate(glm::mat4(1.0f), modelPosRel);
 
@@ -118,8 +122,13 @@ void TeapotShading::Render()
     m_Shader[currentShader]->SetMat4("u_Model", modelRel);
     m_Shader[currentShader]->SetMat4("u_View", viewRel);
     m_Shader[currentShader]->SetMat4("u_Projection", projection);
-    m_Shader[currentShader]->SetVec3("u_CameraPosition", glm::vec3(m_Camera->GetPositionHP()));
-    m_Shader[currentShader]->SetVec3("u_LightPosition", lightPosition);
+
+    // Camera position in origin-relative space (same space as WorldPos in shaders)
+    glm::vec3 cameraPosRel = glm::vec3(m_Camera->GetPositionHP() - origin);
+    m_Shader[currentShader]->SetVec3("u_CameraPosition", cameraPosRel);
+
+    // Directional light: direction vector (not a position), independent of origin
+    m_Shader[currentShader]->SetVec3("u_LightDir", glm::normalize(lightDir));
 
     m_Model->Draw();
 }

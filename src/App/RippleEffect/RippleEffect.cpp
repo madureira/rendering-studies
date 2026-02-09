@@ -5,8 +5,14 @@
 #include "../../Engine/Window/Window.h"
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterApp.h>
+#include <imgui.h>
 
 REGISTER_APP(RippleEffect)
+
+// Real-time tweakable parameters
+static int s_tessLevel = 32;       // subdivisions per patch (tessellation)
+static float s_amplitude = 0.2f;
+static float s_frequency = 5.0f;
 
 RippleEffect::RippleEffect(Window* window)
     : m_Window(window)
@@ -30,11 +36,6 @@ RippleEffect::RippleEffect(Window* window)
         -35.264f // pitch: ~35° down from horizontal (classic isometric)
     );
 
-    m_Shader->Bind();
-    m_Shader->SetFloat("u_Amplitude", 0.2f);
-    m_Shader->SetFloat("u_Frequency", 5.0f);
-    m_Shader->SetInt("u_TessLevel", 32);
-    m_Shader->Unbind();
     CreateMesh();
 }
 
@@ -50,6 +51,12 @@ RippleEffect::~RippleEffect()
 void RippleEffect::Update(float32 deltaTime)
 {
     InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime);
+
+    ImGui::Begin("Ripple Effect");
+    ImGui::SliderInt("Tessellation level", &s_tessLevel, 1, 128, "%d");
+    ImGui::SliderFloat("Amplitude", &s_amplitude, 0.01f, 1.0f, "%.2f");
+    ImGui::SliderFloat("Frequency", &s_frequency, 0.5f, 20.0f, "%.1f");
+    ImGui::End();
 }
 
 void RippleEffect::Render()
@@ -60,12 +67,14 @@ void RippleEffect::Render()
 
     m_Shader->Bind();
 
-    // Set shader uniforms
     m_Shader->SetMat4("u_Model", model);
     m_Shader->SetMat4("u_View", view);
     m_Shader->SetMat4("u_Projection", projection);
 
     m_Shader->SetFloat("u_Time", m_Window->GetTime());
+    m_Shader->SetInt("u_TessLevel", s_tessLevel);
+    m_Shader->SetFloat("u_Amplitude", s_amplitude);
+    m_Shader->SetFloat("u_Frequency", s_frequency);
 
     GL(glPatchParameteri(GL_PATCH_VERTICES, 4));
     GL(glBindVertexArray(m_VAO));

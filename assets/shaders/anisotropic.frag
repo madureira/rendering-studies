@@ -11,17 +11,20 @@
 //   - Heitz 2014, "Understanding the Masking-Shadowing Function"
 //   - Kulla 2017, "Revisiting Physically Based Shading at Imageworks"
 //   - Romain Guy, https://gist.github.com/romainguy/39d4c1c6aac56623399dcd1e8da68337
+//
+// Coordinate space: all positions (v_WorldPos, u_CameraPosition) are in
+// origin-relative world space (floating-origin pattern for precision).
 // ============================================================================
 
-in VS_OUT {
-    vec3 WorldPos;
-    vec3 Normal;
-    vec3 Tangent;
-    vec3 Bitangent;
-} fs_in;
+in vec3 v_WorldPos;
+in vec3 v_Normal;
+in vec3 v_Tangent;
+in vec3 v_Bitangent;
 
+// Both u_CameraPosition and v_WorldPos are in origin-relative space
 uniform vec3  u_CameraPosition;
-uniform vec3  u_LightPosition;  // light direction (directional light, normalized in shader)
+// Directional light: normalized direction toward the light
+uniform vec3  u_LightDir;
 uniform vec3  u_LightColor;
 uniform vec3  u_Albedo;         // base reflectance (F0 for metals)
 uniform float u_Roughness;      // perceptual roughness [0..1]
@@ -31,7 +34,7 @@ uniform float u_Metallic;       // 0 = dielectric, 1 = metal
 out vec4 frag_color;
 
 const float PI            = 3.14159265358979;
-const float MIN_ROUGHNESS = 0.045; // avoid division by zero in GGX
+const float MIN_ROUGHNESS = 0.045;
 
 // ---------- helpers ---------------------------------------------------------
 
@@ -80,19 +83,17 @@ vec3 Fd_Lambert(vec3 albedo)
 
 void main()
 {
-    // Re-normalize interpolated vectors
-    vec3 N = normalize(fs_in.Normal);
+    vec3 N = normalize(v_Normal);
     // Gram-Schmidt re-orthogonalization after interpolation
-    vec3 T = normalize(fs_in.Tangent   - N * dot(fs_in.Tangent,   N));
-    vec3 B = normalize(fs_in.Bitangent - N * dot(fs_in.Bitangent, N));
+    vec3 T = normalize(v_Tangent   - N * dot(v_Tangent,   N));
+    vec3 B = normalize(v_Bitangent - N * dot(v_Bitangent, N));
 
-    vec3 V = normalize(u_CameraPosition - fs_in.WorldPos);
-    // Directional light: normalize the position vector as a direction
-    // This ensures the light direction is fixed regardless of camera movement
-    vec3 L = normalize(u_LightPosition);
+    // V and L in origin-relative space (consistent with v_WorldPos)
+    vec3 V = normalize(u_CameraPosition - v_WorldPos);
+    vec3 L = u_LightDir;
     vec3 H = normalize(V + L);
 
-    float NoV = abs(dot(N, V)) + 1e-5; // bias to avoid artifacts at grazing
+    float NoV = abs(dot(N, V)) + 1e-5;
     float NoL = saturate(dot(N, L));
     float NoH = saturate(dot(N, H));
     float VoH = saturate(dot(V, H));
@@ -114,9 +115,9 @@ void main()
     vec3 f0 = mix(vec3(0.04), u_Albedo, u_Metallic);
 
     // ---- Specular (anisotropic GGX) ----
-    float D = D_GGX_Anisotropic(at, ab, ToH, BoH, NoH);
+    float D   = D_GGX_Anisotropic(at, ab, ToH, BoH, NoH);
     float Vis = V_SmithGGX_Anisotropic(at, ab, ToV, BoV, NoV, ToL, BoL, NoL);
-    vec3  F = F_Schlick(f0, VoH);
+    vec3  F   = F_Schlick(f0, VoH);
 
     vec3 Fr = (D * Vis) * F;
 
@@ -129,18 +130,16 @@ void main()
 
     // ---- Ambient / fake environment reflection ----
     // Without an environment map, metals look black because they have no
-    // diffuse. We fake an environment by using a bright hemisphere blend
-    // so the sphere reads as "steel gray" rather than "black ball".
-    vec3 skyColor    = vec3(0.9, 0.95, 1.0);   // bright overcast sky
-    vec3 groundColor = vec3(0.3, 0.28, 0.25);  // warm ground
+    // diffuse. Approximate with a hemisphere sky/ground blend.
+    vec3 skyColor    = vec3(0.9, 0.95, 1.0);
+    vec3 groundColor = vec3(0.3, 0.28, 0.25);
     float skyBlend   = 0.5 + 0.5 * N.y;
     vec3 envColor    = mix(groundColor, skyColor, skyBlend);
 
     // Fresnel: edges reflect more of the environment
-    float envFresnel = 1.0 - pow(1.0 - NoV, 5.0);
-    // Mix between full reflection at edges and partial at center
+    float envFresnel  = 1.0 - pow(1.0 - NoV, 5.0);
     float envStrength = mix(0.8, 0.35, envFresnel);
-    vec3 ambient = f0 * envColor * envStrength;
+    vec3 ambient      = f0 * envColor * envStrength;
 
     color += ambient;
 
