@@ -10,7 +10,7 @@
 REGISTER_APP(RippleEffect)
 
 // Real-time tweakable parameters
-static int s_tessLevel = 32;       // subdivisions per patch (tessellation)
+static int s_tessLevel = 4; // subdivisions per patch (tessellation)
 static float s_amplitude = 0.2f;
 static float s_frequency = 5.0f;
 

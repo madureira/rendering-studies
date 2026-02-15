@@ -1,7 +1,8 @@
-#include <RenderingStudies/AppRegistry.h>
-#include <RenderingStudies/Config.h>
-#include "Engine/Window/Window.h"
 #include "Engine/UI/UI.h"
+#include "Engine/Utils/AppSelector.h"
+#include "Engine/Window/Window.h"
+#include <RenderingStudies/Config.h>
+#include <RenderingStudies/Types.h>
 
 int main()
 {
@@ -10,12 +11,9 @@ int main()
     Window window(cfg);
     UI ui(&window);
 
-    auto app = AppRegistry::Instance().Create(cfg.app_name, &window);
-
-    if (app == nullptr)
-    {
-        return EXIT_FAILURE;
-    }
+    App* app = nullptr;
+    AppSelector appSelector;
+    int32 lastSelectedAppIndex = -1;
 
     while (window.IsOpen())
     {
@@ -24,13 +22,26 @@ int main()
         window.Clear();
 
         UI::NewFrame();
-        app->Update(window.GetDeltaTime());
+        appSelector.Render();
 
-        app->Render();
+        int32 currentAppIndex = appSelector.GetSelectedIndex();
+        if (currentAppIndex != lastSelectedAppIndex)
+        {
+            delete app;
+            app = appSelector.GetSelectedApp(&window);
+            lastSelectedAppIndex = currentAppIndex;
+        }
+
+        if (app)
+        {
+            app->Update(window.GetDeltaTime());
+            app->Render();
+        }
         UI::Render();
 
         window.SwapBuffers();
     }
 
+    delete app;
     return EXIT_SUCCESS;
 }

@@ -18,7 +18,6 @@ struct Config
     bool window_fullscreen;
     bool show_fps;
     bool vsync_on;
-    std::string app_name;
 };
 
 namespace
@@ -61,7 +60,6 @@ inline Config loadConfig(const std::string& path)
     bool window_fullscreen = false;
     bool show_fps = false;
     bool vsync_on = false;
-    std::string app_name;
 
     bool has_width = false;
     bool has_height = false;
@@ -82,11 +80,7 @@ inline Config loadConfig(const std::string& path)
         const std::string key = line.substr(0, pos);
         const std::string value = line.substr(pos + 1);
 
-        if (key == "app")
-        {
-            app_name = value;
-        }
-        else if (key == "window_title")
+        if (key == "window_title")
         {
             window_title = value;
         }
@@ -124,11 +118,6 @@ inline Config loadConfig(const std::string& path)
         }
     }
 
-    if (app_name.empty())
-    {
-        throw std::runtime_error("No 'app' key found in config file");
-    }
-
     if (window_title.empty())
     {
         throw std::runtime_error("No 'window_title' key found in config file");
@@ -139,7 +128,6 @@ inline Config loadConfig(const std::string& path)
         throw std::runtime_error("Missing 'window_width' or 'window_height' in config file");
     }
 
-    LOG_INFO("Rendering app: {}", app_name);
 
-    return Config{ window_title, window_width, window_height, window_fullscreen, show_fps, vsync_on, app_name };
+    return Config{ window_title, window_width, window_height, window_fullscreen, show_fps, vsync_on };
 }

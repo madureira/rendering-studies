@@ -2,18 +2,16 @@
 
 #include "App.h"
 
-#include <functional>
-#include <memory>
-#include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 class Window;
 
 class AppRegistry
 {
 public:
-    using Creator = std::function<std::unique_ptr<App>(Window*)>;
+    typedef App* (*Creator)(Window*);
 
     static AppRegistry& Instance()
     {
@@ -23,17 +21,28 @@ public:
 
     void Register(const std::string& name, Creator creator)
     {
-        m_Registry[name] = std::move(creator);
+        m_Registry[name] = creator;
     }
 
-    std::unique_ptr<App> Create(const std::string& name, Window* window) const
+    App* Create(const std::string& name, Window* window) const
     {
         auto it = m_Registry.find(name);
         if (it == m_Registry.end())
         {
-            throw std::runtime_error("Unknown app: " + name);
+            return nullptr;
         }
         return (it->second)(window);
+    }
+
+    std::vector<std::string> GetAllAppNames() const
+    {
+        std::vector<std::string> appNames;
+
+        for (auto it = m_Registry.begin(); it != m_Registry.end(); ++it)
+        {
+            appNames.push_back(it->first);
+        }
+        return appNames;
     }
 
 private:

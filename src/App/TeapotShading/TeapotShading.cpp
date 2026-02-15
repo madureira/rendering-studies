@@ -123,9 +123,12 @@ void TeapotShading::Render()
     m_Shader[currentShader]->SetMat4("u_View", viewRel);
     m_Shader[currentShader]->SetMat4("u_Projection", projection);
 
-    // Camera position in origin-relative space (same space as WorldPos in shaders)
-    glm::vec3 cameraPosRel = glm::vec3(m_Camera->GetPositionHP() - origin);
-    m_Shader[currentShader]->SetVec3("u_CameraPosition", cameraPosRel);
+    // Camera position in origin-relative space (only used by gouraud and phong for view vector)
+    if (currentShader != 0)
+    {
+        glm::vec3 cameraPosRel = glm::vec3(m_Camera->GetPositionHP() - origin);
+        m_Shader[currentShader]->SetVec3("u_CameraPosition", cameraPosRel);
+    }
 
     // Directional light: direction vector (not a position), independent of origin
     m_Shader[currentShader]->SetVec3("u_LightDir", glm::normalize(lightDir));
