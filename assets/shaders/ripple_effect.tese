@@ -3,7 +3,7 @@
 layout(quads, equal_spacing, ccw) in;
 
 uniform mat4 u_Model;
-uniform mat4 u_MVP;
+uniform mat4 u_VP;
 uniform float u_Time;
 uniform float u_Amplitude;
 uniform float u_Frequency;
@@ -36,8 +36,8 @@ void main()
     float height = dampedAmplitude * sin(u_Frequency * distance - PHASE * u_Time);
 
     vec4 worldPosition = u_Model * vec4(pos.x, pos.y + height, pos.z, 1.0);
-    gl_Position = u_MVP * vec4(pos.x, pos.y + height, pos.z, 1.0);
 
+    gl_Position = u_VP * worldPosition;
     v_Height = height;
     v_Time = u_Time;
 }

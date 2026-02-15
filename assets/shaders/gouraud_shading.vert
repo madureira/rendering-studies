@@ -4,7 +4,7 @@ layout(location = 0) in vec3 a_Vertex;
 layout(location = 1) in vec3 a_Normal;
 
 uniform mat4 u_Model;
-uniform mat4 u_MVP;
+uniform mat4 u_VP;
 
 // Both u_CameraPosition and worldPos are in origin-relative space
 uniform vec3 u_CameraPosition;
@@ -51,5 +51,5 @@ void main()
 
     v_Color = ADSLightModel(worldNormal, worldPos.xyz);
 
-    gl_Position = u_MVP * vec4(a_Vertex, 1.0);
+    gl_Position = u_VP * worldPos;
 }

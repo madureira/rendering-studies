@@ -64,9 +64,8 @@ void ColorCoord::Render()
     glm::vec3 modelPosRel = glm::vec3(glm::dvec3(0.0) - origin);
     glm::mat4 modelRel = glm::translate(glm::mat4(1.0f), modelPosRel);
 
-    m_Shader->SetMat4("u_Model", modelRel);
-    m_Shader->SetMat4("u_View", viewRel);
-    m_Shader->SetMat4("u_MVP", projection * viewRel * modelRel);
+    m_Shader->SetMat4("u_Projection", projection);
+    m_Shader->SetMat4("u_MV", viewRel * modelRel);
     m_Shader->SetBool("u_UseModelCoords", isUsingModelCoords);
 
     m_Model->Draw();

@@ -96,7 +96,7 @@ void Anisotropic::Render()
     modelRel = glm::rotate(modelRel, r.z, glm::vec3(0, 0, 1));
 
     m_Shader->SetMat4("u_Model",      modelRel);
-    m_Shader->SetMat4("u_MVP", projection * viewRel * modelRel);
+    m_Shader->SetMat4("u_VP", projection * viewRel);
 
     // Camera position in origin-relative space (same space as WorldPos in shaders)
     glm::vec3 cameraPosRel = glm::vec3(m_Camera->GetPositionHP() - origin);
