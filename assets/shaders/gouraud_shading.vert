@@ -1,11 +1,10 @@
 #version 410 core
 
-layout(location = 0) in vec3 a_Position;
+layout(location = 0) in vec3 a_Vertex;
 layout(location = 1) in vec3 a_Normal;
 
 uniform mat4 u_Model;
-uniform mat4 u_View;
-uniform mat4 u_Projection;
+uniform mat4 u_MVP;
 
 // Both u_CameraPosition and worldPos are in origin-relative space
 uniform vec3 u_CameraPosition;
@@ -48,9 +47,9 @@ void main()
     mat3 normalMatrix = mat3(transpose(inverse(u_Model)));
     vec3 worldNormal = normalize(normalMatrix * a_Normal);
 
-    vec4 worldPos = u_Model * vec4(a_Position, 1.0);
+    vec4 worldPos = u_Model * vec4(a_Vertex, 1.0);
 
     v_Color = ADSLightModel(worldNormal, worldPos.xyz);
 
-    gl_Position = u_Projection * u_View * worldPos;
+    gl_Position = u_MVP * vec4(a_Vertex, 1.0);
 }

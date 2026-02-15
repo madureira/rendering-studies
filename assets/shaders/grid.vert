@@ -24,7 +24,7 @@ precision mediump float;
 
 // Input: Fullscreen quad vertices in NDC space (range -1 to +1)
 // The quad covers the entire screen: (-1,-1), (-1,+1), (+1,+1), (+1,-1)
-layout(location = 0) in vec3 a_Position;
+layout(location = 0) in vec3 a_Vertex;
 
 // ============================================================================
 // UNIFORMS
@@ -99,14 +99,14 @@ void main()
     // where the ray intersects the ground plane.
 
     // Near plane point (z = -1 in OpenGL NDC)
-    v_NearH = unprojectPointH(a_Position.x, a_Position.y, -1.0);
+    v_NearH = unprojectPointH(a_Vertex.x, a_Vertex.y, -1.0);
 
     // Far plane point (z = +1 in OpenGL NDC)
-    v_FarH = unprojectPointH(a_Position.x, a_Position.y, 1.0);
+    v_FarH = unprojectPointH(a_Vertex.x, a_Vertex.y, 1.0);
 
     // Pass camera position to fragment shader
     v_CameraPos = u_CameraPos;
 
     // Output vertex position directly (fullscreen quad in NDC, no transformation needed)
-    gl_Position = vec4(a_Position, 1.0);
+    gl_Position = vec4(a_Vertex, 1.0);
 }

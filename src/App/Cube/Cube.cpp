@@ -38,9 +38,7 @@ void Cube::Render()
 
     m_Shader->Bind();
 
-    m_Shader->SetMat4("u_Model", model);
-    m_Shader->SetMat4("u_View", view);
-    m_Shader->SetMat4("u_Projection", projection);
+    m_Shader->SetMat4("u_MVP", projection * view * model);
 
     GL(glBindVertexArray(m_VAO));
 

@@ -66,8 +66,7 @@ void ColorCoord::Render()
 
     m_Shader->SetMat4("u_Model", modelRel);
     m_Shader->SetMat4("u_View", viewRel);
-    m_Shader->SetMat4("u_Projection", projection);
-
+    m_Shader->SetMat4("u_MVP", projection * viewRel * modelRel);
     m_Shader->SetBool("u_UseModelCoords", isUsingModelCoords);
 
     m_Model->Draw();

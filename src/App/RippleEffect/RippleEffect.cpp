@@ -68,9 +68,7 @@ void RippleEffect::Render()
     m_Shader->Bind();
 
     m_Shader->SetMat4("u_Model", model);
-    m_Shader->SetMat4("u_View", view);
-    m_Shader->SetMat4("u_Projection", projection);
-
+    m_Shader->SetMat4("u_MVP", projection * view * model);
     m_Shader->SetFloat("u_Time", m_Window->GetTime());
     m_Shader->SetInt("u_TessLevel", s_tessLevel);
     m_Shader->SetFloat("u_Amplitude", s_amplitude);

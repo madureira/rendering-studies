@@ -120,8 +120,7 @@ void TeapotShading::Render()
     modelRel = glm::scale(modelRel, scale);
 
     m_Shader[currentShader]->SetMat4("u_Model", modelRel);
-    m_Shader[currentShader]->SetMat4("u_View", viewRel);
-    m_Shader[currentShader]->SetMat4("u_Projection", projection);
+    m_Shader[currentShader]->SetMat4("u_MVP", projection * viewRel * modelRel);
 
     // Camera position in origin-relative space (only used by gouraud and phong for view vector)
     if (currentShader != 0)

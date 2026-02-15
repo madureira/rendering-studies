@@ -50,9 +50,7 @@ void Triangle::Render()
 
     m_Shader->Bind();
 
-    m_Shader->SetMat4("u_Model", model);
-    m_Shader->SetMat4("u_View", view);
-    m_Shader->SetMat4("u_Projection", projection);
+    m_Shader->SetMat4("u_MVP", projection * view * model);
 
     GL(glBindVertexArray(m_VAO));
     GL(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0));
