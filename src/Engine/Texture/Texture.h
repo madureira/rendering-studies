@@ -7,9 +7,9 @@ struct TextureParams
 {
     bool flipY = true;
     bool generateMipmaps = true;
-    bool srgb = false;          // use true for albedo/baseColor textures
-    int32 wrapS = 0;            // 0 = repeat (map below)
-    int32 wrapT = 0;
+    bool srgb = false;
+    int32 wrapS = 0; // 0 = REPEAT, 1 = CLAMP_TO_EDGE
+    int32 wrapT = 0; // 0 = REPEAT, 1 = CLAMP_TO_EDGE
 };
 
 class Texture final

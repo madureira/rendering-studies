@@ -57,7 +57,7 @@ Grid::~Grid()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void Grid::Draw(const Camera& camera, const glm::mat4& viewRel, const glm::mat4& projection, const glm::dvec3& origin) const
+void Grid::Draw(const Camera& camera, const glm::mat4& viewRel, const glm::mat4& projection, const glm::dvec3& origin, bool showYAxis) const
 {
     glm::dvec3 positionHP = camera.GetPositionHP();
 
@@ -81,6 +81,7 @@ void Grid::Draw(const Camera& camera, const glm::mat4& viewRel, const glm::mat4&
     m_Shader->SetVec2("u_GridFract1", gridFract1);
     m_Shader->SetVec2("u_GridFract10", gridFract10);
     m_Shader->SetVec2("u_GridFract100", gridFract100);
+    m_Shader->SetBool("u_ShowYAxis", showYAxis);
 
     GL(glBindVertexArray(m_VAO));
     GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));

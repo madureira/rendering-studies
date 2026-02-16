@@ -21,5 +21,5 @@ public:
     Grid();
     ~Grid();
 
-    void Draw(const Camera& camera, const glm::mat4& viewRel, const glm::mat4& projection, const glm::dvec3& origin) const;
+    void Draw(const Camera& camera, const glm::mat4& viewRel, const glm::mat4& projection, const glm::dvec3& origin, bool showYAxis = true) const;
 };

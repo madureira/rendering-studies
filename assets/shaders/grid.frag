@@ -34,6 +34,7 @@ uniform vec3 u_GridOrigin;
 uniform vec2 u_GridFract1;   // fract(cameraPos / 1.0)
 uniform vec2 u_GridFract10;  // fract(cameraPos / 10.0)
 uniform vec2 u_GridFract100; // fract(cameraPos / 100.0)
+uniform bool u_ShowYAxis;    // when false, the green Y-axis line is not drawn
 
 out vec4 frag_color;
 
@@ -265,56 +266,60 @@ void main()
     // Y AXIS (vertical line at world origin)
     // This is rendered separately because it's not on the ground plane.
     // We find the closest point on the ray to the Y axis line.
+    // Disabled when u_ShowYAxis is false.
     // ========================================================================
 
-    vec3 rayDir = normalize(farP - nearP);
-    vec2 rayXZ = rayDir.xz;
-    float denom = dot(rayXZ, rayXZ);
-
-    if (denom > 1e-8) // Ray has horizontal component
+    if (u_ShowYAxis)
     {
-        // Y axis is at world origin (0, Y, 0).
-        // In relative coordinates, that's at position (-gridOrigin.x, Y, -gridOrigin.z)
-        vec2 yAxisRelPos = -u_GridOrigin.xz;
+        vec3 rayDir = normalize(farP - nearP);
+        vec2 rayXZ = rayDir.xz;
+        float denom = dot(rayXZ, rayXZ);
 
-        // Find parameter t where ray is closest to the Y axis line
-        float tY = dot(yAxisRelPos - nearP.xz, rayXZ) / denom;
-
-        if (tY > 0.0) // Point is in front of camera
+        if (denom > 1e-8) // Ray has horizontal component
         {
-            // Closest point on ray to Y axis
-            vec3 closest = nearP + tY * rayDir;
+            // Y axis is at world origin (0, Y, 0).
+            // In relative coordinates, that's at position (-gridOrigin.x, Y, -gridOrigin.z)
+            vec2 yAxisRelPos = -u_GridOrigin.xz;
 
-            // Distance from closest point to the Y axis (XZ distance only)
-            float distXZ = length(closest.xz - yAxisRelPos);
+            // Find parameter t where ray is closest to the Y axis line
+            float tY = dot(yAxisRelPos - nearP.xz, rayXZ) / denom;
 
-            // Calculate line width in world units based on distance from camera
-            // This keeps the line a consistent pixel width on screen
-            float camDist = length(closest - v_CameraPos);
-            float pixelWorldSize = camDist * 0.001; // Approximate world size of one pixel
-            float lineW = pixelWorldSize * kAxisYLineWidth;
-            float lineAA = pixelWorldSize * 0.6; // Anti-aliasing width
-
-            // Smooth falloff from line center
-            float yAxis = 1.0 - smoothstep(lineW - lineAA, lineW + lineAA, distXZ);
-
-            // Fade with distance
-            float camHeight = max(abs(v_CameraPos.y), 0.5);
-            float yAxisFadeDist = camHeight * kAxisYFadeMultiplier;
-            float yAxisFade = 1.0 - smoothstep(yAxisFadeDist * 0.3, yAxisFadeDist, camDist);
-
-            yAxis *= yAxisFade;
-
-            if (yAxis > 0.01)
+            if (tY > 0.0) // Point is in front of camera
             {
-                // Determine if point is above or below ground (Y=0)
-                // Below ground: render with reduced intensity for visual distinction
-                float worldY = closest.y; // World Y = relative Y (since gridOrigin.y = 0)
-                float intensity = worldY >= 0.0 ? kAxisIntensity : kAxisYBelowGroundIntensity;
+                // Closest point on ray to Y axis
+                vec3 closest = nearP + tY * rayDir;
 
-                // Blend Y axis color over existing content
-                frag_color.rgb = mix(frag_color.rgb, kAxisYColor, yAxis * intensity);
-                frag_color.a = max(frag_color.a, yAxis * intensity);
+                // Distance from closest point to the Y axis (XZ distance only)
+                float distXZ = length(closest.xz - yAxisRelPos);
+
+                // Calculate line width in world units based on distance from camera
+                // This keeps the line a consistent pixel width on screen
+                float camDist = length(closest - v_CameraPos);
+                float pixelWorldSize = camDist * 0.001; // Approximate world size of one pixel
+                float lineW = pixelWorldSize * kAxisYLineWidth;
+                float lineAA = pixelWorldSize * 0.6; // Anti-aliasing width
+
+                // Smooth falloff from line center
+                float yAxis = 1.0 - smoothstep(lineW - lineAA, lineW + lineAA, distXZ);
+
+                // Fade with distance
+                float camHeight = max(abs(v_CameraPos.y), 0.5);
+                float yAxisFadeDist = camHeight * kAxisYFadeMultiplier;
+                float yAxisFade = 1.0 - smoothstep(yAxisFadeDist * 0.3, yAxisFadeDist, camDist);
+
+                yAxis *= yAxisFade;
+
+                if (yAxis > 0.01)
+                {
+                    // Determine if point is above or below ground (Y=0)
+                    // Below ground: render with reduced intensity for visual distinction
+                    float worldY = closest.y; // World Y = relative Y (since gridOrigin.y = 0)
+                    float intensity = worldY >= 0.0 ? kAxisIntensity : kAxisYBelowGroundIntensity;
+
+                    // Blend Y axis color over existing content
+                    frag_color.rgb = mix(frag_color.rgb, kAxisYColor, yAxis * intensity);
+                    frag_color.a = max(frag_color.a, yAxis * intensity);
+                }
             }
         }
     }
