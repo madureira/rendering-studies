@@ -1,10 +1,12 @@
 #include "Cube.h"
-#include <RenderingStudies/RegisterApp.h>
+
 #include <RenderingStudies/GL.h>
-#include "../../Engine/Shader/Shader.h"
-#include "../../Engine/Window/Window.h"
+#include <RenderingStudies/RegisterApp.h>
+
 #include "../../Engine/Camera/Camera.h"
+#include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Utils/InputProcessorUtil.h"
+#include "../../Engine/Window/Window.h"
 
 REGISTER_APP(Cube)
 

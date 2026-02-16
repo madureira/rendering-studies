@@ -12,18 +12,17 @@
 
 REGISTER_APP(BumpMapping)
 
-static glm::vec3 s_LightPos(2.0f, 4.0f, 2.0f);
-static glm::vec3 s_LightColor(1.0f, 1.0f, 1.0f);
-static glm::vec2 s_RippleCenterXZ(0.0f, 0.0f);
-static float32 s_Time = 0.0f;
-static float32 s_Amp = 0.08f;
-static float32 s_K = 18.0f;
-static float32 s_Omega = 8.0f;
-static float32 s_Damping = 1.2f;
-static float32 s_NormalStrength = 2.0f;
-
 BumpMapping::BumpMapping(Window* window)
     : m_Window(window)
+    , m_LightPos(2.0f, 4.0f, 2.0f)
+    , m_LightColor(1.0f, 1.0f, 1.0f)
+    , m_RippleCenterXZ(0.0f, 0.0f)
+    , m_Time(0.0f)
+    , m_Amp(0.08f)
+    , m_K(18.0f)
+    , m_Omega(8.0f)
+    , m_Damping(1.2f)
+    , m_NormalStrength(2.0f)
 {
     m_Shader = new Shader("assets/shaders/bump_mapping.vert", "assets/shaders/bump_mapping.frag");
 
@@ -45,12 +44,14 @@ BumpMapping::~BumpMapping()
 {
     delete m_Camera;
     delete m_Shader;
+
     if (m_EBO)
         GL(glDeleteBuffers(1, &m_EBO));
     if (m_VBO)
         GL(glDeleteBuffers(1, &m_VBO));
     if (m_VAO)
         GL(glDeleteVertexArrays(1, &m_VAO));
+
     m_EBO = 0;
     m_VBO = 0;
     m_VAO = 0;
@@ -61,24 +62,24 @@ void BumpMapping::Update(float32 deltaTime)
 {
     InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime);
 
-    s_Time += deltaTime;
+    m_Time += deltaTime;
 
     ImGui::Begin("Bump Mapping");
 
     ImGui::TextUnformatted("Light");
-    ImGui::SliderFloat3("Light position", &s_LightPos.x, -10.0f, 10.0f, "%.2f");
-    ImGui::ColorEdit3("Light color", &s_LightColor.x);
+    ImGui::SliderFloat3("Light position", &m_LightPos.x, -10.0f, 10.0f, "%.2f");
+    ImGui::ColorEdit3("Light color", &m_LightColor.x);
 
     ImGui::Separator();
     ImGui::TextUnformatted("Ripple (height field)");
-    ImGui::SliderFloat2("Ripple center (XZ)", &s_RippleCenterXZ.x, -2.0f, 2.0f, "%.2f");
-    ImGui::SliderFloat("Amplitude (u_Amp)", &s_Amp, 0.0f, 0.5f, "%.3f");
-    ImGui::SliderFloat("Wave number (u_K)", &s_K, 1.0f, 40.0f, "%.1f");
-    ImGui::SliderFloat("Speed (u_Omega)", &s_Omega, 0.0f, 20.0f, "%.1f");
-    ImGui::SliderFloat("Damping (u_Damping)", &s_Damping, 0.0f, 5.0f, "%.2f");
+    ImGui::SliderFloat2("Ripple center (XZ)", &m_RippleCenterXZ.x, -2.0f, 2.0f, "%.2f");
+    ImGui::SliderFloat("Amplitude (u_Amp)", &m_Amp, 0.0f, 0.5f, "%.3f");
+    ImGui::SliderFloat("Wave number (u_K)", &m_K, 1.0f, 40.0f, "%.1f");
+    ImGui::SliderFloat("Speed (u_Omega)", &m_Omega, 0.0f, 20.0f, "%.1f");
+    ImGui::SliderFloat("Damping (u_Damping)", &m_Damping, 0.0f, 5.0f, "%.2f");
 
     ImGui::Separator();
-    ImGui::SliderFloat("Normal strength (u_NormalStrength)", &s_NormalStrength, 0.0f, 6.0f, "%.2f");
+    ImGui::SliderFloat("Normal strength (u_NormalStrength)", &m_NormalStrength, 0.0f, 6.0f, "%.2f");
 
     ImGui::End();
 }
@@ -97,15 +98,15 @@ void BumpMapping::Render()
     m_Shader->SetMat4("u_Model", model);
     m_Shader->SetMat4("u_VP", projection * view);
     m_Shader->SetVec3("u_CameraPos", cameraPos);
-    m_Shader->SetVec3("u_LightPos", s_LightPos);
-    m_Shader->SetVec3("u_LightColor", s_LightColor);
-    m_Shader->SetVec2("u_RippleCenterXZ", s_RippleCenterXZ);
-    m_Shader->SetFloat("u_Time", s_Time);
-    m_Shader->SetFloat("u_Amp", s_Amp);
-    m_Shader->SetFloat("u_K", s_K);
-    m_Shader->SetFloat("u_Omega", s_Omega);
-    m_Shader->SetFloat("u_Damping", s_Damping);
-    m_Shader->SetFloat("u_NormalStrength", s_NormalStrength);
+    m_Shader->SetVec3("u_LightPos", m_LightPos);
+    m_Shader->SetVec3("u_LightColor", m_LightColor);
+    m_Shader->SetVec2("u_RippleCenterXZ", m_RippleCenterXZ);
+    m_Shader->SetFloat("u_Time", m_Time);
+    m_Shader->SetFloat("u_Amp", m_Amp);
+    m_Shader->SetFloat("u_K", m_K);
+    m_Shader->SetFloat("u_Omega", m_Omega);
+    m_Shader->SetFloat("u_Damping", m_Damping);
+    m_Shader->SetFloat("u_NormalStrength", m_NormalStrength);
 
     GL(glBindVertexArray(m_VAO));
     GL(glDrawElements(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, (void*)0));

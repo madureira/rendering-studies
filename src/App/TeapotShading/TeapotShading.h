@@ -2,6 +2,7 @@
 
 #include <RenderingStudies/App.h>
 #include <RenderingStudies/Types.h>
+#include <glm/glm.hpp>
 
 class Camera;
 class Grid;
@@ -17,6 +18,15 @@ private:
     Camera* m_Camera;
     Grid* m_Grid;
     Model* m_Model;
+
+    int32 m_CurrentShader;
+    glm::vec3 m_LightDir;
+    glm::vec3 m_RotDeg;
+    glm::vec3 m_Scale;
+    bool m_LockScale;
+    float32 m_ScaleAll;
+
+    static const char* const s_ShaderOptions[3];
 
 public:
     TeapotShading(Window* window);

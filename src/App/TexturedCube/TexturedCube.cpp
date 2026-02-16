@@ -1,11 +1,13 @@
 #include "TexturedCube.h"
-#include <RenderingStudies/RegisterApp.h>
+
 #include <RenderingStudies/GL.h>
+#include <RenderingStudies/RegisterApp.h>
+
+#include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Texture/Texture.h"
-#include "../../Engine/Window/Window.h"
-#include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Utils/InputProcessorUtil.h"
+#include "../../Engine/Window/Window.h"
 
 REGISTER_APP(TexturedCube)
 
@@ -66,6 +68,7 @@ void TexturedCube::CreateMesh()
 {
     float32 vertices[] = {
         // Positions           // TexCoords
+
         // Front face
         -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
          0.5f, -0.5f,  0.5f,   1.0f, 0.0f,
@@ -147,8 +150,8 @@ void TexturedCube::CreateMesh()
 
     m_Shader->Bind();
     m_Shader->SetInt("u_Texture", 0);
-    //m_Shader->SetInt("u_UseTint", 1);
-    //m_Shader->SetVec4("u_Tint", 2,2,2,2);
+    // m_Shader->SetInt("u_UseTint", 1);
+    // m_Shader->SetVec4("u_Tint", 2,2,2,2);
     m_Shader->Unbind();
 
     GL(glBindBuffer(GL_ARRAY_BUFFER, 0));

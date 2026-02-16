@@ -1,29 +1,29 @@
 #include "RippleEffect.h"
-#include "../../Engine/Camera/Camera.h"
-#include "../../Engine/Shader/Shader.h"
-#include "../../Engine/Utils/InputProcessorUtil.h"
-#include "../../Engine/Window/Window.h"
+
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterApp.h>
 #include <imgui.h>
 
-REGISTER_APP(RippleEffect)
+#include "../../Engine/Camera/Camera.h"
+#include "../../Engine/Shader/Shader.h"
+#include "../../Engine/Utils/InputProcessorUtil.h"
+#include "../../Engine/Window/Window.h"
 
-// Real-time tweakable parameters
-static int s_tessLevel = 4; // subdivisions per patch (tessellation)
-static float s_amplitude = 0.2f;
-static float s_frequency = 5.0f;
+REGISTER_APP(RippleEffect)
 
 RippleEffect::RippleEffect(Window* window)
     : m_Window(window)
+    , m_IndexCount(0)
+    , m_TessLevel(4)
+    , m_Amplitude(0.2f)
+    , m_Frequency(5.0f)
 {
     // Tessellation pipeline (vert + TCS + TES + frag): grid from CreateMesh(), each cell drawn as a patch.
     m_Shader = new Shader(
         "assets/shaders/ripple_effect.vert",
         "assets/shaders/ripple_effect.tesc",
         "assets/shaders/ripple_effect.tese",
-        "assets/shaders/ripple_effect.frag"
-    );
+        "assets/shaders/ripple_effect.frag");
 
     // Isometric-style: elevated, diagonal, looking at origin (not straight top-down).
     // Position in +X,+Y,+Z octant; yaw 225° + pitch ~-35° so front points at (0,0,0).
@@ -53,9 +53,9 @@ void RippleEffect::Update(float32 deltaTime)
     InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime);
 
     ImGui::Begin("Ripple Effect");
-    ImGui::SliderInt("Tessellation level", &s_tessLevel, 1, 128, "%d");
-    ImGui::SliderFloat("Amplitude", &s_amplitude, 0.01f, 1.0f, "%.2f");
-    ImGui::SliderFloat("Frequency", &s_frequency, 0.5f, 20.0f, "%.1f");
+    ImGui::SliderInt("Tessellation level", &m_TessLevel, 1, 128, "%d");
+    ImGui::SliderFloat("Amplitude", &m_Amplitude, 0.01f, 1.0f, "%.2f");
+    ImGui::SliderFloat("Frequency", &m_Frequency, 0.5f, 20.0f, "%.1f");
     ImGui::End();
 }
 
@@ -70,9 +70,9 @@ void RippleEffect::Render()
     m_Shader->SetMat4("u_Model", model);
     m_Shader->SetMat4("u_VP", projection * view);
     m_Shader->SetFloat("u_Time", m_Window->GetTime());
-    m_Shader->SetInt("u_TessLevel", s_tessLevel);
-    m_Shader->SetFloat("u_Amplitude", s_amplitude);
-    m_Shader->SetFloat("u_Frequency", s_frequency);
+    m_Shader->SetInt("u_TessLevel", m_TessLevel);
+    m_Shader->SetFloat("u_Amplitude", m_Amplitude);
+    m_Shader->SetFloat("u_Frequency", m_Frequency);
 
     GL(glPatchParameteri(GL_PATCH_VERTICES, 4));
     GL(glBindVertexArray(m_VAO));

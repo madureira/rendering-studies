@@ -13,10 +13,9 @@
 
 REGISTER_APP(ColorCoord)
 
-static bool isUsingModelCoords = false;
-
 ColorCoord::ColorCoord(Window* window)
     : m_Window(window)
+    , m_UseModelCoords(false)
 {
     m_Shader = new Shader("assets/shaders/color_coord.vert", "assets/shaders/color_coord.frag");
     m_Model = new Model("assets/models/teapot.obj");
@@ -42,7 +41,7 @@ void ColorCoord::Update(float32 deltaTime)
     ImGui::TextUnformatted("Use model coords?");
     ImGui::SameLine();
 
-    ImGui::Checkbox("##Use model coords?", &isUsingModelCoords);
+    ImGui::Checkbox("##Use model coords?", &m_UseModelCoords);
 
     ImGui::End();
 }
@@ -66,7 +65,7 @@ void ColorCoord::Render()
 
     m_Shader->SetMat4("u_Projection", projection);
     m_Shader->SetMat4("u_MV", viewRel * modelRel);
-    m_Shader->SetBool("u_UseModelCoords", isUsingModelCoords);
+    m_Shader->SetBool("u_UseModelCoords", m_UseModelCoords);
 
     m_Model->Draw();
 }

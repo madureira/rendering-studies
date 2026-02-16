@@ -18,6 +18,8 @@ private:
     Grid* m_Grid;
     Model* m_Model;
 
+    bool m_UseModelCoords;
+
 public:
     ColorCoord(Window* window);
     ~ColorCoord();

@@ -1,11 +1,13 @@
 #include "Triangle.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <RenderingStudies/RegisterApp.h>
+
 #include <RenderingStudies/GL.h>
-#include "../../Engine/Shader/Shader.h"
-#include "../../Engine/Window/Window.h"
+#include <RenderingStudies/RegisterApp.h>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "../../Engine/Camera/Camera.h"
+#include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Utils/InputProcessorUtil.h"
+#include "../../Engine/Window/Window.h"
 
 REGISTER_APP(Triangle)
 
