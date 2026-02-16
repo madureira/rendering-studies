@@ -37,7 +37,8 @@ void main()
 
     vec4 worldPosition = u_Model * vec4(pos.x, pos.y + height, pos.z, 1.0);
 
-    gl_Position = u_VP * worldPosition;
     v_Height = height;
     v_Time = u_Time;
+
+    gl_Position = u_VP * worldPosition;
 }

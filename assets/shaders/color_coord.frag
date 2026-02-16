@@ -1,6 +1,6 @@
 #version 410 core
 
-in float vStripeCoord;
+in float v_StripeCoord;
 
 out vec4 frag_color;
 
@@ -11,7 +11,7 @@ const vec4 stripeRed = vec4(1.0, 0.0, 0.0, 1.0);
 
 void main()
 {
-    float stripe = floor(vStripeCoord * stripeFrequency);
+    float stripe = floor(v_StripeCoord * stripeFrequency);
     bool evenStripe = mod(stripe, 2.0) < 1.0;
     frag_color = evenStripe ? stripeWhite : stripeRed;
 }

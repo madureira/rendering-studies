@@ -45,11 +45,11 @@ vec3 ADSLightModel(in vec3 normal, in vec3 worldPos)
 void main()
 {
     mat3 normalMatrix = mat3(transpose(inverse(u_Model)));
-    vec3 worldNormal = normalize(normalMatrix * a_Normal);
+    vec3 N = normalize(normalMatrix * a_Normal);
 
     vec4 worldPos = u_Model * vec4(a_Vertex, 1.0);
 
-    v_Color = ADSLightModel(worldNormal, worldPos.xyz);
+    v_Color = ADSLightModel(N, worldPos.xyz);
 
     gl_Position = u_VP * worldPos;
 }

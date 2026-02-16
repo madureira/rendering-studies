@@ -150,8 +150,8 @@ void TexturedCube::CreateMesh()
 
     m_Shader->Bind();
     m_Shader->SetInt("u_Texture", 0);
-    // m_Shader->SetInt("u_UseTint", 1);
-    // m_Shader->SetVec4("u_Tint", 2,2,2,2);
+    //m_Shader->SetBool("u_UseTint", 1);
+    //m_Shader->SetVec4("u_Tint", 2,2,2,2);
     m_Shader->Unbind();
 
     GL(glBindBuffer(GL_ARRAY_BUFFER, 0));

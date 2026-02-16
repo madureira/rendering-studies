@@ -8,6 +8,6 @@ out vec2 v_TexCoord;
 
 void main()
 {
-    gl_Position = u_Projection * vec4(a_Vertex.xy, 0.0, 1.0);
     v_TexCoord = a_Vertex.zw;
+    gl_Position = u_Projection * vec4(a_Vertex.xy, 0.0, 1.0);
 }

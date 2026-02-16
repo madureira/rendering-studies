@@ -7,7 +7,7 @@ uniform mat4 u_Projection;
 uniform mat4 u_MV;
 uniform bool u_UseModelCoords;
 
-out float vStripeCoord; // X in model or eye space for vertical stripes
+out float v_StripeCoord; // X in model or eye space for vertical stripes
 
 void main()
 {
@@ -18,11 +18,11 @@ void main()
     // Use X in chosen space for vertical stripes (color varies left-right)
     if (u_UseModelCoords)
     {
-        vStripeCoord = modelCoordPosition.x;
+        v_StripeCoord = modelCoordPosition.x;
     }
     else
     {
-        vStripeCoord = eyeCoordPosition.x;
+        v_StripeCoord = eyeCoordPosition.x;
     }
 
     gl_Position = u_Projection * worldPos;

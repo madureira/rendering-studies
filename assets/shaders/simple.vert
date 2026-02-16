@@ -9,6 +9,6 @@ out vec3 v_Color;
 
 void main()
 {
-    gl_Position = u_MVP * vec4(a_Vertex, 1.0);
     v_Color = a_Color;
+    gl_Position = u_MVP * vec4(a_Vertex, 1.0);
 }
