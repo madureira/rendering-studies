@@ -18,6 +18,7 @@ private:
 
     uint32 m_VAO;
     uint32 m_VBO;
+    uint32 m_EBO;
     uint32 m_CubeMapTexture;
 
 public:
@@ -29,5 +30,5 @@ public:
 
 private:
     void CreateMesh();
-    bool LoadCubeMap(const char* basePath);
+    void LoadCubeMap(const char* basePath);
 };

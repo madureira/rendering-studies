@@ -43,24 +43,20 @@ BumpMapping::BumpMapping(Window* window)
 BumpMapping::~BumpMapping()
 {
     delete m_Camera;
-    delete m_Shader;
+    if (m_Shader)
+    {
+        m_Shader->Unbind();
+        delete m_Shader;
+    }
 
-    if (m_EBO)
-        GL(glDeleteBuffers(1, &m_EBO));
-    if (m_VBO)
-        GL(glDeleteBuffers(1, &m_VBO));
-    if (m_VAO)
-        GL(glDeleteVertexArrays(1, &m_VAO));
-
-    m_EBO = 0;
-    m_VBO = 0;
-    m_VAO = 0;
-    m_IndexCount = 0;
+    GL(glDeleteBuffers(1, &m_EBO));
+    GL(glDeleteBuffers(1, &m_VBO));
+    GL(glDeleteVertexArrays(1, &m_VAO));
 }
 
 void BumpMapping::Update(float32 deltaTime)
 {
-    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime);
+    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime, 5.0f, 30.0f);
 
     m_Time += deltaTime;
 

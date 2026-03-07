@@ -42,9 +42,14 @@ TeapotShading::~TeapotShading()
     delete m_Grid;
     delete m_Camera;
     delete m_Model;
-    delete m_Shader[0];
-    delete m_Shader[1];
-    delete m_Shader[2];
+    for (uint32 i = 0; i < 3; i++)
+    {
+        if (m_Shader[i])
+        {
+            m_Shader[i]->Unbind();
+            delete m_Shader[i];
+        }
+    }
 }
 
 void TeapotShading::Update(float32 deltaTime)
@@ -134,4 +139,6 @@ void TeapotShading::Render()
     m_Shader[m_CurrentShader]->SetVec3("u_LightDir", glm::normalize(m_LightDir));
 
     m_Model->Draw();
+
+    m_Shader[m_CurrentShader]->Unbind();
 }

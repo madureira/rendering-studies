@@ -26,7 +26,11 @@ ChromaDepth::~ChromaDepth()
     delete m_Grid;
     delete m_Camera;
     delete m_Model;
-    delete m_Shader;
+    if (m_Shader)
+    {
+        m_Shader->Unbind();
+        delete m_Shader;
+    }
 }
 
 void ChromaDepth::Update(float32 deltaTime)

@@ -43,5 +43,6 @@ int main()
     }
 
     delete app;
+
     return EXIT_SUCCESS;
 }

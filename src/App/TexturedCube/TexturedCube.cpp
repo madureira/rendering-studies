@@ -29,7 +29,11 @@ TexturedCube::~TexturedCube()
 {
     delete m_Camera;
     delete m_Texture;
-    delete m_Shader;
+    if (m_Shader)
+    {
+        m_Shader->Unbind();
+        delete m_Shader;
+    }
 
     GL(glDeleteVertexArrays(1, &m_VAO));
     GL(glDeleteBuffers(1, &m_VBO));

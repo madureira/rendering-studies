@@ -42,7 +42,11 @@ RippleEffect::RippleEffect(Window* window)
 RippleEffect::~RippleEffect()
 {
     delete m_Camera;
-    delete m_Shader;
+    if (m_Shader)
+    {
+        m_Shader->Unbind();
+        delete m_Shader;
+    }
     GL(glDeleteVertexArrays(1, &m_VAO));
     GL(glDeleteBuffers(1, &m_VBO));
     GL(glDeleteBuffers(1, &m_EBO));
