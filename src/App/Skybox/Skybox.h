@@ -8,7 +8,7 @@ class Grid;
 class Shader;
 class Window;
 
-class CubeMap final : public App
+class Skybox final : public App
 {
 private:
     Window* m_Window;
@@ -19,16 +19,16 @@ private:
     uint32 m_VAO;
     uint32 m_VBO;
     uint32 m_EBO;
-    uint32 m_CubeMapTexture;
+    uint32 m_SkyboxTexture;
 
 public:
-    CubeMap(Window* window);
-    ~CubeMap();
+    Skybox(Window* window);
+    ~Skybox();
 
     virtual void Update(float32 deltaTime) override;
     virtual void Render() override;
 
 private:
     void CreateMesh();
-    void LoadCubeMap(const char* basePath);
+    void LoadSkybox(const char* basePath);
 };

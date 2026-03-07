@@ -1,4 +1,4 @@
-#include "CubeMap.h"
+#include "Skybox.h"
 
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterApp.h>
@@ -12,23 +12,23 @@
 #include "../../Engine/Utils/InputProcessorUtil.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(CubeMap)
+REGISTER_APP(Skybox)
 
 // Face names: p = positive, n = negative.
 // OpenGL cubemap targets are sequential: GL_TEXTURE_CUBE_MAP_POSITIVE_X + 0..5
 //   +X(px), -X(nx), +Y(py), -Y(ny), +Z(pz), -Z(nz)
-static const char* const s_CubeMapFaces[] = {
+static const char* const s_SkyboxFaces[] = {
     "px", "nx", "py", "ny", "pz", "nz"
 };
 
-CubeMap::CubeMap(Window* window)
+Skybox::Skybox(Window* window)
     : m_Window(window)
     , m_VAO(0)
     , m_VBO(0)
     , m_EBO(0)
-    , m_CubeMapTexture(0)
+    , m_SkyboxTexture(0)
 {
-    m_Shader = new Shader("assets/shaders/cube_map.vert", "assets/shaders/cube_map.frag");
+    m_Shader = new Shader("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
 
     // Isometric-style: elevated, diagonal, looking at origin (not straight top-down).
     // Position in +X,+Y,+Z octant; yaw 225° + pitch ~-10° so front points at (0,0,0).
@@ -43,10 +43,10 @@ CubeMap::CubeMap(Window* window)
     m_Grid = new Grid();
 
     CreateMesh();
-    LoadCubeMap("assets/images/cube_map");
+    LoadSkybox("assets/images/skybox/blue_sky");
 }
 
-CubeMap::~CubeMap()
+Skybox::~Skybox()
 {
     delete m_Grid;
     delete m_Camera;
@@ -60,10 +60,10 @@ CubeMap::~CubeMap()
     GL(glDeleteVertexArrays(1, &m_VAO));
     GL(glDeleteBuffers(1, &m_VBO));
     GL(glDeleteBuffers(1, &m_EBO));
-    GL(glDeleteTextures(1, &m_CubeMapTexture));
+    GL(glDeleteTextures(1, &m_SkyboxTexture));
 
     // Restore OpenGL state so switching to another app doesn't inherit skybox settings.
-    // Match Window's default: depth LEQUAL, cull face enabled (CubeMap disables it for skybox).
+    // Match Window's default: depth LEQUAL, cull face enabled (Skybox disables it for skybox).
     GL(glDepthFunc(GL_LEQUAL));
     GL(glEnable(GL_CULL_FACE));
     GL(glBindVertexArray(0));
@@ -71,12 +71,12 @@ CubeMap::~CubeMap()
     GL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
-void CubeMap::Update(float32 deltaTime)
+void Skybox::Update(float32 deltaTime)
 {
     InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime, 5.0f, 30.f);
 }
 
-void CubeMap::Render()
+void Skybox::Render()
 {
     glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
 
@@ -97,11 +97,11 @@ void CubeMap::Render()
     m_Shader->Bind();
     m_Shader->SetMat4("u_VP", projection * viewRotOnly);
 
-    if (m_CubeMapTexture)
+    if (m_SkyboxTexture)
     {
         GL(glActiveTexture(GL_TEXTURE0));
-        GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMapTexture));
-        m_Shader->SetInt("u_CubeMap", 0);
+        GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyboxTexture));
+        m_Shader->SetInt("u_Skybox", 0);
     }
 
     // Skybox: depth LEQUAL so far-plane fragments pass; no cull so interior is visible.
@@ -114,14 +114,14 @@ void CubeMap::Render()
     GL(glEnable(GL_CULL_FACE));
     GL(glDepthFunc(GL_LESS));
 
-    if (m_CubeMapTexture)
+    if (m_SkyboxTexture)
     {
         GL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
     }
     m_Shader->Unbind();
 }
 
-void CubeMap::CreateMesh()
+void Skybox::CreateMesh()
 {
     // Skybox cube: 8 unique corners, indexed by EBO (6 faces × 2 triangles × 3 verts = 36 indices).
     // Vertex layout: 0=(-1,-1,-1), 1=(+1,-1,-1), 2=(+1,+1,-1), 3=(-1,+1,-1), 4=(-1,-1,+1), 5=(+1,-1,+1), 6=(+1,+1,+1), 7=(-1,+1,+1).
@@ -159,10 +159,10 @@ void CubeMap::CreateMesh()
     GL(glBindVertexArray(0));
 }
 
-void CubeMap::LoadCubeMap(const char* basePath)
+void Skybox::LoadSkybox(const char* basePath)
 {
-    GL(glGenTextures(1, &m_CubeMapTexture));
-    GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMapTexture));
+    GL(glGenTextures(1, &m_SkyboxTexture));
+    GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyboxTexture));
 
     for (int i = 0; i < 6; ++i)
     {
@@ -170,14 +170,14 @@ void CubeMap::LoadCubeMap(const char* basePath)
         int32 height = 0;
         int32 channels = 0;
 
-        std::string path = std::string(basePath) + "/" + s_CubeMapFaces[i] + ".png";
+        std::string path = std::string(basePath) + "/" + s_SkyboxFaces[i] + ".png";
         uchar* data = FileManager::LoadTexture(path, width, height, channels, false);
         if (!data)
         {
-            LOG_ERROR("CubeMap: failed to load face '{}'", s_CubeMapFaces[i]);
+            LOG_ERROR("Skybox: failed to load face '{}'", s_SkyboxFaces[i]);
             GL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
-            GL(glDeleteTextures(1, &m_CubeMapTexture));
-            m_CubeMapTexture = 0;
+            GL(glDeleteTextures(1, &m_SkyboxTexture));
+            m_SkyboxTexture = 0;
             return;
         }
 
