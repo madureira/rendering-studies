@@ -5,30 +5,21 @@
 
 class Camera;
 class Grid;
-class Shader;
+class Skybox;
 class Window;
 
-class Skybox final : public App
+class SkyboxExample final : public App
 {
 private:
     Window* m_Window;
-    Shader* m_Shader;
     Camera* m_Camera;
     Grid* m_Grid;
-
-    uint32 m_VAO;
-    uint32 m_VBO;
-    uint32 m_EBO;
-    uint32 m_SkyboxTexture;
+    Skybox* m_Skybox;
 
 public:
-    Skybox(Window* window);
-    ~Skybox();
+    SkyboxExample(Window* window);
+    ~SkyboxExample();
 
     virtual void Update(float32 deltaTime) override;
     virtual void Render() override;
-
-private:
-    void CreateMesh();
-    void LoadSkybox(const char* basePath);
 };

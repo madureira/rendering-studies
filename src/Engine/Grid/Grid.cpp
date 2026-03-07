@@ -57,17 +57,23 @@ Grid::~Grid()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void Grid::Draw(const Camera& camera, const glm::mat4& viewRel, const glm::mat4& projection, const glm::dvec3& origin, bool showYAxis) const
+void Grid::Render(const Camera& camera, const uint32 windowWidth, const uint32 windowHeight, bool showYAxis) const
 {
-    glm::dvec3 positionHP = camera.GetPositionHP();
+    glm::dvec3 cameraPosHP = camera.GetPositionHP();
+    glm::mat4 projection = camera.GetProjectionMatrix(windowWidth, windowHeight);
+
+    glm::mat4 viewRel = camera.GetViewMatrixRelative();
 
     // Camera position relative to the floating origin
-    glm::vec3 relativePos = glm::vec3(positionHP - origin);
+    glm::dvec3 origin = cameraPosHP;
+    origin.y = 0.0;
+
+    glm::vec3 relativePos = glm::vec3(cameraPosHP - origin);
 
     // Compute fractions in double precision for precise grid alignment
-    glm::vec2 gridFract1 = CalculateFract(positionHP, 1.0);
-    glm::vec2 gridFract10 = CalculateFract(positionHP, 10.0);
-    glm::vec2 gridFract100 = CalculateFract(positionHP, 100.0);
+    glm::vec2 gridFract1 = CalculateFract(cameraPosHP, 1.0);
+    glm::vec2 gridFract10 = CalculateFract(cameraPosHP, 10.0);
+    glm::vec2 gridFract100 = CalculateFract(cameraPosHP, 100.0);
 
     m_Shader->Bind();
 

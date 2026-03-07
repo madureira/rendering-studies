@@ -52,20 +52,23 @@ void ColorCoord::Update(float32 deltaTime)
 
 void ColorCoord::Render()
 {
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    uint32 winWidth = m_Window->GetWidth();
+    uint32 winHeight = m_Window->GetHeight();
+
+    m_Grid->Render(*m_Camera, winWidth, winHeight);
+
+    glm::mat4 projection = m_Camera->GetProjectionMatrix(winWidth, winHeight);
+
+    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative();
 
     glm::dvec3 origin = m_Camera->GetPositionHP();
     origin.y = 0.0;
 
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative(origin);
-
-    m_Grid->Draw(*m_Camera, viewRel, projection, origin);
-
-    m_Shader->Bind();
-
     // Model position in origin-relative space
     glm::vec3 modelPosRel = glm::vec3(glm::dvec3(0.0) - origin);
     glm::mat4 modelRel = glm::translate(glm::mat4(1.0f), modelPosRel);
+
+    m_Shader->Bind();
 
     m_Shader->SetMat4("u_Projection", projection);
     m_Shader->SetMat4("u_MV", viewRel * modelRel);

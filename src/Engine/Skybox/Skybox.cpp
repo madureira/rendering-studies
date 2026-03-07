@@ -1,18 +1,10 @@
 #include "Skybox.h"
 
 #include <RenderingStudies/GL.h>
-#include <RenderingStudies/RegisterApp.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <string>
 
-#include "../../Engine/Camera/Camera.h"
-#include "../../Engine/FileManager/FileManager.h"
-#include "../../Engine/Grid/Grid.h"
-#include "../../Engine/Shader/Shader.h"
-#include "../../Engine/Utils/InputProcessorUtil.h"
-#include "../../Engine/Window/Window.h"
-
-REGISTER_APP(Skybox)
+#include "../Camera/Camera.h"
+#include "../FileManager/FileManager.h"
+#include "../Shader/Shader.h"
 
 // Face names: p = positive, n = negative.
 // OpenGL cubemap targets are sequential: GL_TEXTURE_CUBE_MAP_POSITIVE_X + 0..5
@@ -21,36 +13,16 @@ static const char* const s_SkyboxFaces[] = {
     "px", "nx", "py", "ny", "pz", "nz"
 };
 
-Skybox::Skybox(Window* window)
-    : m_Window(window)
-    , m_VAO(0)
-    , m_VBO(0)
-    , m_EBO(0)
-    , m_SkyboxTexture(0)
+Skybox::Skybox(std::string& skyboxTexturesBasePath)
 {
     m_Shader = new Shader("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
 
-    // Isometric-style: elevated, diagonal, looking at origin (not straight top-down).
-    // Position in +X,+Y,+Z octant; yaw 225° + pitch ~-10° so front points at (0,0,0).
-    const float32 isoDist = 14.0f; // distance in XZ
-    const float32 isoHeight = 12.0f;
-    m_Camera = new Camera(
-        glm::vec3(isoDist, isoHeight, isoDist),
-        glm::vec3(0.0f, 1.0f, 0.0f),
-        225.0f,  // yaw: look from (+X,+Z) back toward origin
-        -10.264f // pitch: ~10° down from horizontal (classic isometric)
-    );
-    m_Grid = new Grid();
-
     CreateMesh();
-    LoadSkybox("assets/images/skybox/blue_sky");
+    LoadSkybox(skyboxTexturesBasePath);
 }
 
 Skybox::~Skybox()
 {
-    delete m_Grid;
-    delete m_Camera;
-
     if (m_Shader)
     {
         m_Shader->Unbind();
@@ -60,7 +32,7 @@ Skybox::~Skybox()
     GL(glDeleteVertexArrays(1, &m_VAO));
     GL(glDeleteBuffers(1, &m_VBO));
     GL(glDeleteBuffers(1, &m_EBO));
-    GL(glDeleteTextures(1, &m_SkyboxTexture));
+    GL(glDeleteTextures(1, &m_Texture));
 
     // Restore OpenGL state so switching to another app doesn't inherit skybox settings.
     // Match Window's default: depth LEQUAL, cull face enabled (Skybox disables it for skybox).
@@ -71,25 +43,12 @@ Skybox::~Skybox()
     GL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
-void Skybox::Update(float32 deltaTime)
+void Skybox::Render(const Camera& camera, const uint32 windowWidth, const uint32 windowHeight) const
 {
-    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime, 5.0f, 30.f);
-}
+    glm::mat4 projection = camera.GetProjectionMatrix(windowWidth, windowHeight);
 
-void Skybox::Render()
-{
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    glm::mat4 view = camera.GetViewMatrixRelative();
 
-    glm::dvec3 origin = m_Camera->GetPositionHP();
-    origin.y = 0.0;
-
-    // Relative view matrix (computed in double, result in float with small values)
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative(origin);
-
-    // Grid: use the same viewRel as the model (full depth buffer coherence)
-    m_Grid->Draw(*m_Camera, viewRel, projection, origin, false);
-
-    glm::mat4 view = m_Camera->GetViewMatrix();
     // Strip translation from the view matrix so the skybox appears infinitely far away.
     // Only the upper-left 3x3 (rotation) matters; the skybox cube stays centered on the camera.
     glm::mat4 viewRotOnly = glm::mat4(glm::mat3(view));
@@ -97,10 +56,10 @@ void Skybox::Render()
     m_Shader->Bind();
     m_Shader->SetMat4("u_VP", projection * viewRotOnly);
 
-    if (m_SkyboxTexture)
+    if (m_Texture)
     {
         GL(glActiveTexture(GL_TEXTURE0));
-        GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyboxTexture));
+        GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_Texture));
         m_Shader->SetInt("u_Skybox", 0);
     }
 
@@ -114,12 +73,14 @@ void Skybox::Render()
     GL(glEnable(GL_CULL_FACE));
     GL(glDepthFunc(GL_LESS));
 
-    if (m_SkyboxTexture)
+    if (m_Texture)
     {
         GL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
     }
     m_Shader->Unbind();
+
 }
+
 
 void Skybox::CreateMesh()
 {
@@ -159,10 +120,10 @@ void Skybox::CreateMesh()
     GL(glBindVertexArray(0));
 }
 
-void Skybox::LoadSkybox(const char* basePath)
+void Skybox::LoadSkybox(const std::string& basePath)
 {
-    GL(glGenTextures(1, &m_SkyboxTexture));
-    GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyboxTexture));
+    GL(glGenTextures(1, &m_Texture));
+    GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_Texture));
 
     for (int i = 0; i < 6; ++i)
     {
@@ -170,14 +131,14 @@ void Skybox::LoadSkybox(const char* basePath)
         int32 height = 0;
         int32 channels = 0;
 
-        std::string path = std::string(basePath) + "/" + s_SkyboxFaces[i] + ".png";
+        std::string path = basePath + "/" + s_SkyboxFaces[i] + ".png";
         uchar* data = FileManager::LoadTexture(path, width, height, channels, false);
         if (!data)
         {
             LOG_ERROR("Skybox: failed to load face '{}'", s_SkyboxFaces[i]);
             GL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
-            GL(glDeleteTextures(1, &m_SkyboxTexture));
-            m_SkyboxTexture = 0;
+            GL(glDeleteTextures(1, &m_Texture));
+            m_Texture = 0;
             return;
         }
 

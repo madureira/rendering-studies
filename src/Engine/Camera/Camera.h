@@ -47,8 +47,8 @@ public:
     glm::vec3 GetFront() const;
     glm::vec3 GetUp() const;
     glm::mat4 GetViewMatrix() const;
-    glm::mat4 GetViewMatrixRelative(const glm::dvec3& origin) const;
-    glm::mat4 GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight);
+    glm::mat4 GetViewMatrixRelative() const;
+    glm::mat4 GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight) const;
     float32 GetZoom() const;
 
     void Move(CameraMove direction, float32 deltaTime, float32 speed = 1.0f);

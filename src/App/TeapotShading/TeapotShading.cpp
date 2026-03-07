@@ -99,16 +99,19 @@ void TeapotShading::Update(float32 deltaTime)
 
 void TeapotShading::Render()
 {
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    uint32 winWidth = m_Window->GetWidth();
+    uint32 winHeight = m_Window->GetHeight();
 
-    // Floating-origin: all positions are relative to 'origin' to preserve
-    // floating-point precision far from the world origin.
-    glm::dvec3 origin = m_Camera->GetPositionHP();
+    m_Grid->Render(*m_Camera, winWidth, winHeight);
+
+    glm::mat4 projection = m_Camera->GetProjectionMatrix(winWidth, winHeight);
+
+    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative();
+
+    glm::dvec3 cameraPos = m_Camera->GetPositionHP();
+
+    glm::dvec3 origin = cameraPos;
     origin.y = 0.0;
-
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative(origin);
-
-    m_Grid->Draw(*m_Camera, viewRel, projection, origin);
 
     m_Shader[m_CurrentShader]->Bind();
 
@@ -131,7 +134,7 @@ void TeapotShading::Render()
     // Camera position in origin-relative space (only used by gouraud and phong for view vector)
     if (m_CurrentShader != 0)
     {
-        glm::vec3 cameraPosRel = glm::vec3(m_Camera->GetPositionHP() - origin);
+        glm::vec3 cameraPosRel = glm::vec3(cameraPos - origin);
         m_Shader[m_CurrentShader]->SetVec3("u_CameraPosition", cameraPosRel);
     }
 

@@ -67,18 +67,19 @@ void Anisotropic::Update(float32 deltaTime)
 
 void Anisotropic::Render()
 {
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    uint32 winWidth = m_Window->GetWidth();
+    uint32 winHeight = m_Window->GetHeight();
 
-    // Floating-origin: all positions are relative to 'origin' to preserve
-    // floating-point precision far from the world origin.
-    glm::dvec3 origin = m_Camera->GetPositionHP();
+    m_Grid->Render(*m_Camera, winWidth, winHeight);
+
+    glm::mat4 projection = m_Camera->GetProjectionMatrix(winWidth, winHeight);
+
+    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative();
+
+    glm::dvec3 cameraPos = m_Camera->GetPositionHP();
+
+    glm::dvec3 origin = cameraPos;
     origin.y = 0.0;
-
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative(origin);
-
-    m_Grid->Draw(*m_Camera, viewRel, projection, origin);
-
-    m_Shader->Bind();
 
     // Model position in origin-relative space
     glm::vec3 modelPosRel = glm::vec3(glm::dvec3(0.0) - origin);
@@ -95,11 +96,13 @@ void Anisotropic::Render()
     modelRel = glm::rotate(modelRel, r.x, glm::vec3(1, 0, 0));
     modelRel = glm::rotate(modelRel, r.z, glm::vec3(0, 0, 1));
 
+    // Camera position in origin-relative space (same space as WorldPos in shaders)
+    glm::vec3 cameraPosRel = glm::vec3(cameraPos - origin);
+
+    m_Shader->Bind();
+
     m_Shader->SetMat4("u_Model", modelRel);
     m_Shader->SetMat4("u_VP", projection * viewRel);
-
-    // Camera position in origin-relative space (same space as WorldPos in shaders)
-    glm::vec3 cameraPosRel = glm::vec3(m_Camera->GetPositionHP() - origin);
     m_Shader->SetVec3("u_CameraPosition", cameraPosRel);
 
     // Directional light: direction vector (not a position), independent of origin
@@ -111,4 +114,6 @@ void Anisotropic::Render()
     m_Shader->SetFloat("u_Metallic", m_Metallic);
 
     m_Model->Draw();
+
+    m_Shader->Unbind();
 }

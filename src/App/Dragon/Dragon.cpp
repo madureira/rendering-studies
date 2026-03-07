@@ -40,25 +40,23 @@ void Dragon::Update(float32 deltaTime)
 
 void Dragon::Render()
 {
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    uint32 winWidth = m_Window->GetWidth();
+    uint32 winHeight = m_Window->GetHeight();
 
-    // Floating origin: camera position with Y=0 to keep the ground stable.
-    // All rendering happens relative to this origin, keeping float values small.
+    m_Grid->Render(*m_Camera, winWidth, winHeight);
+
+    glm::mat4 projection = m_Camera->GetProjectionMatrix(winWidth, winHeight);
+
+    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative();
+
     glm::dvec3 origin = m_Camera->GetPositionHP();
     origin.y = 0.0;
-
-    // Relative view matrix (computed in double, result in float with small values)
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative(origin);
-
-    // Grid: use the same viewRel as the model (full depth buffer coherence)
-    m_Grid->Draw(*m_Camera, viewRel, projection, origin);
-
-    // Model: world position (0,0,0) converted to relative space
-    m_Shader->Bind();
 
     // Model is at (0,0,0) in world space. In relative space it needs to be offset.
     glm::vec3 modelPosRel = glm::vec3(glm::dvec3(0.0) - origin);
     glm::mat4 modelRel = glm::translate(glm::mat4(1.0f), modelPosRel);
+
+    m_Shader->Bind();
 
     m_Shader->SetMat4("u_MVP", projection * viewRel * modelRel);
 

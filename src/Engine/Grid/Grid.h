@@ -6,7 +6,7 @@
 class Camera;
 class Shader;
 
-class Grid
+class Grid final
 {
 private:
     Shader* m_Shader;
@@ -21,5 +21,5 @@ public:
     Grid();
     ~Grid();
 
-    void Draw(const Camera& camera, const glm::mat4& viewRel, const glm::mat4& projection, const glm::dvec3& origin, bool showYAxis = true) const;
+    void Render(const Camera& camera, const uint32 windowWidth, const uint32 windowHeight, bool showYAxis = true) const;
 };
