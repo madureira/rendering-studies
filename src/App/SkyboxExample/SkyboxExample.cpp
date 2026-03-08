@@ -3,6 +3,7 @@
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterApp.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <imgui.h>
 #include <string>
 
 #include "../../Engine/Camera/Camera.h"
@@ -14,6 +15,15 @@
 #include "../../Engine/Window/Window.h"
 
 REGISTER_APP(SkyboxExample)
+
+const char* SKYBOX_BASE_PATH = "assets/images/skybox";
+
+const char* const SkyboxExample::s_SkyboxOptions[2] = {
+    "day",
+    "night"
+};
+
+static int32 selected_skybox_index = 0;
 
 SkyboxExample::SkyboxExample(Window* window)
     : m_Window(window)
@@ -30,8 +40,9 @@ SkyboxExample::SkyboxExample(Window* window)
     );
     m_Grid = new Grid();
 
-    std::string skyboxBasePath = "assets/images/skybox/blue_sky";
-    m_Skybox = new Skybox(skyboxBasePath);
+    m_CurrentSkybox = 0;
+
+    CreateSkybox();
 }
 
 SkyboxExample::~SkyboxExample()
@@ -44,6 +55,21 @@ SkyboxExample::~SkyboxExample()
 void SkyboxExample::Update(float32 deltaTime)
 {
     InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime, 5.0f, 30.f);
+
+    ImGui::Begin("Skybox");
+    ImGui::AlignTextToFramePadding();
+
+    ImGui::TextUnformatted("Select the texture");
+    ImGui::SameLine();
+    ImGui::Combo("##Skybox", &m_CurrentSkybox, s_SkyboxOptions, IM_ARRAYSIZE(s_SkyboxOptions));
+
+    ImGui::End();
+
+    if (m_CurrentSkybox != selected_skybox_index)
+    {
+        selected_skybox_index = m_CurrentSkybox;
+        CreateSkybox();
+    }
 }
 
 void SkyboxExample::Render()
@@ -54,4 +80,13 @@ void SkyboxExample::Render()
     m_Grid->Render(*m_Camera, winWidth, winHeight, false);
 
     m_Skybox->Render(*m_Camera, winWidth, winHeight);
+}
+
+void SkyboxExample::CreateSkybox()
+{
+    delete m_Skybox;
+
+    std::string skyboxPath = std::string(SKYBOX_BASE_PATH) + "/" + std::string(s_SkyboxOptions[m_CurrentSkybox]);
+
+    m_Skybox = new Skybox(skyboxPath);
 }

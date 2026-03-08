@@ -15,6 +15,9 @@ private:
     Camera* m_Camera;
     Grid* m_Grid;
     Skybox* m_Skybox;
+    int32 m_CurrentSkybox;
+
+    static const char* const s_SkyboxOptions[2];
 
 public:
     SkyboxExample(Window* window);
@@ -22,4 +25,7 @@ public:
 
     virtual void Update(float32 deltaTime) override;
     virtual void Render() override;
+
+private:
+    void CreateSkybox();
 };
