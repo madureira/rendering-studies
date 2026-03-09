@@ -24,6 +24,7 @@ const char* const SkyboxExample::s_SkyboxOptions[2] = {
 };
 
 static int32 selected_skybox_index = 0;
+static float32 exposure = 1.0f;
 
 SkyboxExample::SkyboxExample(Window* window)
     : m_Window(window)
@@ -63,13 +64,18 @@ void SkyboxExample::Update(float32 deltaTime)
     ImGui::SameLine();
     ImGui::Combo("##Skybox", &m_CurrentSkybox, s_SkyboxOptions, IM_ARRAYSIZE(s_SkyboxOptions));
 
-    ImGui::End();
 
     if (m_CurrentSkybox != selected_skybox_index)
     {
         selected_skybox_index = m_CurrentSkybox;
         CreateSkybox();
     }
+
+    ImGui::TextUnformatted("Exposure");
+    ImGui::SameLine();
+    ImGui::SliderFloat("##Exposure", &exposure, 0.1f, 2.0f);
+
+    ImGui::End();
 }
 
 void SkyboxExample::Render()
@@ -79,7 +85,7 @@ void SkyboxExample::Render()
 
     m_Grid->Render(*m_Camera, winWidth, winHeight, false);
 
-    m_Skybox->Render(*m_Camera, winWidth, winHeight);
+    m_Skybox->Render(*m_Camera, winWidth, winHeight, exposure);
 }
 
 void SkyboxExample::CreateSkybox()

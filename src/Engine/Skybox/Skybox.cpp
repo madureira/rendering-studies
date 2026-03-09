@@ -43,7 +43,7 @@ Skybox::~Skybox()
     GL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
-void Skybox::Render(const Camera& camera, const uint32 windowWidth, const uint32 windowHeight) const
+void Skybox::Render(const Camera& camera, const uint32 windowWidth, const uint32 windowHeight, const float32 exposure) const
 {
     glm::mat4 projection = camera.GetProjectionMatrix(windowWidth, windowHeight);
 
@@ -60,7 +60,8 @@ void Skybox::Render(const Camera& camera, const uint32 windowWidth, const uint32
     {
         GL(glActiveTexture(GL_TEXTURE0));
         GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_Texture));
-        m_Shader->SetInt("u_Skybox", 0);
+        m_Shader->SetInt("u_SkyboxTexture", 0);
+        m_Shader->SetFloat("u_Exposure", exposure);
     }
 
     // Skybox: depth LEQUAL so far-plane fragments pass; no cull so interior is visible.
