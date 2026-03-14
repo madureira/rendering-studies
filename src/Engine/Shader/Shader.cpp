@@ -30,7 +30,7 @@ Shader::~Shader()
     }
 }
 
-void Shader::Bind()
+void Shader::Bind() const
 {
     if (m_ID == 0)
     {
@@ -40,7 +40,7 @@ void Shader::Bind()
     GL(glUseProgram(m_ID));
 }
 
-void Shader::Unbind()
+void Shader::Unbind() const
 {
     GL(glUseProgram(0));
 }
@@ -206,7 +206,7 @@ void Shader::Link()
     GL(glDeleteShader(m_FragmentId));
 }
 
-void Shader::CheckCompileError(uint32 shader, const std::string type)
+void Shader::CheckCompileError(uint32 shader, const std::string type) const
 {
     int32 success;
     char infoLog[1024];

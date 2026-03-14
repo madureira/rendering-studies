@@ -24,8 +24,8 @@ private:
     uint32 m_VBO;
 
 public:
-    TextRenderer(std::string fontPath);
+    TextRenderer(const std::string& fontPath);
     ~TextRenderer();
 
-    void Render(Shader& shader, const std::string& text, float32 x, float32 y, float32 scale, glm::vec3 color);
+    void Render(const Shader& shader, const std::string& text, const glm::vec3& color, float32 x, float32 y, float32 scale) const;
 };

@@ -14,8 +14,9 @@ const glm::vec3 CAMERA_POSITION = glm::vec3(0.0f, 10.0f, 20.0f);
 const glm::vec3 CAMERA_UP = glm::vec3(0.0f, 1.0f, 0.0f);
 const float32 CAMERA_YAW = -90.0f;
 const float32 CAMERA_PITCH = -20.0f;
+const glm::vec3 FPS_COLOR = glm::vec3(0.5f, 0.8f, 0.2f);
 
-Renderer::Renderer(const uint32 windowInitialWidth, const uint32 windowInitialHeight)
+Renderer::Renderer(uint32 windowInitialWidth, uint32 windowInitialHeight)
     : m_WindowInitialWidth(windowInitialWidth)
     , m_WindowInitialHeight(windowInitialHeight)
 {
@@ -45,14 +46,14 @@ Renderer::~Renderer()
     if (m_Grid) delete m_Grid;
 }
 
-void Renderer::Clear(const float32 r, const float32 g, const float32 b) const
+void Renderer::Clear(float32 r, float32 g, float32 b) const
 {
     // Background color
     GL(glClearColor(r, g, b, 1.0f));
     GL(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Renderer::RenderFPS(const float64 currentTime, const bool display) const
+void Renderer::RenderFPS(float64 currentTime, bool display) const
 {
     m_FpsNbFrames++;
 
@@ -80,10 +81,10 @@ void Renderer::RenderFPS(const float64 currentTime, const bool display) const
         return;
     }
 
-    m_TextRenderer->Render(*m_TextShader, fpsText, originX, fpsTextPosY, scale, glm::vec3(0.5f, 0.8f, 0.2f));
+    m_TextRenderer->Render(*m_TextShader, fpsText, FPS_COLOR, originX, fpsTextPosY, scale);
 }
 
-void Renderer::SetPolygonMode(const bool enabled)
+void Renderer::SetPolygonMode(bool enabled)
 {
     if (enabled)
     {
@@ -95,7 +96,7 @@ void Renderer::SetPolygonMode(const bool enabled)
     }
 }
 
-void Renderer::SetZBuffer(const bool enabled)
+void Renderer::SetZBuffer(bool enabled)
 {
     if (enabled)
     {
@@ -110,7 +111,7 @@ void Renderer::SetZBuffer(const bool enabled)
     }
 }
 
-void Renderer::SetCullFace(const bool enabled)
+void Renderer::SetCullFace(bool enabled)
 {
     if (enabled)
     {
@@ -123,7 +124,7 @@ void Renderer::SetCullFace(const bool enabled)
     }
 }
 
-void Renderer::RenderGrid(const uint32 winWidth, const uint32 winHeight, const bool enabled) const
+void Renderer::RenderGrid(uint32 winWidth, uint32 winHeight, bool enabled) const
 {
     if (enabled) {
         m_Grid->Render(*m_Camera, winWidth, winHeight);

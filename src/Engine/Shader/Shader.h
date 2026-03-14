@@ -28,8 +28,8 @@ public:
     Shader(const std::string& vertexPath, const std::string& tessControlPath, const std::string& tessEvalPath, const std::string& fragmentPath);
     ~Shader();
 
-    void Bind();
-    void Unbind();
+    void Bind() const;
+    void Unbind() const;
     uint32 GetProgram() const;
     void SetBool(const std::string& name, bool value) const;
     void SetInt(const std::string& name, int32 value) const;
@@ -47,7 +47,7 @@ public:
 private:
     void Compile();
     void Link();
-    void CheckCompileError(uint32 shader, const std::string type);
+    void CheckCompileError(uint32 shader, const std::string type) const;
     void CheckLinkingError();
     int32 GetUniformLocation(const std::string& name) const;
 };

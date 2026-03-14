@@ -6,12 +6,12 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-UI::UI(const Window* window)
+UI::UI(const Window& window)
 {
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
 
-    ImGui_ImplGlfw_InitForOpenGL(window->getNativeWindow(), true);
+    ImGui_ImplGlfw_InitForOpenGL(window.getNativeWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 410 core");
 }
 

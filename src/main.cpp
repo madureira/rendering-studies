@@ -11,7 +11,7 @@ int main()
 
     Window window(cfg);
     Renderer renderer(window.GetWidth(), window.GetHeight());
-    UI ui(&window);
+    UI ui(window);
 
     App* app = nullptr;
     AppSelector appSelector;

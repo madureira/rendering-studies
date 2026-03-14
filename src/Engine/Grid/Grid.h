@@ -21,5 +21,5 @@ public:
     Grid();
     ~Grid();
 
-    void Render(const Camera& camera, const uint32 windowWidth, const uint32 windowHeight, bool showYAxis = true) const;
+    void Render(const Camera& camera, uint32 windowWidth, uint32 windowHeight, bool showYAxis = true) const;
 };

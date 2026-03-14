@@ -28,12 +28,12 @@ public:
      Renderer(const uint32 windowInitialWidth, const uint32 windowInitialHeight);
      ~Renderer();
 
-     void Clear(const float32 r, float32 g, float32 b) const;
-     void RenderFPS(const float64 currentTime, const bool display = false) const;
-     void SetPolygonMode(const bool enabled = false);
-     void SetZBuffer(const bool enabled = true);
-     void SetCullFace(const bool enabled = true);
-     void RenderGrid(const uint32 winWidth, const uint32 winHeight, const bool enabled = true) const;
+     void Clear(float32 r, float32 g, float32 b) const;
+     void RenderFPS(float64 currentTime, bool display = false) const;
+     void SetPolygonMode(bool enabled = false);
+     void SetZBuffer(bool enabled = true);
+     void SetCullFace(bool enabled = true);
+     void RenderGrid(uint32 winWidth, uint32 winHeight, bool enabled = true) const;
      void ResetCameraPosition() const;
      Camera* GetCamera() const;
 };

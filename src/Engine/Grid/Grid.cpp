@@ -57,7 +57,7 @@ Grid::~Grid()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void Grid::Render(const Camera& camera, const uint32 windowWidth, const uint32 windowHeight, bool showYAxis) const
+void Grid::Render(const Camera& camera, uint32 windowWidth, uint32 windowHeight, bool showYAxis) const
 {
     glm::dvec3 cameraPosHP = camera.GetPositionHP();
     glm::mat4 projection = camera.GetProjectionMatrix(windowWidth, windowHeight);

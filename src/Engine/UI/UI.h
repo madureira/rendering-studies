@@ -5,7 +5,7 @@ class Window;
 class UI final
 {
 public:
-    UI(const Window* window);
+    UI(const Window& window);
     ~UI();
 
     static void NewFrame();

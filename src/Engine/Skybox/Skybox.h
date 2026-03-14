@@ -18,10 +18,10 @@ private:
     uint32 m_Texture;
 
 public:
-    Skybox(std::string& skyboxTexturesBasePath);
+    Skybox(const std::string& skyboxTexturesBasePath);
     ~Skybox();
 
-    void Render(const Camera& camera, const uint32 windowWidth, const uint32 windowHeight, const float32 exposure = 1.0f) const;
+    void Render(const Camera& camera, uint32 windowWidth, uint32 windowHeight, float32 exposure = 1.0f) const;
 
 private:
     void CreateMesh();

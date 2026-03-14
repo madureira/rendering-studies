@@ -13,7 +13,7 @@ static const char* const s_SkyboxFaces[] = {
     "px", "nx", "py", "ny", "pz", "nz"
 };
 
-Skybox::Skybox(std::string& skyboxTexturesBasePath)
+Skybox::Skybox(const std::string& skyboxTexturesBasePath)
 {
     m_Shader = new Shader("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
 
@@ -43,7 +43,7 @@ Skybox::~Skybox()
     GL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
-void Skybox::Render(const Camera& camera, const uint32 windowWidth, const uint32 windowHeight, const float32 exposure) const
+void Skybox::Render(const Camera& camera, uint32 windowWidth, uint32 windowHeight, float32 exposure) const
 {
     glm::mat4 projection = camera.GetProjectionMatrix(windowWidth, windowHeight);
 

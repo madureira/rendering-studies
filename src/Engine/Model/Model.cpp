@@ -45,7 +45,7 @@ void Model::LoadModel(const std::string& path)
     ProcessNode(scene->mRootNode, scene);
 }
 
-void Model::ProcessNode(aiNode* node, const aiScene* scene)
+void Model::ProcessNode(const aiNode* node, const aiScene* scene)
 {
     for (uint32 i = 0; i < node->mNumMeshes; i++)
     {
@@ -58,7 +58,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
     }
 }
 
-Mesh Model::ProcessMesh(aiMesh* mesh)
+Mesh Model::ProcessMesh(const aiMesh* mesh)
 {
     Mesh newMesh;
     newMesh.vertices.reserve(mesh->mNumVertices);

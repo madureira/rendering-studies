@@ -39,7 +39,7 @@ public:
 
 private:
     void LoadModel(const std::string& path);
-    void ProcessNode(aiNode* node, const aiScene* scene);
-    Mesh ProcessMesh(aiMesh* mesh);
+    void ProcessNode(const aiNode* node, const aiScene* scene);
+    Mesh ProcessMesh(const aiMesh* mesh);
     void SetupMesh(Mesh* mesh) const;
 };

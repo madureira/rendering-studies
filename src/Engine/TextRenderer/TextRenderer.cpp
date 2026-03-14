@@ -8,7 +8,7 @@
 
 #include "../Shader/Shader.h"
 
-TextRenderer::TextRenderer(std::string fontPath)
+TextRenderer::TextRenderer(const std::string& fontPath)
 {
     FT_Library ft;
 
@@ -84,7 +84,7 @@ TextRenderer::~TextRenderer()
     GL(glDeleteVertexArrays(1, &m_VAO));
 }
 
-void TextRenderer::Render(Shader& shader, const std::string& text, float32 x, float32 y, float32 scale, glm::vec3 color)
+void TextRenderer::Render(const Shader& shader, const std::string& text, const glm::vec3& color, float32 x, float32 y, float32 scale) const
 {
     shader.Bind();
 
