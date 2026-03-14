@@ -11,17 +11,17 @@
 
 REGISTER_APP(Triangle)
 
-Triangle::Triangle(Window* window)
+Triangle::Triangle(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
-    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+    m_Camera.OverrideInitialPosition(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     CreateMesh();
 }
 
 Triangle::~Triangle()
 {
-    delete m_Camera;
     if (m_Shader)
     {
         m_Shader->Unbind();
@@ -32,30 +32,33 @@ Triangle::~Triangle()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void Triangle::Update([[maybe_unused]] float32 deltaTime)
+void Triangle::Update(float32 deltaTime)
 {
     InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime);
 }
 
 void Triangle::Render()
 {
-    float32 time = m_Window->GetTime();
+    float32 time = m_Window.GetTime();
 
     // Vary color based on time
-    float32 red = (std::sin(time * 0.5f) + 1.0f) / 4.0f;
-    float32 green = (std::sin(time * 0.3f) + 1.0f) / 4.0f;
-    float32 blue = (std::sin(time * 0.7f) + 1.0f) / 4.0f;
+    // float31 red = (std::sin(time * 0.5f) + 1.0f) / 4.0f;
+    // float32 green = (std::sin(time * 0.3f) + 1.0f) / 4.0f;
+    // float32 blue = (std::sin(time * 0.7f) + 1.0f) / 4.0f;
 
-    GL(glClearColor(red, green, blue, 1.0f)); // Use oscillating colors
-    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    // GL(glClearColor(red, green, blue, 1.0f)); // Use oscillating colors
+    // GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
     // Update model matrix for rotating the triangle on Z-axis
     glm::mat4 model = glm::rotate(glm::mat4(1.f), std::sin(time * 0.8f) / 4.f, glm::vec3(0.f, 0.f, -1.f));
-    glm::mat4 view = m_Camera->GetViewMatrix();
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    glm::mat4 view = m_Camera.GetViewMatrix();
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
+
+    // Move model above the x-axis origin
+    float distanceX = 0.5f;
+    model = glm::translate(model, glm::vec3(0.0f, distanceX, 0.0f));
 
     m_Shader->Bind();
-
     m_Shader->SetMat4("u_MVP", projection * view * model);
 
     GL(glBindVertexArray(m_VAO));

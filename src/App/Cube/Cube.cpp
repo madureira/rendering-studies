@@ -2,6 +2,7 @@
 
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterApp.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
@@ -10,17 +11,16 @@
 
 REGISTER_APP(Cube)
 
-Cube::Cube(Window* window)
+Cube::Cube(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
-    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     CreateMesh();
 }
 
 Cube::~Cube()
 {
-    delete m_Camera;
     if (m_Shader)
     {
         m_Shader->Unbind();
@@ -39,11 +39,14 @@ void Cube::Update(float32 deltaTime)
 void Cube::Render()
 {
     glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = m_Camera->GetViewMatrix();
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    glm::mat4 view = m_Camera.GetViewMatrix();
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
+
+    // Move model above the x-axis origin
+    float distanceX = 0.5f;
+    model = glm::translate(model, glm::vec3(0.0f, distanceX, 0.0f));
 
     m_Shader->Bind();
-
     m_Shader->SetMat4("u_MVP", projection * view * model);
 
     GL(glBindVertexArray(m_VAO));

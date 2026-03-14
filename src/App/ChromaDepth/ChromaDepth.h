@@ -4,7 +4,6 @@
 #include <RenderingStudies/Types.h>
 
 class Camera;
-class Grid;
 class Model;
 class Shader;
 class Window;
@@ -12,14 +11,13 @@ class Window;
 class ChromaDepth final : public App
 {
 private:
-    Window* m_Window;
+    const Window& m_Window;
+    const Camera& m_Camera;
     Shader* m_Shader;
-    Camera* m_Camera;
-    Grid* m_Grid;
     Model* m_Model;
 
 public:
-    ChromaDepth(Window* window);
+    ChromaDepth(const Window& window, const Camera& camera);
     ~ChromaDepth();
 
     virtual void Update(float32 deltaTime) override;

@@ -17,6 +17,9 @@ UI::UI(const Window* window)
 
 UI::~UI()
 {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void UI::NewFrame()

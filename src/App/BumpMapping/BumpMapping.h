@@ -11,9 +11,9 @@ class Window;
 class BumpMapping final : public App
 {
 private:
-    Window* m_Window;
+    const Window& m_Window;
+    const Camera& m_Camera;
     Shader* m_Shader;
-    Camera* m_Camera;
 
     uint32 m_VAO;
     uint32 m_VBO;
@@ -31,7 +31,7 @@ private:
     float32 m_NormalStrength;
 
 public:
-    BumpMapping(Window* window);
+    BumpMapping(const Window& window, const Camera& camera);
     ~BumpMapping();
 
     virtual void Update(float32 deltaTime) override;

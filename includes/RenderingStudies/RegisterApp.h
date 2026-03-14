@@ -11,7 +11,9 @@
         {                                                            \
             AppRegistry::Instance().Register(                        \
                 #ClassType,                                          \
-                [](Window* w) -> App* { return new ClassType(w); }); \
+                [](Window& w, Camera& c) -> App* {                   \
+                    return new ClassType(w, c);                      \
+                });                                                  \
         }                                                            \
     };                                                               \
     static ClassType##Registrator global_##ClassType##Registrator;   \

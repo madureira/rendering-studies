@@ -15,5 +15,5 @@ public:
     InputProcessorUtil& operator=(InputProcessorUtil&&) = delete;
     ~InputProcessorUtil() = delete;
 
-    static void moveCamera(Camera* camera, Window* window, float32 deltaTime, float32 speed = 1.0f, float32 acceleratedSpeed = 3.0f);
+    static void moveCamera(const Camera& camera, const Window& window, float32 deltaTime, float32 speed = 1.0f, float32 acceleratedSpeed = 3.0f);
 };

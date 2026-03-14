@@ -71,6 +71,19 @@ TextRenderer::TextRenderer(std::string fontPath)
     GL(glBindVertexArray(0));
 }
 
+TextRenderer::~TextRenderer()
+{
+    for (const auto& ch : m_Characters)
+    {
+        if (ch.TextureID != 0)
+        {
+            GL(glDeleteTextures(1, &ch.TextureID));
+        }
+    }
+    GL(glDeleteBuffers(1, &m_VBO));
+    GL(glDeleteVertexArrays(1, &m_VAO));
+}
+
 void TextRenderer::Render(Shader& shader, const std::string& text, float32 x, float32 y, float32 scale, glm::vec3 color)
 {
     shader.Bind();

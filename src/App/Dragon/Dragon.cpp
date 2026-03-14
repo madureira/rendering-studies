@@ -12,19 +12,16 @@
 
 REGISTER_APP(Dragon)
 
-Dragon::Dragon(Window* window)
+Dragon::Dragon(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
     m_Model = new Model("assets/models/dragon.obj");
-    m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f);
-    m_Grid = new Grid();
 }
 
 Dragon::~Dragon()
 {
-    delete m_Grid;
-    delete m_Camera;
     delete m_Model;
     if (m_Shader)
     {
@@ -40,16 +37,14 @@ void Dragon::Update(float32 deltaTime)
 
 void Dragon::Render()
 {
-    uint32 winWidth = m_Window->GetWidth();
-    uint32 winHeight = m_Window->GetHeight();
+    uint32 winWidth = m_Window.GetWidth();
+    uint32 winHeight = m_Window.GetHeight();
 
-    m_Grid->Render(*m_Camera, winWidth, winHeight);
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(winWidth, winHeight);
 
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(winWidth, winHeight);
+    glm::mat4 viewRel = m_Camera.GetViewMatrixRelative();
 
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative();
-
-    glm::dvec3 origin = m_Camera->GetPositionHP();
+    glm::dvec3 origin = m_Camera.GetPositionHP();
     origin.y = 0.0;
 
     // Model is at (0,0,0) in world space. In relative space it needs to be offset.

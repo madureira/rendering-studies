@@ -34,6 +34,7 @@ private:
 
 public:
     Model(const std::string& path);
+    ~Model();
     void Draw() const;
 
 private:

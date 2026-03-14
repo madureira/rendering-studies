@@ -1,37 +1,80 @@
 #pragma once
 
-#include "../Window/Window.h"
-#include <RenderingStudies/App.h>
 #include <RenderingStudies/AppRegistry.h>
 #include <RenderingStudies/Types.h>
 #include <imgui.h>
 #include <string>
 #include <vector>
 
+class Window;
+class Camera;
+
 class AppSelector final
 {
 private:
     std::vector<std::string> m_AppNames;
     int32 m_SelectedAppIndex = 0;
+    bool m_FpsEnabled = true;
+    bool m_PolygonModeEnabled = false;
+    bool m_ZBufferEnabled = true;
+    bool m_CullFaceEnabled = true;
+    bool m_GridEnabled = true;
 
 public:
-    void Render()
+    inline void Render()
     {
         m_AppNames = AppRegistry::Instance().GetAllAppNames();
 
-        ImGui::Begin("Select an app");
+        ImGui::Begin("Settings");
+
+        ImGui::TextUnformatted("App");
+        ImGui::SameLine();
         ImGui::Combo("##App", &m_SelectedAppIndex, &AppSelector::ComboGetter, &m_AppNames, static_cast<int>(m_AppNames.size()));
+
+        ImGui::NewLine();
+
+        ImGui::Checkbox("FPS", &m_FpsEnabled);
+        ImGui::Checkbox("Grid", &m_GridEnabled);
+        ImGui::Checkbox("Wireframe", &m_PolygonModeEnabled);
+        ImGui::Checkbox("Z-buffering", &m_ZBufferEnabled);
+        ImGui::Checkbox("Face culling", &m_CullFaceEnabled);
+
         ImGui::End();
     }
 
-    int32 GetSelectedIndex()
+    inline int32 GetSelectedIndex() const
     {
         return m_SelectedAppIndex;
     }
 
-    App* GetSelectedApp(Window* window)
+    inline App* GetSelectedApp(Window& window, Camera& camera) const
     {
-        return AppRegistry::Instance().Create(m_AppNames[m_SelectedAppIndex], window);
+        return AppRegistry::Instance().Create(m_AppNames[m_SelectedAppIndex], window, camera);
+    }
+
+    inline bool IsPolygonModeEnabled() const
+    {
+        return m_PolygonModeEnabled;
+    }
+
+    inline bool IsFpsEnabled() const
+    {
+        return m_FpsEnabled;
+    }
+
+    inline bool IsZBufferEnabled() const
+    {
+        return m_ZBufferEnabled;
+    }
+
+    inline bool IsCullFaceEnabled() const
+    {
+        return m_CullFaceEnabled;
+    }
+
+    inline bool IsGridEnabled() const
+    {
+        return m_GridEnabled;
     }
 
 private:

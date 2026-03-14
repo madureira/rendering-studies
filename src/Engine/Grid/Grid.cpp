@@ -75,6 +75,11 @@ void Grid::Render(const Camera& camera, const uint32 windowWidth, const uint32 w
     glm::vec2 gridFract10 = CalculateFract(cameraPosHP, 10.0);
     glm::vec2 gridFract100 = CalculateFract(cameraPosHP, 100.0);
 
+    // Disable wireframe mode
+    GLint oldPolygonMode[2];
+    GL(glGetIntegerv(GL_POLYGON_MODE, oldPolygonMode));
+    GL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+
     m_Shader->Bind();
 
     // Use the same viewRel as the rest of the scene (depth coherence)
@@ -94,4 +99,8 @@ void Grid::Render(const Camera& camera, const uint32 windowWidth, const uint32 w
 
     GL(glBindVertexArray(0));
     m_Shader->Unbind();
+
+    // Restore previous state
+    assert(oldPolygonMode[0] == oldPolygonMode[1]);
+    GL(glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode[0]));
 }

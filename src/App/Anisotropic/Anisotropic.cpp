@@ -13,8 +13,9 @@
 
 REGISTER_APP(Anisotropic)
 
-Anisotropic::Anisotropic(Window* window)
+Anisotropic::Anisotropic(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
     , m_LightDir(0.5f, 0.6f, 0.5f)
     , m_RotDeg(0.0f, 0.0f, 0.0f)
     , m_Roughness(1.0f)
@@ -24,14 +25,10 @@ Anisotropic::Anisotropic(Window* window)
 {
     m_Shader = new Shader("assets/shaders/anisotropic.vert", "assets/shaders/anisotropic.frag");
     m_Model = new Model("assets/models/sphere.obj");
-    m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f);
-    m_Grid = new Grid();
 }
 
 Anisotropic::~Anisotropic()
 {
-    delete m_Grid;
-    delete m_Camera;
     delete m_Model;
     if (m_Shader)
     {
@@ -67,16 +64,14 @@ void Anisotropic::Update(float32 deltaTime)
 
 void Anisotropic::Render()
 {
-    uint32 winWidth = m_Window->GetWidth();
-    uint32 winHeight = m_Window->GetHeight();
+    uint32 winWidth = m_Window.GetWidth();
+    uint32 winHeight = m_Window.GetHeight();
 
-    m_Grid->Render(*m_Camera, winWidth, winHeight);
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(winWidth, winHeight);
 
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(winWidth, winHeight);
+    glm::mat4 viewRel = m_Camera.GetViewMatrixRelative();
 
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative();
-
-    glm::dvec3 cameraPos = m_Camera->GetPositionHP();
+    glm::dvec3 cameraPos = m_Camera.GetPositionHP();
 
     glm::dvec3 origin = cameraPos;
     origin.y = 0.0;

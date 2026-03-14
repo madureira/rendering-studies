@@ -5,10 +5,20 @@
 Camera::Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)
     : m_Position(position)
     , m_Front(glm::vec3(0.0f, 0.0f, -1.0f))
+    , m_Zoom(ZOOM)
     , m_MovementSpeed(SPEED)
     , m_MouseSensitivity(SENSITIVITY)
-    , m_Zoom(ZOOM)
 {
+    m_WorldUp = up;
+    m_Yaw = yaw;
+    m_Pitch = pitch;
+
+    UpdateCameraVectors();
+}
+
+void Camera::OverrideInitialPosition(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch) const
+{
+    m_Position = position;
     m_WorldUp = up;
     m_Yaw = yaw;
     m_Pitch = pitch;
@@ -75,7 +85,7 @@ float32 Camera::GetZoom() const
     return m_Zoom;
 }
 
-void Camera::Move(CameraMove direction, float32 deltaTime, float32 speed)
+void Camera::Move(CameraMove direction, float32 deltaTime, float32 speed) const
 {
     float64 velocity = static_cast<float64>(m_MovementSpeed * deltaTime * speed);
     glm::dvec3 front = glm::dvec3(m_Front);
@@ -102,7 +112,7 @@ void Camera::Move(CameraMove direction, float32 deltaTime, float32 speed)
     }
 }
 
-void Camera::Look(float32 dx, float32 dy, bool constrainPitch)
+void Camera::Look(float32 dx, float32 dy, bool constrainPitch) const
 {
     float32 dampingFactor = 0.5f;
     dx *= m_MouseSensitivity * dampingFactor;
@@ -125,7 +135,7 @@ void Camera::Look(float32 dx, float32 dy, bool constrainPitch)
     UpdateCameraVectors();
 }
 
-void Camera::Zoom(float32 yoffset)
+void Camera::Zoom(float32 yoffset) const
 {
     m_Zoom -= yoffset;
 
@@ -139,7 +149,7 @@ void Camera::Zoom(float32 yoffset)
     }
 }
 
-void Camera::UpdateCameraVectors()
+void Camera::UpdateCameraVectors() const
 {
     glm::vec3 front;
     front.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));

@@ -7,11 +7,12 @@
 #include <vector>
 
 class Window;
+class Camera;
 
 class AppRegistry
 {
 public:
-    typedef App* (*Creator)(Window*);
+    typedef App* (*Creator)(Window&, Camera&);
 
     static AppRegistry& Instance()
     {
@@ -24,14 +25,14 @@ public:
         m_Registry[name] = creator;
     }
 
-    App* Create(const std::string& name, Window* window) const
+    App* Create(const std::string& name, Window& window, Camera& camera) const
     {
         auto it = m_Registry.find(name);
         if (it == m_Registry.end())
         {
             return nullptr;
         }
-        return (it->second)(window);
+        return (it->second)(window, camera);
     }
 
     std::vector<std::string> GetAllAppNames() const

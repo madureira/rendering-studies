@@ -12,9 +12,9 @@ class Window;
 class RippleEffect final : public App
 {
 private:
-    Window* m_Window;
+    const Window& m_Window;
+    const Camera& m_Camera;
     Shader* m_Shader;
-    Camera* m_Camera;
 
     uint32 m_VAO;
     uint32 m_VBO;
@@ -28,7 +28,7 @@ private:
     float32 m_Frequency;
 
 public:
-    RippleEffect(Window* window);
+    RippleEffect(const Window& window, const Camera& camera);
     ~RippleEffect();
 
     virtual void Update(float32 deltaTime) override;

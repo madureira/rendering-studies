@@ -11,6 +11,16 @@ Model::Model(const std::string& path)
     LoadModel(path);
 }
 
+Model::~Model()
+{
+    for (const auto& mesh : m_Meshes)
+    {
+        GL(glDeleteVertexArrays(1, &mesh.VAO));
+        GL(glDeleteBuffers(1, &mesh.VBO));
+        GL(glDeleteBuffers(1, &mesh.EBO));
+    }
+}
+
 void Model::Draw() const
 {
     for (const auto& mesh : m_Meshes)

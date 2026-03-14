@@ -53,6 +53,11 @@ void Skybox::Render(const Camera& camera, const uint32 windowWidth, const uint32
     // Only the upper-left 3x3 (rotation) matters; the skybox cube stays centered on the camera.
     glm::mat4 viewRotOnly = glm::mat4(glm::mat3(view));
 
+    // Disable wireframe mode
+    GLint oldPolygonMode[2];
+    GL(glGetIntegerv(GL_POLYGON_MODE, oldPolygonMode));
+    GL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+
     m_Shader->Bind();
     m_Shader->SetMat4("u_VP", projection * viewRotOnly);
 
@@ -80,6 +85,9 @@ void Skybox::Render(const Camera& camera, const uint32 windowWidth, const uint32
     }
     m_Shader->Unbind();
 
+    // Restore previous state
+    assert(oldPolygonMode[0] == oldPolygonMode[1]);
+    GL(glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode[0]));
 }
 
 

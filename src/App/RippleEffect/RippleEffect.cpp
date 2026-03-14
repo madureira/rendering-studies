@@ -2,6 +2,7 @@
 
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterApp.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
 
 #include "../../Engine/Camera/Camera.h"
@@ -11,8 +12,9 @@
 
 REGISTER_APP(RippleEffect)
 
-RippleEffect::RippleEffect(Window* window)
+RippleEffect::RippleEffect(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
     , m_IndexCount(0)
     , m_TessLevel(4)
     , m_Amplitude(0.2f)
@@ -29,7 +31,8 @@ RippleEffect::RippleEffect(Window* window)
     // Position in +X,+Y,+Z octant; yaw 225° + pitch ~-35° so front points at (0,0,0).
     const float32 isoDist = 14.0f; // distance in XZ
     const float32 isoHeight = 12.0f;
-    m_Camera = new Camera(
+
+    m_Camera.OverrideInitialPosition(
         glm::vec3(isoDist, isoHeight, isoDist),
         glm::vec3(0.0f, 1.0f, 0.0f),
         225.0f,  // yaw: look from (+X,+Z) back toward origin
@@ -41,7 +44,6 @@ RippleEffect::RippleEffect(Window* window)
 
 RippleEffect::~RippleEffect()
 {
-    delete m_Camera;
     if (m_Shader)
     {
         m_Shader->Unbind();
@@ -66,14 +68,18 @@ void RippleEffect::Update(float32 deltaTime)
 void RippleEffect::Render()
 {
     glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = m_Camera->GetViewMatrix();
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    glm::mat4 view = m_Camera.GetViewMatrix();
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
+
+    // Move model above the x-axis origin
+    float distanceX = 1.0f;
+    model = glm::translate(model, glm::vec3(0.0f, distanceX, 0.0f));
 
     m_Shader->Bind();
 
     m_Shader->SetMat4("u_Model", model);
     m_Shader->SetMat4("u_VP", projection * view);
-    m_Shader->SetFloat("u_Time", m_Window->GetTime());
+    m_Shader->SetFloat("u_Time", m_Window.GetTime());
     m_Shader->SetInt("u_TessLevel", m_TessLevel);
     m_Shader->SetFloat("u_Amplitude", m_Amplitude);
     m_Shader->SetFloat("u_Frequency", m_Frequency);

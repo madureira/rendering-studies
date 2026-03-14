@@ -15,9 +15,8 @@ struct Config
     std::string window_title;
     int16 window_width;
     int16 window_height;
-    bool window_fullscreen;
-    bool show_fps;
     bool vsync_on;
+    int32 monitor_index;
 };
 
 namespace
@@ -57,9 +56,8 @@ inline Config loadConfig(const std::string& path)
     std::string window_title;
     int16 window_width = 0;
     int16 window_height = 0;
-    bool window_fullscreen = false;
-    bool show_fps = false;
     bool vsync_on = false;
+    int8 monitor_index = 0;
 
     bool has_width = false;
     bool has_height = false;
@@ -104,17 +102,18 @@ inline Config loadConfig(const std::string& path)
             window_height = static_cast<int16>(v);
             has_height = true;
         }
-        else if (key == "window_fullscreen")
-        {
-            window_fullscreen = parseBool(value);
-        }
-        else if (key == "show_fps")
-        {
-            show_fps = parseBool(value);
-        }
         else if (key == "vsync_on")
         {
             vsync_on = parseBool(value);
+        }
+        else if (key == "monitor_index")
+        {
+            int v = std::stoi(value);
+            if (v < std::numeric_limits<int32>::min() || v > std::numeric_limits<int32>::max())
+            {
+                throw std::runtime_error("monitor_index out of int8 range");
+            }
+            monitor_index = static_cast<int32>(v);
         }
     }
 
@@ -129,5 +128,11 @@ inline Config loadConfig(const std::string& path)
     }
 
 
-    return Config{ window_title, window_width, window_height, window_fullscreen, show_fps, vsync_on };
+    return Config {
+        window_title,
+        window_width,
+        window_height,
+        vsync_on,
+        monitor_index
+    };
 }

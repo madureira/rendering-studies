@@ -5,8 +5,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../Shader/Shader.h"
-#include "../TextRenderer/TextRenderer.h"
 #include "../Utils/HardwareUtil.h"
 #include <RenderingStudies/Config.h>
 
@@ -16,9 +14,8 @@ Window::Window(const Config& config)
     m_InitialHeight = config.window_height;
     m_Width = config.window_width;
     m_Height = config.window_height;
-    m_FullScreen = config.window_fullscreen;
-    m_ShowFPS = config.show_fps;
     m_VSyncOn = config.vsync_on;
+    m_MonitorIndex = config.monitor_index;
 
     glfwSetErrorCallback([](int32 error, const char* description) {
         LOG_ERROR("GLFW ERROR: code: {}, message: {}", error, description);
@@ -30,10 +27,22 @@ Window::Window(const Config& config)
         return;
     }
 
-    const int32 MONITOR_INDEX = 0;
-    int32 monitors;
-    GLFWmonitor* pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
-    const GLFWvidmode* pMode = glfwGetVideoMode(pMonitor);
+    int32 monitorCount;
+
+    GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+
+    m_Monitor = (monitorCount > 1) ? monitors[0] : glfwGetPrimaryMonitor();
+
+    if (m_MonitorIndex >= 0 && m_MonitorIndex < monitorCount)
+    {
+        m_Monitor = monitors[m_MonitorIndex];
+    }
+    else
+    {
+        m_Monitor = glfwGetPrimaryMonitor();
+    }
+
+    const GLFWvidmode* pVideoMode = glfwGetVideoMode(m_Monitor);
 
     // Set OpenGL version and profile
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -42,16 +51,19 @@ Window::Window(const Config& config)
 #if defined(__APPLE__)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // Hide initially to prevent flicker during move
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-    glfwWindowHint(GLFW_RED_BITS, pMode->redBits);
-    glfwWindowHint(GLFW_GREEN_BITS, pMode->greenBits);
-    glfwWindowHint(GLFW_BLUE_BITS, pMode->blueBits);
+    glfwWindowHint(GLFW_RED_BITS, pVideoMode->redBits);
+    glfwWindowHint(GLFW_GREEN_BITS, pVideoMode->greenBits);
+    glfwWindowHint(GLFW_BLUE_BITS, pVideoMode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, 60);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    m_Window = glfwCreateWindow(m_Width, m_Height, config.window_title.c_str(), m_FullScreen ? pMonitor : NULL, NULL);
+    // Create the window
+    m_Window = glfwCreateWindow(m_Width, m_Height, config.window_title.c_str(), m_FullScreen ? m_Monitor : NULL, NULL);
+
     if (!m_Window)
     {
         LOG_ERROR("Window: error creating window");
@@ -61,9 +73,13 @@ Window::Window(const Config& config)
 
     // Make OpenGL context current
     glfwMakeContextCurrent(m_Window);
-    glfwSetWindowUserPointer(m_Window, this);
-    glfwSetWindowPos(m_Window, (pMode->width - m_Width) / 2, (pMode->height - m_Height) / 2);
+
     glfwSetWindowSizeLimits(m_Window, 800, 600, 3840, 2160);
+
+    WindowPosition winPosition = CenterWindow(pVideoMode, m_Width, m_Height);
+    glfwSetWindowPos(m_Window, winPosition.CenterX, winPosition.CenterY);
+
+    glfwSetWindowUserPointer(m_Window, this);
     // glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSwapInterval(m_VSyncOn ? 1 : 0);
     glfwFocusWindow(m_Window);
@@ -94,11 +110,6 @@ Window::Window(const Config& config)
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(pNativeWindow, GLFW_TRUE);
-        }
-
-        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-        {
-            window.m_WireframeMode = !window.m_WireframeMode;
         }
     });
 
@@ -133,26 +144,7 @@ Window::Window(const Config& config)
         return;
     }
 
-    GL(glEnable(GL_DEPTH_TEST));
-    GL(glEnable(GL_MULTISAMPLE));
-    GL(glEnable(GL_CULL_FACE));
-    GL(glCullFace(GL_BACK));
-    GL(glFrontFace(GL_CCW));
-    GL(glEnable(GL_BLEND));
-    GL(glDepthFunc(GL_LEQUAL));
-    GL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-    m_TextShader = new Shader("assets/shaders/text.vert", "assets/shaders/text.frag");
-
-    if (m_ShowFPS)
-    {
-        m_TextRenderer = new TextRenderer("assets/fonts/roboto-regular.ttf");
-    }
-
-    glm::mat4 projection = glm::ortho(0.0f, (float32)m_InitialWidth, 0.0f, (float32)m_InitialHeight);
-    m_TextShader->Bind();
-    m_TextShader->SetMat4("u_Projection", projection);
-    m_TextShader->Unbind();
+    glfwShowWindow(m_Window);
 }
 
 Window::~Window()
@@ -160,7 +152,7 @@ Window::~Window()
     Shutdown();
 }
 
-bool Window::IsOpen() const
+bool Window::IsOpened() const
 {
     return !glfwWindowShouldClose(m_Window);
 }
@@ -170,22 +162,8 @@ void Window::BeginFrame()
     m_Mouse.BeginFrame();
 }
 
-void Window::Clear() const
-{
-    // Gray background
-    GL(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
-    // Clear color buffer and depth buffer
-    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-    SetPolygonMode();
-}
-
 void Window::SwapBuffers() const
 {
-    if (m_ShowFPS)
-    {
-        RenderFPS();
-    }
     glfwSwapBuffers(m_Window);
 }
 
@@ -242,67 +220,20 @@ void Window::Shutdown() const
     glfwTerminate();
 }
 
-void Window::RenderFPS() const
-{
-    float64 currentTime = glfwGetTime();
-    m_FpsNbFrames++;
-
-    static std::string fpsText;
-    if (currentTime - m_FpsLastTime >= 1.0) // If 1 second has passed
-    {
-        float64 fps = float64(m_FpsNbFrames) / (currentTime - m_FpsLastTime);
-
-        // Convert FPS to string with 2 decimal places
-        std::stringstream fpsStream;
-        fpsStream << std::fixed << std::setprecision(2) << fps;
-        fpsText = "FPS: " + fpsStream.str();
-
-        m_FpsNbFrames = 0;
-        m_FpsLastTime = currentTime;
-    }
-
-    static const float32 scale = 0.3f;
-    static const float32 originX = 5.0f;
-    static const float32 rowHeight = 20.0f;
-    const float32 fpsTextPosY = m_InitialHeight - rowHeight;
-
-    if (!m_TextRenderer)
-    {
-        return;
-    }
-
-    m_TextRenderer->Render(*m_TextShader, fpsText, originX, fpsTextPosY, scale, glm::vec3(0.5f, 0.8f, 0.2f));
-}
-
 void Window::Fullscreen() const
 {
     m_FullScreen = !m_FullScreen;
 
-    const int32 MONITOR_INDEX = 0;
-    int32 monitors;
-    GLFWmonitor* pMonitor = glfwGetMonitors(&monitors)[MONITOR_INDEX];
-    const GLFWvidmode* pMode = glfwGetVideoMode(pMonitor);
+    const GLFWvidmode* pVideoMode = glfwGetVideoMode(m_Monitor);
 
     if (m_FullScreen)
     {
-        glfwSetWindowMonitor(m_Window, pMonitor, 0, 0, pMode->width, pMode->height, pMode->refreshRate);
+        glfwSetWindowMonitor(m_Window, m_Monitor, 0, 0, pVideoMode->width, pVideoMode->height, pVideoMode->refreshRate);
     }
     else
     {
-        glfwSetWindowMonitor(m_Window, NULL, 0, 0, m_InitialWidth, m_InitialHeight, 0);
-        glfwSetWindowPos(m_Window, (pMode->width - m_InitialWidth) / 2, (pMode->height - m_InitialHeight) / 2);
-    }
-}
-
-void Window::SetPolygonMode() const
-{
-    if (m_WireframeMode)
-    {
-        GL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
-    }
-    else
-    {
-        GL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+        WindowPosition winPos = CenterWindow(pVideoMode, m_InitialWidth, m_InitialHeight);
+        glfwSetWindowMonitor(m_Window, NULL, winPos.CenterX, winPos.CenterY, m_InitialWidth, m_InitialHeight, GLFW_DONT_CARE);
     }
 }
 
@@ -344,6 +275,22 @@ void Window::OnMouseButton(int32 button, int32 action, [[maybe_unused]] int32 mo
 void Window::OnScroll([[maybe_unused]] float64 xoffset, float64 yoffset)
 {
     m_Mouse.scrollY += yoffset;
+}
+
+WindowPosition Window::CenterWindow(const GLFWvidmode* pVideoMode, const uint32 winWidth, const uint32 winHeight) const
+{
+    int monitorX, monitorY;
+    glfwGetMonitorPos(m_Monitor, &monitorX, &monitorY);
+
+    // Calculate the centered position relative to the monitor's start position
+    int32 centerX = monitorX + (pVideoMode->width - winWidth) / 2;
+    int32 centerY = monitorY + (pVideoMode ->height - winHeight) / 2;
+
+    WindowPosition winPos;
+    winPos.CenterX = centerX;
+    winPos.CenterY = centerY;
+
+    return winPos;
 }
 
 void Window::ShowHardwareInfo() const

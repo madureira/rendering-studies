@@ -13,20 +13,17 @@
 
 REGISTER_APP(ColorCoord)
 
-ColorCoord::ColorCoord(Window* window)
+ColorCoord::ColorCoord(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
     , m_UseModelCoords(false)
 {
     m_Shader = new Shader("assets/shaders/color_coord.vert", "assets/shaders/color_coord.frag");
     m_Model = new Model("assets/models/teapot.obj");
-    m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f);
-    m_Grid = new Grid();
 }
 
 ColorCoord::~ColorCoord()
 {
-    delete m_Grid;
-    delete m_Camera;
     delete m_Model;
     if (m_Shader)
     {
@@ -52,16 +49,14 @@ void ColorCoord::Update(float32 deltaTime)
 
 void ColorCoord::Render()
 {
-    uint32 winWidth = m_Window->GetWidth();
-    uint32 winHeight = m_Window->GetHeight();
+    uint32 winWidth = m_Window.GetWidth();
+    uint32 winHeight = m_Window.GetHeight();
 
-    m_Grid->Render(*m_Camera, winWidth, winHeight);
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(winWidth, winHeight);
 
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(winWidth, winHeight);
+    glm::mat4 viewRel = m_Camera.GetViewMatrixRelative();
 
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative();
-
-    glm::dvec3 origin = m_Camera->GetPositionHP();
+    glm::dvec3 origin = m_Camera.GetPositionHP();
     origin.y = 0.0;
 
     // Model position in origin-relative space

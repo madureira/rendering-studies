@@ -12,19 +12,16 @@
 
 REGISTER_APP(ChromaDepth)
 
-ChromaDepth::ChromaDepth(Window* window)
+ChromaDepth::ChromaDepth(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
 {
     m_Shader = new Shader("assets/shaders/chroma_depth.vert", "assets/shaders/chroma_depth.frag");
     m_Model = new Model("assets/models/dragon.obj");
-    m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f);
-    m_Grid = new Grid();
 }
 
 ChromaDepth::~ChromaDepth()
 {
-    delete m_Grid;
-    delete m_Camera;
     delete m_Model;
     if (m_Shader)
     {
@@ -40,18 +37,16 @@ void ChromaDepth::Update(float32 deltaTime)
 
 void ChromaDepth::Render()
 {
-    uint32 winWidth = m_Window->GetWidth();
-    uint32 winHeight = m_Window->GetHeight();
+    uint32 winWidth = m_Window.GetWidth();
+    uint32 winHeight = m_Window.GetHeight();
 
-    m_Grid->Render(*m_Camera, winWidth, winHeight);
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(winWidth, winHeight);
 
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(winWidth, winHeight);
-
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative();
+    glm::mat4 viewRel = m_Camera.GetViewMatrixRelative();
 
     // Floating origin: camera position with Y=0 to keep the ground stable.
     // All rendering happens relative to this origin, keeping float values small.
-    glm::dvec3 origin = m_Camera->GetPositionHP();
+    glm::dvec3 origin = m_Camera.GetPositionHP();
     origin.y = 0.0;
 
     // Model is at (0,0,0) in world space. In relative space it needs to be offset.

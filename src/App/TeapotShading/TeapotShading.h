@@ -5,7 +5,6 @@
 #include <glm/glm.hpp>
 
 class Camera;
-class Grid;
 class Model;
 class Shader;
 class Window;
@@ -13,10 +12,9 @@ class Window;
 class TeapotShading final : public App
 {
 private:
-    Window* m_Window;
+    const Window& m_Window;
+    const Camera& m_Camera;
     Shader* m_Shader[3];
-    Camera* m_Camera;
-    Grid* m_Grid;
     Model* m_Model;
 
     int32 m_CurrentShader;
@@ -29,7 +27,7 @@ private:
     static const char* const s_ShaderOptions[3];
 
 public:
-    TeapotShading(Window* window);
+    TeapotShading(const Window& window, const Camera& camera);
     ~TeapotShading();
 
     virtual void Update(float32 deltaTime) override;

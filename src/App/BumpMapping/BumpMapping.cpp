@@ -12,8 +12,9 @@
 
 REGISTER_APP(BumpMapping)
 
-BumpMapping::BumpMapping(Window* window)
+BumpMapping::BumpMapping(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
     , m_LightPos(2.0f, 4.0f, 2.0f)
     , m_LightColor(1.0f, 1.0f, 1.0f)
     , m_RippleCenterXZ(0.0f, 0.0f)
@@ -30,7 +31,7 @@ BumpMapping::BumpMapping(Window* window)
     // Position in +X,+Y,+Z octant; yaw 225° + pitch ~-35° so front points at (0,0,0).
     const float32 isoDist = 14.0f; // distance in XZ
     const float32 isoHeight = 12.0f;
-    m_Camera = new Camera(
+    m_Camera.OverrideInitialPosition(
         glm::vec3(isoDist, isoHeight, isoDist),
         glm::vec3(0.0f, 1.0f, 0.0f),
         225.0f,  // yaw: look from (+X,+Z) back toward origin
@@ -42,7 +43,6 @@ BumpMapping::BumpMapping(Window* window)
 
 BumpMapping::~BumpMapping()
 {
-    delete m_Camera;
     if (m_Shader)
     {
         m_Shader->Unbind();
@@ -84,13 +84,16 @@ void BumpMapping::Render()
 {
     glm::mat4 model = glm::mat4(1.0);
     model = glm::scale(model, glm::vec3(15.0f, 1.0f, 15.0f));
-    glm::mat4 view = m_Camera->GetViewMatrix();
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    glm::mat4 view = m_Camera.GetViewMatrix();
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
+
+    // Move model above the x-axis origin
+    float distanceX = 1.0f;
+    model = glm::translate(model, glm::vec3(0.0f, distanceX, 0.0f));
+
+    glm::vec3 cameraPos = m_Camera.GetPosition();
 
     m_Shader->Bind();
-
-    glm::vec3 cameraPos = m_Camera->GetPosition();
-
     m_Shader->SetMat4("u_Model", model);
     m_Shader->SetMat4("u_VP", projection * view);
     m_Shader->SetVec3("u_CameraPos", cameraPos);

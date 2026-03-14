@@ -4,23 +4,21 @@
 #include <RenderingStudies/Types.h>
 
 class Camera;
-class Grid;
 class Skybox;
 class Window;
 
 class SkyboxExample final : public App
 {
 private:
-    Window* m_Window;
-    Camera* m_Camera;
-    Grid* m_Grid;
+    const Window& m_Window;
+    const Camera& m_Camera;
     Skybox* m_Skybox;
     int32 m_CurrentSkybox;
 
     static const char* const s_SkyboxOptions[2];
 
 public:
-    SkyboxExample(Window* window);
+    SkyboxExample(const Window& window, const Camera& camera);
     ~SkyboxExample();
 
     virtual void Update(float32 deltaTime) override;

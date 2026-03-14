@@ -20,27 +20,28 @@ private:
     const float32 NEAR_CLIP = 0.1f;
     const float32 FAR_CLIP = 10000.0f;
 
-    glm::dvec3 m_Position;
-    glm::vec3 m_Up;
-    glm::vec3 m_Front;
-    glm::vec3 m_Right;
-    glm::vec3 m_WorldUp;
+    mutable glm::dvec3 m_Position;
+    mutable glm::vec3 m_Up;
+    mutable glm::vec3 m_Front;
+    mutable glm::vec3 m_Right;
+    mutable glm::vec3 m_WorldUp;
 
-    float32 m_Yaw;
-    float32 m_Pitch;
-    float32 m_MovementSpeed;
-    float32 m_MouseSensitivity;
-    float32 m_Zoom;
+    mutable float32 m_Yaw;
+    mutable float32 m_Pitch;
+    mutable float32 m_Zoom;
 
     mutable glm::mat4 m_ProjectionCache{ 1.0f };
     mutable uint32 m_LastWindowWidth = 0;
     mutable uint32 m_LastWindowHeight = 0;
     mutable float32 m_LastZoom = 0.0f;
 
-    void UpdateCameraVectors();
+    float32 m_MovementSpeed;
+    float32 m_MouseSensitivity;
 
 public:
     Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch);
+
+    void OverrideInitialPosition(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch) const;
 
     glm::vec3 GetPosition() const;
     glm::dvec3 GetPositionHP() const;
@@ -51,7 +52,10 @@ public:
     glm::mat4 GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight) const;
     float32 GetZoom() const;
 
-    void Move(CameraMove direction, float32 deltaTime, float32 speed = 1.0f);
-    void Look(float32 dx, float32 dy, bool constrainPitch = true);
-    void Zoom(float32 yoffset);
+    void Move(CameraMove direction, float32 deltaTime, float32 speed = 1.0f) const;
+    void Look(float32 dx, float32 dy, bool constrainPitch = true) const;
+    void Zoom(float32 yoffset) const;
+
+private:
+    void UpdateCameraVectors() const;
 };

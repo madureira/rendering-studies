@@ -4,7 +4,6 @@
 #include <RenderingStudies/Types.h>
 
 class Camera;
-class Grid;
 class Model;
 class Shader;
 class Window;
@@ -12,16 +11,15 @@ class Window;
 class ColorCoord final : public App
 {
 private:
-    Window* m_Window;
+    const Window& m_Window;
+    const Camera& m_Camera;
     Shader* m_Shader;
-    Camera* m_Camera;
-    Grid* m_Grid;
     Model* m_Model;
 
     bool m_UseModelCoords;
 
 public:
-    ColorCoord(Window* window);
+    ColorCoord(const Window& window, const Camera& camera);
     ~ColorCoord();
 
     virtual void Update(float32 deltaTime) override;

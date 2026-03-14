@@ -11,9 +11,9 @@ class Window;
 class TexturedCube final : public App
 {
 private:
-    Window* m_Window;
+    const Window& m_Window;
+    const Camera& m_Camera;
     Shader* m_Shader;
-    Camera* m_Camera;
     Texture* m_Texture;
 
     uint32 m_VAO;
@@ -21,7 +21,7 @@ private:
     uint32 m_EBO;
 
 public:
-    TexturedCube(Window* window);
+    TexturedCube(const Window& window, const Camera& camera);
     ~TexturedCube();
 
     virtual void Update(float32 deltaTime) override;

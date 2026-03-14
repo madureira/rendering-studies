@@ -25,6 +25,7 @@ private:
 
 public:
     TextRenderer(std::string fontPath);
+    ~TextRenderer();
 
     void Render(Shader& shader, const std::string& text, float32 x, float32 y, float32 scale, glm::vec3 color);
 };

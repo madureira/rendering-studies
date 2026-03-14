@@ -20,8 +20,9 @@ const char* const TeapotShading::s_ShaderOptions[3] = {
     "phong"
 };
 
-TeapotShading::TeapotShading(Window* window)
+TeapotShading::TeapotShading(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
     , m_CurrentShader(0)
     , m_LightDir(0.5f, 0.6f, 0.5f)
     , m_RotDeg(0.0f, 0.0f, 0.0f)
@@ -33,14 +34,10 @@ TeapotShading::TeapotShading(Window* window)
     m_Shader[1] = new Shader("assets/shaders/gouraud_shading.vert", "assets/shaders/gouraud_shading.frag");
     m_Shader[2] = new Shader("assets/shaders/phong_shading.vert", "assets/shaders/phong_shading.frag");
     m_Model = new Model("assets/models/teapot.obj");
-    m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f);
-    m_Grid = new Grid();
 }
 
 TeapotShading::~TeapotShading()
 {
-    delete m_Grid;
-    delete m_Camera;
     delete m_Model;
     for (uint32 i = 0; i < 3; i++)
     {
@@ -99,16 +96,14 @@ void TeapotShading::Update(float32 deltaTime)
 
 void TeapotShading::Render()
 {
-    uint32 winWidth = m_Window->GetWidth();
-    uint32 winHeight = m_Window->GetHeight();
+    uint32 winWidth = m_Window.GetWidth();
+    uint32 winHeight = m_Window.GetHeight();
 
-    m_Grid->Render(*m_Camera, winWidth, winHeight);
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(winWidth, winHeight);
 
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(winWidth, winHeight);
+    glm::mat4 viewRel = m_Camera.GetViewMatrixRelative();
 
-    glm::mat4 viewRel = m_Camera->GetViewMatrixRelative();
-
-    glm::dvec3 cameraPos = m_Camera->GetPositionHP();
+    glm::dvec3 cameraPos = m_Camera.GetPositionHP();
 
     glm::dvec3 origin = cameraPos;
     origin.y = 0.0;

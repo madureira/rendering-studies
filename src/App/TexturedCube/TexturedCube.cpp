@@ -2,6 +2,7 @@
 
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterApp.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
@@ -11,8 +12,9 @@
 
 REGISTER_APP(TexturedCube)
 
-TexturedCube::TexturedCube(Window* window)
+TexturedCube::TexturedCube(const Window& window, const Camera& camera)
     : m_Window(window)
+    , m_Camera(camera)
 {
     m_Shader = new Shader("assets/shaders/texture.vert", "assets/shaders/texture.frag");
     // Load and create a texture
@@ -21,13 +23,11 @@ TexturedCube::TexturedCube(Window* window)
     texParams.generateMipmaps = true;
     texParams.flipY = true;
     m_Texture = new Texture("assets/images/container.jpg", texParams);
-    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     CreateMesh();
 }
 
 TexturedCube::~TexturedCube()
 {
-    delete m_Camera;
     delete m_Texture;
     if (m_Shader)
     {
@@ -47,9 +47,13 @@ void TexturedCube::Update(float32 deltaTime)
 
 void TexturedCube::Render()
 {
-    glm::mat4 view = m_Camera->GetViewMatrix();
     glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 projection = m_Camera->GetProjectionMatrix(m_Window->GetWidth(), m_Window->GetHeight());
+    glm::mat4 view = m_Camera.GetViewMatrix();
+    glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
+
+    // Move model above the x-axis origin
+    float distanceX = 0.5f;
+    model = glm::translate(model, glm::vec3(0.0f, distanceX, 0.0f));
 
     m_Shader->Bind();
     m_Texture->Bind(0);

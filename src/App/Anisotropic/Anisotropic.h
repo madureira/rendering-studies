@@ -5,7 +5,6 @@
 #include <glm/glm.hpp>
 
 class Camera;
-class Grid;
 class Model;
 class Shader;
 class Window;
@@ -13,10 +12,9 @@ class Window;
 class Anisotropic final : public App
 {
 private:
-    Window* m_Window;
+    const Window& m_Window;
+    const Camera& m_Camera;
     Shader* m_Shader;
-    Camera* m_Camera;
-    Grid* m_Grid;
     Model* m_Model;
 
     glm::vec3 m_LightDir;
@@ -27,7 +25,7 @@ private:
     glm::vec3 m_Albedo;
 
 public:
-    Anisotropic(Window* window);
+    Anisotropic(const Window& window, const Camera& camera);
     ~Anisotropic();
 
     virtual void Update(float32 deltaTime) override;

@@ -4,7 +4,7 @@
 #include "../Window/Window.h"
 #include <imgui.h>
 
-void InputProcessorUtil::moveCamera(Camera* camera, Window* window, float32 deltaTime, float32 speed, float32 acceleratedSpeed)
+void InputProcessorUtil::moveCamera(const Camera& camera, const Window& window, float32 deltaTime, float32 speed, float32 acceleratedSpeed)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -13,45 +13,45 @@ void InputProcessorUtil::moveCamera(Camera* camera, Window* window, float32 delt
         return;
     }
 
-    const MouseState& mouse = window->GetMouse();
+    const MouseState& mouse = window.GetMouse();
 
     if (mouse.LeftDown())
     {
-        camera->Look((float32)mouse.dx, (float32)mouse.dy);
+        camera.Look((float32)mouse.dx, (float32)mouse.dy);
     }
 
-    if (window->IsKeyPressed(KeyToken::LeftShift))
+    if (window.IsKeyPressed(KeyToken::LeftShift))
     {
         speed = acceleratedSpeed;
     }
 
-    if (window->IsKeyPressed(KeyToken::Up) || window->IsKeyPressed(KeyToken::W))
+    if (window.IsKeyPressed(KeyToken::Up) || window.IsKeyPressed(KeyToken::W))
     {
-        camera->Move(CameraMove::FORWARD, deltaTime, speed);
+        camera.Move(CameraMove::FORWARD, deltaTime, speed);
     }
 
-    if (window->IsKeyPressed(KeyToken::Down) || window->IsKeyPressed(KeyToken::S))
+    if (window.IsKeyPressed(KeyToken::Down) || window.IsKeyPressed(KeyToken::S))
     {
-        camera->Move(CameraMove::BACKWARD, deltaTime, speed);
+        camera.Move(CameraMove::BACKWARD, deltaTime, speed);
     }
 
-    if (window->IsKeyPressed(KeyToken::Left) || window->IsKeyPressed(KeyToken::A))
+    if (window.IsKeyPressed(KeyToken::Left) || window.IsKeyPressed(KeyToken::A))
     {
-        camera->Move(CameraMove::LEFT, deltaTime, speed);
+        camera.Move(CameraMove::LEFT, deltaTime, speed);
     }
 
-    if (window->IsKeyPressed(KeyToken::Right) || window->IsKeyPressed(KeyToken::D))
+    if (window.IsKeyPressed(KeyToken::Right) || window.IsKeyPressed(KeyToken::D))
     {
-        camera->Move(CameraMove::RIGHT, deltaTime, speed);
+        camera.Move(CameraMove::RIGHT, deltaTime, speed);
     }
 
     const float64 scrollY = mouse.scrollY;
     if (scrollY > 0.0)
     {
-        camera->Move(CameraMove::FORWARD, 0.15f, (float32)scrollY * 2.0f);
+        camera.Move(CameraMove::FORWARD, 0.15f, (float32)scrollY * 2.0f);
     }
     else if (scrollY < 0.0)
     {
-        camera->Move(CameraMove::BACKWARD, 0.15f, (float32)(-scrollY) * 2.0f);
+        camera.Move(CameraMove::BACKWARD, 0.15f, (float32)(-scrollY) * 2.0f);
     }
 }
