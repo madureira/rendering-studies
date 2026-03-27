@@ -1,9 +1,10 @@
+#include <RenderingStudies/Config.h>
+#include <RenderingStudies/Types.h>
+
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/UI/UI.h"
 #include "Engine/Utils/AppSelector.h"
 #include "Engine/Window/Window.h"
-#include "Engine/Renderer/Renderer.h"
-#include <RenderingStudies/Config.h>
-#include <RenderingStudies/Types.h>
 
 int main()
 {

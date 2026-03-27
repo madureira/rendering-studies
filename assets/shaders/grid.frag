@@ -316,6 +316,10 @@ void main()
                     float worldY = closest.y; // World Y = relative Y (since gridOrigin.y = 0)
                     float intensity = worldY >= 0.0 ? kAxisIntensity : kAxisYBelowGroundIntensity;
 
+                    // Give the Y-axis its real depth so it interacts correctly with scene geometry.
+                    // Use min() to never push depth further than the ground-plane depth already set.
+                    gl_FragDepth = min(gl_FragDepth, computeDepth(closest));
+
                     // Blend Y axis color over existing content
                     frag_color.rgb = mix(frag_color.rgb, kAxisYColor, yAxis * intensity);
                     frag_color.a = max(frag_color.a, yAxis * intensity);
