@@ -102,11 +102,11 @@ Window::Window(const Config& config)
         window.m_Height = height;
     });
 
-    glfwSetFramebufferSizeCallback(m_Window, []([[maybe_unused]] GLFWwindow* pNativeWindow, int32 width, int32 height) {
+    glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* /*unused: pNativeWindow*/, int32 width, int32 height) {
         GL(glViewport(0, 0, width, height));
     });
 
-    glfwSetKeyCallback(m_Window, [](GLFWwindow* pNativeWindow, int32 key, [[maybe_unused]] int32 scancode, int32 action, [[maybe_unused]] int32 mods) {
+    glfwSetKeyCallback(m_Window, [](GLFWwindow* pNativeWindow, int32 key, int32 /*unused: scancode*/, int32 action, int32 /*unused: mods*/) {
         Window& window = *(Window*)glfwGetWindowUserPointer(pNativeWindow);
 
         if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
@@ -257,7 +257,7 @@ void Window::OnCursorPos(float64 x, float64 y)
     m_Mouse.y = y;
 }
 
-void Window::OnMouseButton(int32 button, int32 action, [[maybe_unused]] int32 mods)
+void Window::OnMouseButton(int32 button, int32 action, int32 /*unused: mods*/)
 {
     if (button < 0 || button > Input::kMouseButtonLast)
     {
@@ -284,7 +284,7 @@ void Window::OnMouseButton(int32 button, int32 action, [[maybe_unused]] int32 mo
     }
 }
 
-void Window::OnScroll([[maybe_unused]] float64 xoffset, float64 yoffset)
+void Window::OnScroll(float64 /*unused: xoffset*/, float64 yoffset)
 {
     m_Mouse.scrollY += yoffset;
 }

@@ -19,6 +19,8 @@ private:
     bool m_ZBufferEnabled = true;
     bool m_CullFaceEnabled = true;
     bool m_GridEnabled = true;
+    float32 m_CameraSpeed = 5.0f;
+    float32 m_CameraAcceleratedSpeed = 15.0f;
 
 public:
     inline void Render()
@@ -38,6 +40,14 @@ public:
         ImGui::Checkbox("Wireframe", &m_PolygonModeEnabled);
         ImGui::Checkbox("Z-buffering", &m_ZBufferEnabled);
         ImGui::Checkbox("Face culling", &m_CullFaceEnabled);
+
+        float32 itemWidth = ImGui::CalcItemWidth() / 3.0f;
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::SetNextItemWidth(itemWidth - 10.0f);
+        ImGui::SliderFloat("Camera speed", &m_CameraSpeed, 1.0f, 50.0f);
+        ImGui::SetNextItemWidth(itemWidth - 10.0f);
+        ImGui::SliderFloat("Camera speed (holding Shift)", &m_CameraAcceleratedSpeed, 1.0f, 100.0f);
 
         ImGui::End();
     }
@@ -75,6 +85,16 @@ public:
     inline bool IsGridEnabled() const
     {
         return m_GridEnabled;
+    }
+
+    inline float32 GetCameraSpeed() const
+    {
+        return m_CameraSpeed;
+    }
+
+    inline float32 GetCameraAcceleratedSpeed() const
+    {
+        return m_CameraAcceleratedSpeed;
     }
 
 private:

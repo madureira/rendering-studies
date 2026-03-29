@@ -8,7 +8,6 @@
 #include "../../Engine/Grid/Grid.h"
 #include "../../Engine/Model/Model.h"
 #include "../../Engine/Shader/Shader.h"
-#include "../../Engine/Utils/InputProcessorUtil.h"
 #include "../../Engine/Window/Window.h"
 
 
@@ -49,10 +48,8 @@ TeapotShading::~TeapotShading()
     }
 }
 
-void TeapotShading::Update(float32 deltaTime)
+void TeapotShading::Update(float32 /*unused: deltaTime*/)
 {
-    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime, 5.0f, 30.f);
-
     ImGui::Begin("Teapot Shading");
     ImGui::AlignTextToFramePadding();
 

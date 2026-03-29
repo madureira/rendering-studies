@@ -7,7 +7,6 @@
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Texture/Texture.h"
-#include "../../Engine/Utils/InputProcessorUtil.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_APP(TexturedCube)
@@ -40,9 +39,8 @@ TexturedCube::~TexturedCube()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void TexturedCube::Update(float32 deltaTime)
+void TexturedCube::Update(float32 /*unused: deltaTime*/)
 {
-    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime);
 }
 
 void TexturedCube::Render()

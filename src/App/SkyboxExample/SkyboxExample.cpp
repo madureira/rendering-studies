@@ -11,7 +11,6 @@
 #include "../../Engine/Grid/Grid.h"
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Skybox/Skybox.h"
-#include "../../Engine/Utils/InputProcessorUtil.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_APP(SkyboxExample)
@@ -51,10 +50,8 @@ SkyboxExample::~SkyboxExample()
     delete m_Skybox;
 }
 
-void SkyboxExample::Update(float32 deltaTime)
+void SkyboxExample::Update(float32 /*unused: deltaTime*/)
 {
-    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime, 5.0f, 30.f);
-
     ImGui::Begin("Skybox");
     ImGui::AlignTextToFramePadding();
 

@@ -4,6 +4,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/UI/UI.h"
 #include "Engine/Utils/AppSelector.h"
+#include "Engine/Utils/InputProcessorUtil.h"
 #include "Engine/Window/Window.h"
 
 int main()
@@ -41,15 +42,18 @@ int main()
 
         renderer.RenderGrid(window.GetWidth(), window.GetHeight(), appSelector.IsGridEnabled());
 
+        float32 deltaTime = window.GetDeltaTime();
+
+        InputProcessorUtil::moveCamera(*renderer.GetCamera(), window, deltaTime, appSelector.GetCameraSpeed(), appSelector.GetCameraAcceleratedSpeed());
+
         if (app)
         {
-            app->Update(window.GetDeltaTime());
+            app->Update(deltaTime);
             app->Render();
         }
         UI::Render();
 
         renderer.RenderFPS(window.GetTime(), appSelector.IsFpsEnabled());
-
         renderer.SetPolygonMode(appSelector.IsPolygonModeEnabled());
 
         window.SwapBuffers();

@@ -6,7 +6,6 @@
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
-#include "../../Engine/Utils/InputProcessorUtil.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_APP(Triangle)
@@ -32,9 +31,8 @@ Triangle::~Triangle()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void Triangle::Update(float32 deltaTime)
+void Triangle::Update(float32 /*unused: deltaTime*/)
 {
-    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime);
 }
 
 void Triangle::Render()

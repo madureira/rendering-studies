@@ -7,7 +7,6 @@
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
-#include "../../Engine/Utils/InputProcessorUtil.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_APP(RippleEffect)
@@ -16,7 +15,7 @@ RippleEffect::RippleEffect(const Window& window, const Camera& camera)
     : m_Window(window)
     , m_Camera(camera)
     , m_IndexCount(0)
-    , m_TessLevel(4)
+    , m_TessLevel(20)
     , m_Amplitude(0.2f)
     , m_Frequency(5.0f)
 {
@@ -54,12 +53,10 @@ RippleEffect::~RippleEffect()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void RippleEffect::Update(float32 deltaTime)
+void RippleEffect::Update(float32 /*unused: deltaTime*/)
 {
-    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime);
-
     ImGui::Begin("Ripple Effect");
-    ImGui::SliderInt("Tessellation level", &m_TessLevel, 1, 128, "%d");
+    ImGui::SliderInt("Tessellation level", &m_TessLevel, 1, 64, "%d");
     ImGui::SliderFloat("Amplitude", &m_Amplitude, 0.01f, 1.0f, "%.2f");
     ImGui::SliderFloat("Frequency", &m_Frequency, 0.5f, 20.0f, "%.1f");
     ImGui::End();
@@ -95,7 +92,7 @@ void RippleEffect::Render()
 
 void RippleEffect::CreateMesh()
 {
-    uint8 gridSize = 16;  // Number of subdivisions
+    uint8 gridSize = 4;  // Number of subdivisions
     float32 size = 20.0f; // Size of the plane
 
     const uint32 vertCount = (gridSize + 1) * (gridSize + 1);

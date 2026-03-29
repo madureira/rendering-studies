@@ -7,7 +7,6 @@
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
-#include "../../Engine/Utils/InputProcessorUtil.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_APP(BumpMapping)
@@ -56,8 +55,6 @@ BumpMapping::~BumpMapping()
 
 void BumpMapping::Update(float32 deltaTime)
 {
-    InputProcessorUtil::moveCamera(m_Camera, m_Window, deltaTime, 5.0f, 30.0f);
-
     m_Time += deltaTime;
 
     ImGui::Begin("Bump Mapping");
