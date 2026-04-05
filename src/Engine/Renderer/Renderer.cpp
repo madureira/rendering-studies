@@ -40,10 +40,25 @@ Renderer::Renderer(uint32 windowInitialWidth, uint32 windowInitialHeight)
 
 Renderer::~Renderer()
 {
-    if (m_TextRenderer) delete m_TextRenderer;
-    if (m_TextShader) delete m_TextShader;
-    if (m_Camera) delete m_Camera;
-    if (m_Grid) delete m_Grid;
+    if (m_TextRenderer)
+    {
+        delete m_TextRenderer;
+    }
+
+    if (m_TextShader)
+    {
+        delete m_TextShader;
+    }
+
+    if (m_Camera)
+    {
+        delete m_Camera;
+    }
+
+    if (m_Grid)
+    {
+        delete m_Grid;
+    }
 }
 
 void Renderer::Clear(float32 r, float32 g, float32 b) const
@@ -126,7 +141,8 @@ void Renderer::SetCullFace(bool enabled)
 
 void Renderer::RenderGrid(uint32 winWidth, uint32 winHeight, bool enabled) const
 {
-    if (enabled) {
+    if (enabled)
+    {
         m_Grid->Render(*m_Camera, winWidth, winHeight);
     }
 }

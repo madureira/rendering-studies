@@ -171,6 +171,7 @@ public:
     {
         return QuerySystemInfo().osName;
     }
+
     static std::string GetOSVersion()
     {
         return QuerySystemInfo().osVersion;
@@ -180,10 +181,12 @@ public:
     {
         return QuerySystemInfo().cpuModel;
     }
+
     static std::string GetCPUArchitecture()
     {
         return QuerySystemInfo().cpuArch;
     }
+
     static int GetCPUCores()
     {
         return QuerySystemInfo().cpuLogicalCores;
@@ -193,14 +196,17 @@ public:
     {
         return QuerySystemInfo().totalMemoryGiB;
     }
+
     static double GetFreeMemory()
     {
         return QueryMemoryStats().freeMemoryGiB;
     }
+
     static double GetUsedMemory()
     {
         return QueryMemoryStats().usedMemoryGiB;
     }
+
     static double GetProcessRssMiB()
     {
         return QueryMemoryStats().processRssMiB;
@@ -210,6 +216,7 @@ public:
     {
         return QueryGraphicsInfo().renderer;
     }
+
     static std::string GetGPUVendor()
     {
         return QueryGraphicsInfo().vendor;
@@ -219,6 +226,7 @@ public:
     {
         return QueryGraphicsInfo().glVersion;
     }
+
     static std::string GetGLSLVersion()
     {
         return QueryGraphicsInfo().glslVersion;
@@ -253,10 +261,12 @@ public:
     {
         return (float64)bytes / (1024.0 * 1024.0 * 1024.0);
     }
+
     static float64 KiBToGiB(uint64 kib)
     {
         return (float64)kib / (1024.0 * 1024.0);
     }
+
     static float64 BytesToMiB(uint64 bytes)
     {
         return (float64)bytes / (1024.0 * 1024.0);
@@ -289,7 +299,8 @@ private:
         }
 
         std::vector<char> buf(size);
-        if (sysctlbyname(name, buf.data(), &size, nullptr, 0) != 0) {
+        if (sysctlbyname(name, buf.data(), &size, nullptr, 0) != 0)
+        {
             return "Unknown";
         }
 
@@ -362,10 +373,12 @@ private:
                 {
                     v.erase(v.begin());
                 }
+
                 if (!v.empty() && (v.back() == '"' || v.back() == '\''))
                 {
                     v.pop_back();
                 }
+
                 return v.empty() ? "Linux" : v;
             }
         }
@@ -417,7 +430,9 @@ private:
     static inline bool HasGlExtension(const char* ext)
     {
         if (!ext || !*ext)
+        {
             return false;
+        }
 
         GLint n = 0;
         GL(glGetIntegerv(GL_NUM_EXTENSIONS, &n));
@@ -630,10 +645,12 @@ inline MemoryStats HardwareUtil::QueryMemoryStats()
             break;
         }
     }
+
     if (availableKiB > 0)
     {
         s.freeMemoryGiB = KiBToGiB((uint64)availableKiB);
     }
+
 #elif defined(_WIN32)
     MEMORYSTATUSEX ms;
     ms.dwLength = sizeof(ms);
@@ -658,6 +675,7 @@ inline MemoryStats HardwareUtil::QueryMemoryStats()
     {
         s.processRssMiB = BytesToMiB((uint64)info.resident_size);
     }
+
 #elif defined(__linux__)
     // /proc/self/statm: size resident shared text lib data dt
     std::ifstream statm("/proc/self/statm");
@@ -668,6 +686,7 @@ inline MemoryStats HardwareUtil::QueryMemoryStats()
         const uint64 rssBytes = (uint64)resident * pageSize;
         s.processRssMiB = BytesToMiB(rssBytes);
     }
+
 #elif defined(_WIN32)
     PROCESS_MEMORY_COUNTERS_EX pmc;
     if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc)))
@@ -815,6 +834,7 @@ inline DisplayInfo HardwareUtil::QueryDisplayInfo(GLFWwindow* window)
     {
         monitor = glfwGetWindowMonitor(window);
     }
+
     if (!monitor)
     {
         monitor = glfwGetPrimaryMonitor();

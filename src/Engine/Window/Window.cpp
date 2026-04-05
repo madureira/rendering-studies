@@ -322,9 +322,14 @@ void Window::ShowHardwareInfo() const
     {
         LOG_INFO("Physical Memory: {:.2f} GB", totalMem);
         if (usedMem >= 0.0)
+        {
             LOG_INFO("Used Memory: {:.2f} GB", usedMem);
+        }
+
         if (freeMem >= 0.0)
+        {
             LOG_INFO("Free Memory: {:.2f} GB", freeMem);
+        }
     }
     else
     {
@@ -352,9 +357,13 @@ void Window::ShowHardwareInfo() const
         // fallback (your older heuristic)
         const double est = HardwareUtil::GetEstimateGPUMemory();
         if (est > 0.0)
+        {
             LOG_INFO("GPU Memory (estimated): {:.2f} GB", est);
+        }
         else
+        {
             LOG_INFO("GPU Memory: Unknown (integrated / not exposed)");
+        }
     }
 
     LOG_INFO("Max Texture Size: {}", gfx.maxTextureSize);

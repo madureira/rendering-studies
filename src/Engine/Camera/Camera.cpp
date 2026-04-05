@@ -127,9 +127,14 @@ void Camera::Look(float32 dx, float32 dy, bool constrainPitch) const
     if (constrainPitch)
     {
         if (m_Pitch > 89.0f)
+        {
             m_Pitch = 89.0f;
+        }
+
         if (m_Pitch < -89.0f)
+        {
             m_Pitch = -89.0f;
+        }
     }
 
     UpdateCameraVectors();
@@ -143,6 +148,7 @@ void Camera::Zoom(float32 yoffset) const
     {
         m_Zoom = 1.0f;
     }
+
     if (m_Zoom > 45.0f)
     {
         m_Zoom = 45.0f;

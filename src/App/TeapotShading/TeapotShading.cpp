@@ -78,7 +78,9 @@ void TeapotShading::Update(float32 /*unused: deltaTime*/)
     {
         ImGui::SliderFloat3("##Scale", &m_Scale.x, 0.1f, 10.0f);
     }
+
     ImGui::SameLine();
+
     if (ImGui::Checkbox("Lock", &m_LockScale))
     {
         if (m_LockScale)

@@ -52,6 +52,7 @@ void Model::ProcessNode(const aiNode* node, const aiScene* scene)
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         m_Meshes.push_back(ProcessMesh(mesh));
     }
+
     for (uint32 i = 0; i < node->mNumChildren; i++)
     {
         ProcessNode(node->mChildren[i], scene);

@@ -99,7 +99,9 @@ Texture::Texture(Texture&& other) noexcept
 Texture& Texture::operator=(Texture&& other) noexcept
 {
     if (this == &other)
+    {
         return *this;
+    }
 
     if (m_ID != 0)
     {
