@@ -3,6 +3,10 @@
 #include <iomanip>
 #include <sstream>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/html5.h>
+#endif
+
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../Utils/HardwareUtil.h"
@@ -14,6 +18,18 @@ Window::Window(const Config& config)
     m_InitialHeight = config.window_height;
     m_Width = config.window_width;
     m_Height = config.window_height;
+
+#ifdef __EMSCRIPTEN__
+    // On web, use the actual canvas size (set to window.innerWidth/Height in shell.html)
+    int32 canvasW = 0;
+    int32 canvasH = 0;
+    emscripten_get_canvas_element_size("#canvas", &canvasW, &canvasH);
+    if (canvasW > 0 && canvasH > 0)
+    {
+        m_Width = canvasW;
+        m_Height = canvasH;
+    }
+#endif
     m_VSyncOn = config.vsync_on;
     m_MonitorIndex = config.monitor_index;
 
@@ -27,12 +43,10 @@ Window::Window(const Config& config)
         return;
     }
 
+#ifndef __EMSCRIPTEN__
     int32 monitorCount;
-
     GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
-
     m_Monitor = (monitorCount > 1) ? monitors[0] : glfwGetPrimaryMonitor();
-
     if (m_MonitorIndex >= 0 && m_MonitorIndex < monitorCount)
     {
         m_Monitor = monitors[m_MonitorIndex];
@@ -41,20 +55,27 @@ Window::Window(const Config& config)
     {
         m_Monitor = glfwGetPrimaryMonitor();
     }
-
     const GLFWvidmode* pVideoMode = glfwGetVideoMode(m_Monitor);
+#endif
 
     // Set OpenGL version and profile
+#ifdef __EMSCRIPTEN__
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+#else
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #if defined(__APPLE__)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // Hide initially to prevent flicker during move
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+#endif
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // Hide initially to prevent flicker during move
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+#ifndef __EMSCRIPTEN__
     glfwWindowHint(GLFW_RED_BITS, pVideoMode->redBits);
     glfwWindowHint(GLFW_GREEN_BITS, pVideoMode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, pVideoMode->blueBits);
@@ -67,9 +88,16 @@ Window::Window(const Config& config)
     // our detailed spdlog messages.
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
+#endif
 
     // Create the window
-    m_Window = glfwCreateWindow(m_Width, m_Height, config.window_title.c_str(), m_FullScreen ? m_Monitor : NULL, NULL);
+    m_Window = glfwCreateWindow(m_Width, m_Height, config.window_title.c_str(),
+#ifndef __EMSCRIPTEN__
+        m_FullScreen ? m_Monitor : NULL,
+#else
+        NULL,
+#endif
+        NULL);
 
     if (!m_Window)
     {
@@ -81,10 +109,30 @@ Window::Window(const Config& config)
     // Make OpenGL context current
     glfwMakeContextCurrent(m_Window);
 
+#ifdef __EMSCRIPTEN__
+    // glfwGetWindowSize returns CSS pixels (logical) and glfwGetFramebufferSize returns
+    // device pixels on HiDPI displays. Keep m_Width/m_Height in CSS pixels so
+    // projections and layout use logical coordinates, and set the initial GL viewport
+    // to device pixels so the first frame renders at full resolution.
+    {
+        int32 logW = 0, logH = 0, fbW = 0, fbH = 0;
+        glfwGetWindowSize(m_Window, &logW, &logH);
+        glfwGetFramebufferSize(m_Window, &fbW, &fbH);
+        if (logW > 0 && logH > 0)
+        {
+            m_Width = (uint32)logW;
+            m_Height = (uint32)logH;
+        }
+        if (fbW > 0 && fbH > 0)
+        {
+            GL(glViewport(0, 0, fbW, fbH));
+        }
+    }
+#else
     glfwSetWindowSizeLimits(m_Window, 800, 600, 3840, 2160);
-
     WindowPosition winPosition = CenterWindow(pVideoMode, m_Width, m_Height);
     glfwSetWindowPos(m_Window, winPosition.CenterX, winPosition.CenterY);
+#endif
 
     glfwSetWindowUserPointer(m_Window, this);
     // glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -135,6 +183,7 @@ Window::Window(const Config& config)
         window.OnScroll(xoffset, yoffset);
     });
 
+#ifndef __EMSCRIPTEN__
     // Initialize GLAD
     if (!gladLoadGL())
     {
@@ -142,6 +191,7 @@ Window::Window(const Config& config)
         Shutdown();
         return;
     }
+#endif
 
     ShowHardwareInfo();
 
@@ -234,6 +284,7 @@ void Window::Shutdown() const
 
 void Window::Fullscreen() const
 {
+#ifndef __EMSCRIPTEN__
     m_FullScreen = !m_FullScreen;
 
     const GLFWvidmode* pVideoMode = glfwGetVideoMode(m_Monitor);
@@ -247,6 +298,7 @@ void Window::Fullscreen() const
         WindowPosition winPos = CenterWindow(pVideoMode, m_InitialWidth, m_InitialHeight);
         glfwSetWindowMonitor(m_Window, NULL, winPos.CenterX, winPos.CenterY, m_InitialWidth, m_InitialHeight, GLFW_DONT_CARE);
     }
+#endif
 }
 
 void Window::OnCursorPos(float64 x, float64 y)
@@ -291,12 +343,13 @@ void Window::OnScroll(float64 /*unused: xoffset*/, float64 yoffset)
 
 WindowPosition Window::CenterWindow(const GLFWvidmode* pVideoMode, const uint32 winWidth, const uint32 winHeight) const
 {
-    int monitorX, monitorY;
+    int32 monitorX;
+    int32 monitorY;
     glfwGetMonitorPos(m_Monitor, &monitorX, &monitorY);
 
     // Calculate the centered position relative to the monitor's start position
     int32 centerX = monitorX + (pVideoMode->width - winWidth) / 2;
-    int32 centerY = monitorY + (pVideoMode ->height - winHeight) / 2;
+    int32 centerY = monitorY + (pVideoMode->height - winHeight) / 2;
 
     WindowPosition winPos;
     winPos.CenterX = centerX;
@@ -395,5 +448,4 @@ void Window::ShowHardwareInfo() const
     LOG_INFO("Max Uniform Block Size: {} bytes", gfx.maxUniformBlockSizeBytes);
 
     LOG_INFO("================================================");
-
 }

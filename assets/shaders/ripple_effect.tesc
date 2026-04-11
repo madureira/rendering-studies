@@ -1,5 +1,3 @@
-#version 410 core
-
 layout(vertices = 4) out;
 
 uniform int u_TessLevel = 128;

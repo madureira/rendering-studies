@@ -84,7 +84,7 @@ inline Config loadConfig(const std::string& path)
         }
         else if (key == "window_width")
         {
-            int v = std::stoi(value);
+            int32 v = std::stoi(value);
             if (v < std::numeric_limits<int16>::min() || v > std::numeric_limits<int16>::max())
             {
                 throw std::runtime_error("window_width out of int16 range");
@@ -94,7 +94,7 @@ inline Config loadConfig(const std::string& path)
         }
         else if (key == "window_height")
         {
-            int v = std::stoi(value);
+            int32 v = std::stoi(value);
             if (v < std::numeric_limits<int16>::min() || v > std::numeric_limits<int16>::max())
             {
                 throw std::runtime_error("window_height out of int16 range");
@@ -108,7 +108,7 @@ inline Config loadConfig(const std::string& path)
         }
         else if (key == "monitor_index")
         {
-            int v = std::stoi(value);
+            int32 v = std::stoi(value);
             if (v < std::numeric_limits<int32>::min() || v > std::numeric_limits<int32>::max())
             {
                 throw std::runtime_error("monitor_index out of int8 range");

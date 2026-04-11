@@ -1,5 +1,3 @@
-#version 410 core
-
 in vec3 v_WorldPos;
 
 uniform vec3 u_CameraPos;

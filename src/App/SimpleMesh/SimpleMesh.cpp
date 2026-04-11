@@ -10,7 +10,7 @@
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(SimpleMesh)
+REGISTER_APP(SimpleMesh, true)
 
 const char* const SimpleMesh::s_MeshOptions[7] = {
     "apple",
@@ -22,36 +22,41 @@ const char* const SimpleMesh::s_MeshOptions[7] = {
     "teapot"
 };
 
+const char* const SimpleMesh::s_MeshPaths[7] = {
+    "assets/models/apple.fbx",
+    "assets/models/bunny.obj",
+    "assets/models/cube.obj",
+    "assets/models/dragon.obj",
+    "assets/models/monkey.obj",
+    "assets/models/sphere.obj",
+    "assets/models/teapot.obj"
+};
+
 SimpleMesh::SimpleMesh(const Window& window, const Camera& camera)
     : m_Window(window)
     , m_Camera(camera)
     , m_ModelPos(0.0f, 0.0f, 0.0f)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
-    m_Model[0] = new Model("assets/models/apple.fbx");
-    m_Model[1] = new Model("assets/models/bunny.obj");
-    m_Model[2] = new Model("assets/models/cube.obj");
-    m_Model[3] = new Model("assets/models/dragon.obj");
-    m_Model[4] = new Model("assets/models/monkey.obj");
-    m_Model[5] = new Model("assets/models/sphere.obj");
-    m_Model[6] = new Model("assets/models/teapot.obj");
+    LoadCurrentModel();
 }
 
 SimpleMesh::~SimpleMesh()
 {
-    for (uint32 i = 0; i < 7; i++)
-    {
-        if (m_Model[i])
-        {
-            delete m_Model[i];
-        }
-    }
+    delete m_Model;
 
     if (m_Shader)
     {
         m_Shader->Unbind();
         delete m_Shader;
     }
+}
+
+void SimpleMesh::LoadCurrentModel()
+{
+    delete m_Model;
+    m_Model = new Model(s_MeshPaths[m_CurrentMesh]);
+    m_LoadedMeshIndex = m_CurrentMesh;
 }
 
 void SimpleMesh::Update(float32 /*unused: deltaTime*/)
@@ -62,6 +67,11 @@ void SimpleMesh::Update(float32 /*unused: deltaTime*/)
     ImGui::TextUnformatted("Meshes");
     ImGui::SameLine();
     ImGui::Combo("##Meshes", &m_CurrentMesh, s_MeshOptions, IM_ARRAYSIZE(s_MeshOptions));
+
+    if (m_CurrentMesh != m_LoadedMeshIndex)
+    {
+        LoadCurrentModel();
+    }
 
     ImGui::AlignTextToFramePadding();
     ImGui::TextUnformatted("Position");
@@ -92,6 +102,11 @@ void SimpleMesh::Update(float32 /*unused: deltaTime*/)
 
 void SimpleMesh::Render()
 {
+    if (!m_Model)
+    {
+        return;
+    }
+
     uint32 winWidth = m_Window.GetWidth();
     uint32 winHeight = m_Window.GetHeight();
 
@@ -102,8 +117,6 @@ void SimpleMesh::Render()
     glm::dvec3 origin = m_Camera.GetPositionHP();
     origin.y = 0.0;
 
-    // m_ModelPos is a world-space position. Convert to camera-relative space by
-    // subtracting the camera origin (origin.y is always 0, so world Y == relative Y).
     glm::vec3 modelPosRel = glm::vec3(glm::dvec3(m_ModelPos) - origin);
     glm::mat4 modelRel = glm::translate(glm::mat4(1.0f), modelPosRel);
 
@@ -111,7 +124,7 @@ void SimpleMesh::Render()
 
     m_Shader->SetMat4("u_MVP", projection * viewRel * modelRel);
 
-    m_Model[m_CurrentMesh]->Draw();
+    m_Model->Draw();
 
     m_Shader->Unbind();
 }

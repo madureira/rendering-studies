@@ -1,5 +1,3 @@
-#version 410 core
-
 in vec3 v_Color;
 
 out vec4 frag_color;

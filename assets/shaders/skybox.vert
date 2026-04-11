@@ -1,5 +1,3 @@
-#version 410 core
-
 layout(location = 0) in vec3 a_Vertex;
 
 uniform mat4 u_VP;

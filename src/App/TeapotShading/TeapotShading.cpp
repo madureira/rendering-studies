@@ -10,8 +10,7 @@
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
-
-REGISTER_APP(TeapotShading)
+REGISTER_APP(TeapotShading, true)
 
 const char* const TeapotShading::s_ShaderOptions[3] = {
     "flat",

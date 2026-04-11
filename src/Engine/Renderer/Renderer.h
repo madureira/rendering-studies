@@ -29,7 +29,7 @@ public:
      ~Renderer();
 
      void Clear(float32 r, float32 g, float32 b) const;
-     void RenderFPS(float64 currentTime, bool display = false) const;
+     void RenderFPS(float64 currentTime, bool display, uint32 winWidth, uint32 winHeight) const;
      void SetPolygonMode(bool enabled = false);
      void SetZBuffer(bool enabled = true);
      void SetCullFace(bool enabled = true);

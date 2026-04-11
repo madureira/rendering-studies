@@ -1,5 +1,3 @@
-#version 410 core
-
 uniform float u_ChromaBlue; // z-depth corresponding to blue
 uniform float u_ChromaRed;  // z-depth corresponding to red
 
@@ -25,14 +23,14 @@ vec3 ChromaDepth(float t)
 
     if (t <= (4.0 / 6.0))
     {
-        r = 0;
+        r = 0.0;
         g = 1.0 - 6.0 * (t - (3.0 / 6.0));
         b = 1.0;
     }
 
     if (t <= (3.0 / 6.0))
     {
-        r = 0;
+        r = 0.0;
         g = 1.0;
         b = 6.0 * (t - (2.0 / 6.0));
     }

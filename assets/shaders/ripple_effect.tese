@@ -1,5 +1,3 @@
-#version 410 core
-
 layout(quads, equal_spacing, ccw) in;
 
 uniform mat4 u_Model;

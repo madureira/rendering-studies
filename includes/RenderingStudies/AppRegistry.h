@@ -20,8 +20,13 @@ public:
         return registry;
     }
 
-    void Register(const std::string& name, Creator creator)
+    void Register(const std::string& name, Creator creator, bool webCompatible = true)
     {
+#ifdef __EMSCRIPTEN__
+        if (!webCompatible) return;
+#else
+        (void)webCompatible;
+#endif
         m_Registry[name] = creator;
     }
 

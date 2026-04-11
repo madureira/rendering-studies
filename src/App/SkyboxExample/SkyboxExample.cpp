@@ -13,7 +13,7 @@
 #include "../../Engine/Skybox/Skybox.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(SkyboxExample)
+REGISTER_APP(SkyboxExample, true)
 
 const char* SKYBOX_BASE_PATH = "assets/images/skybox";
 
@@ -22,7 +22,6 @@ const char* const SkyboxExample::s_SkyboxOptions[2] = {
     "night"
 };
 
-static int32 selected_skybox_index = 0;
 static float32 exposure = 1.0f;
 
 SkyboxExample::SkyboxExample(const Window& window, const Camera& camera)
@@ -40,8 +39,6 @@ SkyboxExample::SkyboxExample(const Window& window, const Camera& camera)
         -10.264f // pitch: ~10° down from horizontal (classic isometric)
     );
 
-    m_CurrentSkybox = 0;
-
     CreateSkybox();
 }
 
@@ -57,13 +54,10 @@ void SkyboxExample::Update(float32 /*unused: deltaTime*/)
 
     ImGui::TextUnformatted("Select the texture");
     ImGui::SameLine();
-    ImGui::Combo("##Skybox", &m_CurrentSkybox, s_SkyboxOptions, IM_ARRAYSIZE(s_SkyboxOptions));
-
-
-    if (m_CurrentSkybox != selected_skybox_index)
+    if (ImGui::Combo("##Skybox", &m_CurrentSkybox, s_SkyboxOptions, IM_ARRAYSIZE(s_SkyboxOptions)))
     {
-        selected_skybox_index = m_CurrentSkybox;
         CreateSkybox();
+        exposure = (m_CurrentSkybox == 1) ? 0.5f : 1.0f;
     }
 
     ImGui::TextUnformatted("Exposure");
@@ -75,6 +69,11 @@ void SkyboxExample::Update(float32 /*unused: deltaTime*/)
 
 void SkyboxExample::Render()
 {
+    if (!m_Skybox)
+    {
+        return;
+    }
+
     uint32 winWidth = m_Window.GetWidth();
     uint32 winHeight = m_Window.GetHeight();
 

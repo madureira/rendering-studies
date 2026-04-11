@@ -14,12 +14,16 @@ class SimpleMesh final : public App
 private:
     const Window& m_Window;
     const Camera& m_Camera;
-    Shader* m_Shader;
-    Model* m_Model[7];
-    int32 m_CurrentMesh;
+    Shader* m_Shader = nullptr;
+    Model* m_Model = nullptr;
+    int32 m_CurrentMesh = 0;
+    int32 m_LoadedMeshIndex = -1;
     glm::vec3 m_ModelPos;
 
     static const char* const s_MeshOptions[7];
+    static const char* const s_MeshPaths[7];
+
+    void LoadCurrentModel();
 
 public:
     SimpleMesh(const Window& window, const Camera& camera);

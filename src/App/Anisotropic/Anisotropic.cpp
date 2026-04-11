@@ -10,7 +10,7 @@
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(Anisotropic)
+REGISTER_APP(Anisotropic, true)
 
 Anisotropic::Anisotropic(const Window& window, const Camera& camera)
     : m_Window(window)

@@ -15,8 +15,10 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 Shader::Shader(const std::string& vertexPath, const std::string& tessControlPath, const std::string& tessEvalPath, const std::string& fragmentPath)
 {
     m_VertexCode = FileManager::ReadText(vertexPath);
+#ifndef __EMSCRIPTEN__
     m_TessControlCode = FileManager::ReadText(tessControlPath);
     m_TessEvalCode = FileManager::ReadText(tessEvalPath);
+#endif
     m_FragmentCode = FileManager::ReadText(fragmentPath);
     Compile();
     Link();
@@ -155,32 +157,46 @@ void Shader::SetMat4(const std::string& name, const glm::mat4& mat) const
     }
 }
 
+#ifdef __EMSCRIPTEN__
+static const char* s_VertPreamble = "#version 300 es\nprecision highp float;\n";
+static const char* s_FragPreamble = "#version 300 es\nprecision mediump float;\n";
+#else
+static const char* s_VertPreamble = "#version 410 core\n";
+static const char* s_FragPreamble = "#version 410 core\n";
+#endif
+
 void Shader::Compile()
 {
     const char* vsCode = m_VertexCode.c_str();
+    const char* vsSources[2] = { s_VertPreamble, vsCode };
     m_VertexId = GLR(glCreateShader(GL_VERTEX_SHADER));
-    GL(glShaderSource(m_VertexId, 1, &vsCode, NULL));
+    GL(glShaderSource(m_VertexId, 2, vsSources, NULL));
     GL(glCompileShader(m_VertexId));
     CheckCompileError(m_VertexId, "Vertex Shader");
 
+#ifndef __EMSCRIPTEN__
     if (!m_TessControlCode.empty() && !m_TessEvalCode.empty())
     {
         const char* tcsCode = m_TessControlCode.c_str();
+        const char* tcsSources[2] = { s_VertPreamble, tcsCode };
         m_TessControlId = GLR(glCreateShader(GL_TESS_CONTROL_SHADER));
-        GL(glShaderSource(m_TessControlId, 1, &tcsCode, NULL));
+        GL(glShaderSource(m_TessControlId, 2, tcsSources, NULL));
         GL(glCompileShader(m_TessControlId));
         CheckCompileError(m_TessControlId, "Tessellation Control Shader");
 
         const char* tesCode = m_TessEvalCode.c_str();
+        const char* tesSources[2] = { s_VertPreamble, tesCode };
         m_TessEvalId = GLR(glCreateShader(GL_TESS_EVALUATION_SHADER));
-        GL(glShaderSource(m_TessEvalId, 1, &tesCode, NULL));
+        GL(glShaderSource(m_TessEvalId, 2, tesSources, NULL));
         GL(glCompileShader(m_TessEvalId));
         CheckCompileError(m_TessEvalId, "Tessellation Evaluation Shader");
     }
+#endif
 
     const char* fsCode = m_FragmentCode.c_str();
+    const char* fsSources[2] = { s_FragPreamble, fsCode };
     m_FragmentId = GLR(glCreateShader(GL_FRAGMENT_SHADER));
-    GL(glShaderSource(m_FragmentId, 1, &fsCode, NULL));
+    GL(glShaderSource(m_FragmentId, 2, fsSources, NULL));
     GL(glCompileShader(m_FragmentId));
     CheckCompileError(m_FragmentId, "Fragment Shader");
 }
@@ -189,20 +205,24 @@ void Shader::Link()
 {
     m_ID = GLR(glCreateProgram());
     GL(glAttachShader(m_ID, m_VertexId));
+#ifndef __EMSCRIPTEN__
     if (!m_TessControlCode.empty() && !m_TessEvalCode.empty())
     {
         GL(glAttachShader(m_ID, m_TessControlId));
         GL(glAttachShader(m_ID, m_TessEvalId));
     }
+#endif
     GL(glAttachShader(m_ID, m_FragmentId));
     GL(glLinkProgram(m_ID));
     CheckLinkingError();
     GL(glDeleteShader(m_VertexId));
+#ifndef __EMSCRIPTEN__
     if (!m_TessControlCode.empty() && !m_TessEvalCode.empty())
     {
         GL(glDeleteShader(m_TessControlId));
         GL(glDeleteShader(m_TessEvalId));
     }
+#endif
     GL(glDeleteShader(m_FragmentId));
 }
 

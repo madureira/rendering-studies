@@ -5,8 +5,8 @@
 
 namespace Input
 {
-    constexpr int kMouseButtonLeft = 0; // equivalent to GLFW_MOUSE_BUTTON_LEFT
-    constexpr int kMouseButtonLast = 7; // equivalent to GLFW_MOUSE_BUTTON_LAST
+    constexpr int32 kMouseButtonLeft = 0; // equivalent to GLFW_MOUSE_BUTTON_LEFT
+    constexpr int32 kMouseButtonLast = 7; // equivalent to GLFW_MOUSE_BUTTON_LAST
 }
 
 struct MouseButtonState

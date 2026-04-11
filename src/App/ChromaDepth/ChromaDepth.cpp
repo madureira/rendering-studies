@@ -9,7 +9,7 @@
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(ChromaDepth)
+REGISTER_APP(ChromaDepth, true)
 
 ChromaDepth::ChromaDepth(const Window& window, const Camera& camera)
     : m_Window(window)

@@ -9,7 +9,7 @@
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(BumpMapping)
+REGISTER_APP(BumpMapping, true)
 
 BumpMapping::BumpMapping(const Window& window, const Camera& camera)
     : m_Window(window)

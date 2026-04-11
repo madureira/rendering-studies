@@ -1,5 +1,3 @@
-#version 410 core
-
 flat in vec3 v_Normal;
 in vec3 v_WorldPos;
 

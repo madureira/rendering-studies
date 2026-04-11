@@ -1,5 +1,3 @@
-#version 410 core
-
 in float v_Height;
 in float v_Time;
 

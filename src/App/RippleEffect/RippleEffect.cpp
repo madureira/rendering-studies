@@ -9,7 +9,7 @@
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(RippleEffect)
+REGISTER_APP(RippleEffect, false)
 
 RippleEffect::RippleEffect(const Window& window, const Camera& camera)
     : m_Window(window)
@@ -81,9 +81,13 @@ void RippleEffect::Render()
     m_Shader->SetFloat("u_Amplitude", m_Amplitude);
     m_Shader->SetFloat("u_Frequency", m_Frequency);
 
+#ifndef __EMSCRIPTEN__
     GL(glPatchParameteri(GL_PATCH_VERTICES, 4));
+#endif
     GL(glBindVertexArray(m_VAO));
+#ifndef __EMSCRIPTEN__
     GL(glDrawElements(GL_PATCHES, m_IndexCount, GL_UNSIGNED_INT, 0));
+#endif
 
     // Unbind the VAO
     GL(glBindVertexArray(0));

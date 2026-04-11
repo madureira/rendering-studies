@@ -54,9 +54,11 @@ void Skybox::Render(const Camera& camera, uint32 windowWidth, uint32 windowHeigh
     glm::mat4 viewRotOnly = glm::mat4(glm::mat3(view));
 
     // Disable wireframe mode
+#ifndef __EMSCRIPTEN__
     GLint oldPolygonMode[2];
     GL(glGetIntegerv(GL_POLYGON_MODE, oldPolygonMode));
     GL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+#endif
 
     m_Shader->Bind();
     m_Shader->SetMat4("u_VP", projection * viewRotOnly);
@@ -86,10 +88,11 @@ void Skybox::Render(const Camera& camera, uint32 windowWidth, uint32 windowHeigh
     m_Shader->Unbind();
 
     // Restore previous state
+#ifndef __EMSCRIPTEN__
     assert(oldPolygonMode[0] == oldPolygonMode[1]);
     GL(glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode[0]));
+#endif
 }
-
 
 void Skybox::CreateMesh()
 {
@@ -134,7 +137,7 @@ void Skybox::LoadSkybox(const std::string& basePath)
     GL(glGenTextures(1, &m_Texture));
     GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_Texture));
 
-    for (int i = 0; i < 6; ++i)
+    for (int32 i = 0; i < 6; ++i)
     {
         int32 width = 0;
         int32 height = 0;

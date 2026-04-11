@@ -29,7 +29,7 @@ private:
     uint32 m_Height;
     bool m_VSyncOn;
     MouseState m_Mouse;
-    mutable bool m_FullScreen;
+    mutable bool m_FullScreen = false;
     mutable float64 m_LastTime = 0.0f;
     int32 m_MonitorIndex;
 

@@ -22,7 +22,6 @@ private:
     std::array<Character, 128> m_Characters{};
     uint32 m_VAO;
     uint32 m_VBO;
-
 public:
     TextRenderer(const std::string& fontPath);
     ~TextRenderer();

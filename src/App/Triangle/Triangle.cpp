@@ -8,7 +8,7 @@
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(Triangle)
+REGISTER_APP(Triangle, true)
 
 Triangle::Triangle(const Window& window, const Camera& camera)
     : m_Window(window)

@@ -8,7 +8,7 @@
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(Cube)
+REGISTER_APP(Cube, true)
 
 Cube::Cube(const Window& window, const Camera& camera)
     : m_Window(window)

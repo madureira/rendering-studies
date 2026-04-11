@@ -40,7 +40,11 @@ TextRenderer::TextRenderer(const std::string& fontPath)
         GLuint texture;
         GL(glGenTextures(1, &texture));
         GL(glBindTexture(GL_TEXTURE_2D, texture));
+#ifdef __EMSCRIPTEN__
+        GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer));
+#else
         GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer));
+#endif
 
         GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
         GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
@@ -91,7 +95,9 @@ void TextRenderer::Render(const Shader& shader, const std::string& text, const g
     shader.SetVec3("u_TextColor", color.x, color.y, color.z);
     GL(glActiveTexture(GL_TEXTURE0));
     GL(glBindVertexArray(m_VAO));
+#ifndef __EMSCRIPTEN__
     GL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+#endif
     GL(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
 
     std::string::const_iterator c;

@@ -10,7 +10,7 @@
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(ColorCoord)
+REGISTER_APP(ColorCoord, true)
 
 ColorCoord::ColorCoord(const Window& window, const Camera& camera)
     : m_Window(window)

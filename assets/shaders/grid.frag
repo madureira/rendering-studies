@@ -1,7 +1,3 @@
-#version 410 core
-
-precision highp float;
-
 // ============================================================================
 // INPUTS FROM VERTEX SHADER
 // ============================================================================
@@ -124,8 +120,13 @@ float computeDepth(vec3 pos)
 {
     vec4 clip = u_Projection * u_View * vec4(pos, 1.0);
     float ndc = clip.z / clip.w; // Normalized device coordinate [-1, 1]
-    // Convert from NDC to depth buffer range
+    // Convert from NDC to depth buffer range.
+    // WebGL2/GLES3: depth range is always [0, 1]; desktop: use gl_DepthRange for configurable range.
+#ifdef GL_ES
+    return (1.0 * ndc + 0.0 + 1.0) * 0.5;
+#else
     return (gl_DepthRange.diff * ndc + gl_DepthRange.near + gl_DepthRange.far) * 0.5;
+#endif
 }
 
 // ============================================================================

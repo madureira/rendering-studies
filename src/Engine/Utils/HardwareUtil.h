@@ -36,6 +36,7 @@
 #include <string>
 #include <vector>
 
+#ifndef __EMSCRIPTEN__
 #if defined(__APPLE__)
 #include <mach/mach.h>
 #include <sys/sysctl.h>
@@ -49,6 +50,7 @@
 #include <psapi.h>
 #include <windows.h>
 #endif
+#endif // __EMSCRIPTEN__
 
 #if defined(__has_include)
 #if __has_include(<GLFW/glfw3.h>)
@@ -187,7 +189,7 @@ public:
         return QuerySystemInfo().cpuArch;
     }
 
-    static int GetCPUCores()
+    static int32 GetCPUCores()
     {
         return QuerySystemInfo().cpuLogicalCores;
     }
@@ -387,7 +389,7 @@ private:
 #endif
 
 #if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
-    static inline void Cpuid(int out[4], int leaf, int subleaf)
+    static inline void Cpuid(int32 out[4], int32 leaf, int32 subleaf)
     {
 #if defined(_WIN32)
         __cpuidex(out, leaf, subleaf);
@@ -481,6 +483,16 @@ inline SystemInfo HardwareUtil::QuerySystemInfo()
 {
     SystemInfo info;
 
+#ifdef __EMSCRIPTEN__
+    info.osName = "Browser";
+    info.osVersion = "WebAssembly";
+    info.cpuArch = "wasm32";
+    info.cpuModel = "N/A";
+    info.cpuLogicalCores = 1;
+    info.totalMemoryGiB = -1.0;
+    return info;
+#endif
+
     // OS name
 #if defined(_WIN32)
     info.osName = "Windows";
@@ -538,13 +550,13 @@ inline SystemInfo HardwareUtil::QuerySystemInfo()
     // Prefer CPUID brand string on x86, fallback to registry.
     info.cpuModel = "Unknown CPU";
 #if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
-    int regs[4] = { 0, 0, 0, 0 };
+    int32 regs[4] = { 0, 0, 0, 0 };
     Cpuid(regs, 0x80000000, 0);
     const uint32 maxExt = (uint32)regs[0];
     if (maxExt >= 0x80000004)
     {
         char brand[49] = {};
-        int* brandInts = reinterpret_cast<int*>(brand);
+        int32* brandInts = reinterpret_cast<int*>(brand);
         Cpuid(brandInts + 0, 0x80000002, 0);
         Cpuid(brandInts + 4, 0x80000003, 0);
         Cpuid(brandInts + 8, 0x80000004, 0);
@@ -620,6 +632,10 @@ inline SystemInfo HardwareUtil::QuerySystemInfo()
 inline MemoryStats HardwareUtil::QueryMemoryStats()
 {
     MemoryStats s;
+
+#ifdef __EMSCRIPTEN__
+    return s;
+#endif
 
     // Free / available memory (GiB)
 #if defined(__APPLE__)
@@ -702,6 +718,10 @@ inline CpuFeatures HardwareUtil::QueryCpuFeatures()
 {
     CpuFeatures f;
 
+#ifdef __EMSCRIPTEN__
+    return f;
+#endif
+
     // ARM NEON (compile-time best effort)
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 #if defined(__ARM_NEON) || defined(__ARM_NEON__)
@@ -710,12 +730,12 @@ inline CpuFeatures HardwareUtil::QueryCpuFeatures()
 #endif
 
 #if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
-    int regs[4] = { 0, 0, 0, 0 };
+    int32 regs[4] = { 0, 0, 0, 0 };
 
     // Leaf 1: SSE3, SSSE3, SSE4.1, SSE4.2, AVX, OSXSAVE
     Cpuid(regs, 1, 0);
-    const int ecx = regs[2];
-    const int edx = regs[3];
+    const int32 ecx = regs[2];
+    const int32 edx = regs[3];
 
     f.sse2 = (edx & (1 << 26)) != 0;
     f.sse3 = (ecx & (1 << 0)) != 0;
@@ -737,7 +757,7 @@ inline CpuFeatures HardwareUtil::QueryCpuFeatures()
 
     // Leaf 7 subleaf 0: AVX2 in EBX bit 5
     Cpuid(regs, 7, 0);
-    const int ebx = regs[1];
+    const int32 ebx = regs[1];
     const bool avx2Cpu = (ebx & (1 << 5)) != 0;
     f.avx2 = f.avx && avx2Cpu;
 #endif
@@ -766,10 +786,14 @@ inline GraphicsInfo HardwareUtil::QueryGraphicsInfo()
     GL(glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &g.maxUniformBlockSizeBytes));
     GL(glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &g.maxUniformBufferBindings));
 
-    // Debug context flag
+    // Debug context flag (GL_CONTEXT_FLAGS not available in GLES3)
+#ifndef __EMSCRIPTEN__
     GLint flags = 0;
     GL(glGetIntegerv(GL_CONTEXT_FLAGS, &flags));
     g.debugContext = (flags & GL_CONTEXT_FLAG_DEBUG_BIT) != 0;
+#else
+    g.debugContext = false;
+#endif
 
     // Anisotropy
     if (HasGlExtension("GL_EXT_texture_filter_anisotropic"))
@@ -785,6 +809,7 @@ inline GraphicsInfo HardwareUtil::QueryGraphicsInfo()
     GL(glGetIntegerv(GL_MAJOR_VERSION, &major));
     GL(glGetIntegerv(GL_MINOR_VERSION, &minor));
 
+#ifndef __EMSCRIPTEN__
     g.supportsCompute = (major > 4) || (major == 4 && minor >= 3) || HasGlExtension("GL_ARB_compute_shader");
     if (g.supportsCompute)
     {
@@ -803,6 +828,7 @@ inline GraphicsInfo HardwareUtil::QueryGraphicsInfo()
         GL(glGetIntegerv(GL_MAX_TESS_GEN_LEVEL, &g.maxTessGenLevel));
         GL(glGetIntegerv(GL_MAX_PATCH_VERTICES, &g.maxPatchVertices));
     }
+#endif // __EMSCRIPTEN__
 
     // VRAM best-effort (extensions)
     // NVX (NVIDIA): returns KB

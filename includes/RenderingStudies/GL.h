@@ -3,7 +3,12 @@
 #include "Log.h"
 #include "Types.h"
 #include <cstring>
-#include <glad/glad.h>
+#ifdef __EMSCRIPTEN__
+#  include <GLES3/gl3.h>
+#  include <emscripten/emscripten.h>
+#else
+#  include <glad/glad.h>
+#endif
 #include <type_traits>
 
 /**

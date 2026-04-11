@@ -1,5 +1,3 @@
-#version 410 core
-
 in float v_StripeCoord;
 
 out vec4 frag_color;

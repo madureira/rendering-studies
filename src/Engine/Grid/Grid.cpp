@@ -76,9 +76,11 @@ void Grid::Render(const Camera& camera, uint32 windowWidth, uint32 windowHeight,
     glm::vec2 gridFract100 = CalculateFract(cameraPosHP, 100.0);
 
     // Disable wireframe mode
+#ifndef __EMSCRIPTEN__
     GLint oldPolygonMode[2];
     GL(glGetIntegerv(GL_POLYGON_MODE, oldPolygonMode));
     GL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+#endif
 
     m_Shader->Bind();
 
@@ -101,6 +103,8 @@ void Grid::Render(const Camera& camera, uint32 windowWidth, uint32 windowHeight,
     m_Shader->Unbind();
 
     // Restore previous state
+#ifndef __EMSCRIPTEN__
     assert(oldPolygonMode[0] == oldPolygonMode[1]);
     GL(glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode[0]));
+#endif
 }

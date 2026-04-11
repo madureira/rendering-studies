@@ -1,4 +1,12 @@
 cmake_minimum_required(VERSION 3.24)
+
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    message(FATAL_ERROR
+        "In-source builds are not allowed.\n"
+        "Run cmake with a separate build directory, e.g.:\n"
+        "  cmake -S . -B build/Debug")
+endif()
+
 project(rendering-studies)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -9,7 +17,9 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic")
+if(NOT EMSCRIPTEN)
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic")
+endif()
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
@@ -17,53 +27,139 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-DDEBUG)
 endif()
 
-# Find libraries
-find_package(imgui CONFIG REQUIRED)
-find_package(assimp REQUIRED)
-find_package(freetype REQUIRED)
-find_package(glad REQUIRED)
-find_package(glfw3 REQUIRED)
-find_package(glm REQUIRED)
-find_package(spdlog REQUIRED)
+# ============================================================
+# DEPENDENCIES
+# ============================================================
 
-# Add all .cpp files in the src directory and its subdirectories
-file(GLOB_RECURSE CPP_SOURCES src/*.cpp)
+# --- Assimp: compiled from source submodule (both desktop and web) ---
+set(ASSIMP_BUILD_TESTS                  OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS           OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL                      OFF CACHE BOOL "" FORCE)
+set(ASSIMP_NO_EXPORT                    ON  CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_OBJ_IMPORTER           ON  CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_FBX_IMPORTER           ON  CACHE BOOL "" FORCE)
+# Always build assimp as a static library to avoid dynamic linker overhead
+set(BUILD_SHARED_LIBS                   OFF CACHE BOOL "" FORCE)
+if(EMSCRIPTEN)
+    # Web: no system zlib available, build assimp's bundled one
+    set(ASSIMP_BUILD_ZLIB ON  CACHE BOOL "" FORCE)
+else()
+    # Desktop: use system/Conan zlib to avoid bundled zlib's macOS SDK conflicts
+    set(ASSIMP_BUILD_ZLIB OFF CACHE BOOL "" FORCE)
+endif()
+add_subdirectory(vendor/assimp)
 
-# Add all .h files in the src directory and its subdirectories
-file(GLOB_RECURSE HEADER_FILES src/*.h)
+if(EMSCRIPTEN)
+    # Silence Clang/Emscripten warnings inside assimp's bundled zlib
+    target_compile_options(assimp PRIVATE -Wno-nontrivial-memcall)
+    if(TARGET zlibstatic)
+        target_compile_options(zlibstatic PRIVATE -Wno-deprecated-non-prototype)
+    endif()
+else()
+    # Silence warnings in assimp's own code (not our problem to fix)
+    target_compile_options(assimp PRIVATE -Wno-deprecated-copy)
+    # Desktop: freetype and glfw via Conan; glad vendored
+    find_package(freetype REQUIRED)
+    find_package(glfw3    REQUIRED)
+    find_package(ZLIB     REQUIRED)
+endif()
 
-# Create the library target
+# ============================================================
+# SOURCES
+# ============================================================
+
+file(GLOB_RECURSE CPP_SOURCES    src/*.cpp)
+file(GLOB_RECURSE HEADER_FILES   src/*.h)
+
+# ImGui compiled from source submodule (both builds)
+set(IMGUI_SOURCES
+    vendor/imgui/imgui.cpp
+    vendor/imgui/imgui_draw.cpp
+    vendor/imgui/imgui_tables.cpp
+    vendor/imgui/imgui_widgets.cpp
+)
+
 add_executable(
     ${PROJECT_NAME}
     src/main.cpp
-
-    # ImGui backends (vendor these files)
-    external/imgui/backends/imgui_impl_glfw.cpp
-    external/imgui/backends/imgui_impl_opengl3.cpp
-
+    vendor/imgui/backends/imgui_impl_glfw.cpp
+    vendor/imgui/backends/imgui_impl_opengl3.cpp
+    ${IMGUI_SOURCES}
     ${CPP_SOURCES} ${HEADER_FILES}
 )
 
+if(NOT EMSCRIPTEN)
+    # glad: vendored generated sources (desktop only; web uses GLES3)
+    target_sources(${PROJECT_NAME} PRIVATE vendor/glad/src/glad.c)
+endif()
+
+# ============================================================
+# INCLUDE DIRECTORIES
+# ============================================================
 target_include_directories(${PROJECT_NAME} PRIVATE
-  external/imgui/backends
+    includes
+    vendor/imgui
+    vendor/imgui/backends
+    ${CMAKE_SOURCE_DIR}/vendor/glm
+    ${CMAKE_SOURCE_DIR}/vendor/spdlog/include
 )
 
-# Copy assets to the build directory
-file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/)
+if(NOT EMSCRIPTEN)
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_SOURCE_DIR}/vendor/glad/include
+    )
+endif()
 
-# Copy config.ini to the build directory
-file(COPY config.ini DESTINATION ${CMAKE_BINARY_DIR}/)
+# ============================================================
+# ASSETS
+# ============================================================
+if(NOT EMSCRIPTEN)
+    file(COPY assets     DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY config.ini DESTINATION ${CMAKE_BINARY_DIR}/)
+endif()
 
-# Link libraries to the target
-target_link_libraries(${PROJECT_NAME} imgui::imgui)
-target_link_libraries(${PROJECT_NAME} assimp::assimp)
-target_link_libraries(${PROJECT_NAME} Freetype::Freetype)
-target_link_libraries(${PROJECT_NAME} glad::glad)
-target_link_libraries(${PROJECT_NAME} glfw)
-target_link_libraries(${PROJECT_NAME} glm::glm)
-target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
+# ============================================================
+# LINK LIBRARIES
+# ============================================================
 
-target_include_directories(${PROJECT_NAME} PRIVATE includes)
+target_link_libraries(${PROJECT_NAME} assimp)
 
-# Precompiled header for faster builds
-target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/includes/RenderingStudies/pch.h)
+if(EMSCRIPTEN)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE IMGUI_IMPL_OPENGL_ES3)
+
+    target_compile_options(${PROJECT_NAME} PRIVATE "-sUSE_FREETYPE=1")
+
+    set(EM_LINK_FLAGS
+        "-sUSE_WEBGL2=1"
+        "-sUSE_GLFW=3"
+        "-sUSE_FREETYPE=1"
+        "-sFULL_ES3=1"
+        "-sMIN_WEBGL_VERSION=2"
+        "-sMAX_WEBGL_VERSION=2"
+        "-sALLOW_MEMORY_GROWTH=1"
+        "-sINITIAL_MEMORY=134217728"
+        "-sSTACK_SIZE=8388608"
+        "--preload-file=${CMAKE_SOURCE_DIR}/assets@/assets"
+        "--preload-file=${CMAKE_SOURCE_DIR}/config.ini@/config.ini"
+        "--use-preload-plugins"
+        "--shell-file=${CMAKE_SOURCE_DIR}/assets/index.html"
+    )
+    string(JOIN " " EM_LINK_FLAGS_STR ${EM_LINK_FLAGS})
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME "index"
+        SUFFIX      ".html"
+        LINK_FLAGS  "${EM_LINK_FLAGS_STR}"
+    )
+else()
+    target_link_libraries(${PROJECT_NAME} Freetype::Freetype)
+    target_link_libraries(${PROJECT_NAME} glfw)
+endif()
+
+# ============================================================
+# PRECOMPILED HEADERS (desktop only — Emscripten PCH support is limited)
+# ============================================================
+if(NOT EMSCRIPTEN)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE
+        $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/includes/RenderingStudies/pch.h>)
+endif()

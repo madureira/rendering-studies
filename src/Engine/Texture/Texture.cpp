@@ -31,12 +31,20 @@ Texture::Texture(const std::string& path, const TextureParams& params)
     else if (m_Channels == 3)
     {
         dataFormat = GL_RGB;
+#ifdef __EMSCRIPTEN__
+        internalFormat = GL_RGB8;
+#else
         internalFormat = params.srgb ? GL_SRGB8 : GL_RGB8;
+#endif
     }
     else if (m_Channels == 4)
     {
         dataFormat = GL_RGBA;
+#ifdef __EMSCRIPTEN__
+        internalFormat = GL_RGBA8;
+#else
         internalFormat = params.srgb ? GL_SRGB8_ALPHA8 : GL_RGBA8;
+#endif
     }
     else
     {

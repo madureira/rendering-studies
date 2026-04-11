@@ -9,7 +9,7 @@
 #include "../../Engine/Texture/Texture.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_APP(TexturedCube)
+REGISTER_APP(TexturedCube, true)
 
 TexturedCube::TexturedCube(const Window& window, const Camera& camera)
     : m_Window(window)

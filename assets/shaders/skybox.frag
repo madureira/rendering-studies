@@ -1,5 +1,3 @@
-#version 410 core
-
 in vec3 v_TexCoord;
 
 uniform samplerCube u_SkyboxTexture;

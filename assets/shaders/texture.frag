@@ -1,5 +1,3 @@
-#version 410 core
-
 in vec2 v_TexCoord;
 
 uniform sampler2D u_Texture;

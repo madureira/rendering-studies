@@ -12,8 +12,8 @@ class SkyboxExample final : public App
 private:
     const Window& m_Window;
     const Camera& m_Camera;
-    Skybox* m_Skybox;
-    int32 m_CurrentSkybox;
+    Skybox* m_Skybox = nullptr;
+    int32 m_CurrentSkybox = 0;
 
     static const char* const s_SkyboxOptions[2];
 
