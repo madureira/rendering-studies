@@ -9,13 +9,15 @@
 ![CMake](https://img.shields.io/badge/CMake-3.24+-064F8C?style=flat-square&logo=cmake&logoColor=white)
 ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)
-![Windows](https://img.shields.io/badge/Windows-0078D4?style=flat-square&logo=windows&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-0078D4?style=flat-square)
 
 ---
 
 ## Overview
 
-Each demo is selectable at runtime from a settings panel — no restart needed. The same codebase compiles to a native binary (OpenGL 4.1 Core) and to a static web page (WebGL 2.0 via Emscripten), deployable on GitHub Pages.
+A collection of real-time 3D rendering demos built from scratch in C++11 and OpenGL, covering foundational techniques in computer graphics — from basic geometry and lighting models to normal mapping, environment mapping, and tessellation shaders.
+
+Each demo is selectable at runtime from a settings panel with no restart needed. The same codebase compiles to a native binary using OpenGL 4.1 Core, and to a static web page using WebGL 2.0 via Emscripten, making every demo instantly accessible in the browser without any installation.
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-madureira.github.io/rendering--studies-654FF0?style=for-the-badge&logo=webassembly&logoColor=white)](https://madureira.github.io/rendering-studies)
 
@@ -61,6 +63,20 @@ conan profile detect
 ---
 
 ## Building
+
+### 1. Clone the repository
+
+```sh
+git clone --recurse-submodules https://github.com/madureira/rendering-studies.git
+```
+
+If you already cloned without submodules, initialize them manually:
+
+```sh
+git submodule update --init --recursive
+```
+
+> **Note:** The first clone may take a few minutes — Assimp is a large dependency (~300 MB).
 
 ### Desktop
 

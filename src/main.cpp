@@ -3,7 +3,7 @@
 
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/UI/UI.h"
-#include "Engine/Utils/AppSelector.h"
+#include "Engine/Utils/DemoSelector.h"
 #include "Engine/Utils/InputProcessorUtil.h"
 #include "Engine/Window/Window.h"
 
@@ -15,9 +15,9 @@ struct LoopState
 {
     Window* window;
     Renderer* renderer;
-    AppSelector* appSelector;
-    App* app = nullptr;
-    int32 lastAppIndex = -1;
+    DemoSelector* demoSelector;
+    Demo* demo = nullptr;
+    int32 lastDemoIndex = -1;
 };
 
 static void runFrame(LoopState& s)
@@ -27,38 +27,38 @@ static void runFrame(LoopState& s)
     s.renderer->Clear(0.2f, 0.2f, 0.2f);
 
     UI::NewFrame();
-    s.appSelector->RenderSettings();
+    s.demoSelector->RenderSettings();
 
-    s.renderer->SetZBuffer(s.appSelector->IsZBufferEnabled());
-    s.renderer->SetCullFace(s.appSelector->IsCullFaceEnabled());
+    s.renderer->SetZBuffer(s.demoSelector->IsZBufferEnabled());
+    s.renderer->SetCullFace(s.demoSelector->IsCullFaceEnabled());
 
-    int32 currentAppIndex = s.appSelector->GetSelectedIndex();
-    if (currentAppIndex != s.lastAppIndex)
+    int32 currentDemoIndex = s.demoSelector->GetSelectedIndex();
+    if (currentDemoIndex != s.lastDemoIndex)
     {
-        delete s.app;
+        delete s.demo;
         s.renderer->ResetCameraPosition();
-        s.app = s.appSelector->GetSelectedApp(*s.window, *s.renderer->GetCamera());
-        s.lastAppIndex = currentAppIndex;
+        s.demo = s.demoSelector->GetSelectedDemo(*s.window, *s.renderer->GetCamera());
+        s.lastDemoIndex = currentDemoIndex;
     }
 
-    s.renderer->RenderGrid(s.window->GetWidth(), s.window->GetHeight(), s.appSelector->IsGridEnabled());
+    s.renderer->RenderGrid(s.window->GetWidth(), s.window->GetHeight(), s.demoSelector->IsGridEnabled());
 
     float32 deltaTime = s.window->GetDeltaTime();
-    InputProcessorUtil::moveCamera(*s.renderer->GetCamera(), *s.window, deltaTime, s.appSelector->GetCameraSpeed(), s.appSelector->GetCameraAcceleratedSpeed());
+    InputProcessorUtil::moveCamera(*s.renderer->GetCamera(), *s.window, deltaTime, s.demoSelector->GetCameraSpeed(), s.demoSelector->GetCameraAcceleratedSpeed());
 
-    if (s.app)
+    if (s.demo)
     {
-        ImGui::SetNextWindowPos(ImVec2(10.0f, s.appSelector->GetPanelBottom() + 10.0f), ImGuiCond_Appearing);
-        s.app->Update(deltaTime);
-        s.app->Render();
+        ImGui::SetNextWindowPos(ImVec2(10.0f, s.demoSelector->GetPanelBottom() + 10.0f), ImGuiCond_Appearing);
+        s.demo->Update(deltaTime);
+        s.demo->Render();
     }
 
-    s.appSelector->RenderControls(s.window->GetWidth());
+    s.demoSelector->RenderControls(s.window->GetWidth());
 
     UI::Render();
 
-    s.renderer->RenderFPS(s.window->GetTime(), s.appSelector->IsFpsEnabled(), s.window->GetWidth(), s.window->GetHeight());
-    s.renderer->SetPolygonMode(s.appSelector->IsPolygonModeEnabled());
+    s.renderer->RenderFPS(s.window->GetTime(), s.demoSelector->IsFpsEnabled(), s.window->GetWidth(), s.window->GetHeight());
+    s.renderer->SetPolygonMode(s.demoSelector->IsPolygonModeEnabled());
 
     s.window->SwapBuffers();
 }
@@ -77,12 +77,12 @@ int main()
     Window window(cfg);
     Renderer renderer(window.GetWidth(), window.GetHeight());
     UI ui(window);
-    AppSelector appSelector;
+    DemoSelector demoSelector;
 
     LoopState state;
     state.window = &window;
     state.renderer = &renderer;
-    state.appSelector = &appSelector;
+    state.demoSelector = &demoSelector;
 
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop_arg(emscriptenCallback, &state, 0, 1);
@@ -92,7 +92,7 @@ int main()
         runFrame(state);
     }
 
-    delete state.app;
+    delete state.demo;
 #endif
 
     return EXIT_SUCCESS;

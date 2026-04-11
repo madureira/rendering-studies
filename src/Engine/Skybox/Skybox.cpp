@@ -34,7 +34,7 @@ Skybox::~Skybox()
     GL(glDeleteBuffers(1, &m_EBO));
     GL(glDeleteTextures(1, &m_Texture));
 
-    // Restore OpenGL state so switching to another app doesn't inherit skybox settings.
+    // Restore OpenGL state so switching to another demo doesn't inherit skybox settings.
     // Match Window's default: depth LEQUAL, cull face enabled (Skybox disables it for skybox).
     GL(glDepthFunc(GL_LEQUAL));
     GL(glEnable(GL_CULL_FACE));
