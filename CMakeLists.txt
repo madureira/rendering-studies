@@ -45,7 +45,7 @@ if(EMSCRIPTEN)
     # Web: no system zlib available, build assimp's bundled one
     set(ASSIMP_BUILD_ZLIB ON  CACHE BOOL "" FORCE)
 else()
-    # Desktop: use system/Conan zlib to avoid bundled zlib's macOS SDK conflicts
+    # Desktop: use system zlib to avoid bundled zlib's macOS SDK conflicts
     set(ASSIMP_BUILD_ZLIB OFF CACHE BOOL "" FORCE)
 endif()
 add_subdirectory(vendor/assimp)
@@ -59,10 +59,23 @@ if(EMSCRIPTEN)
 else()
     # Silence warnings in assimp's own code (not our problem to fix)
     target_compile_options(assimp PRIVATE -Wno-deprecated-copy)
-    # Desktop: freetype and glfw via Conan; glad vendored
-    find_package(freetype REQUIRED)
-    find_package(glfw3    REQUIRED)
-    find_package(ZLIB     REQUIRED)
+    # Desktop: use system zlib to avoid bundled zlib's macOS SDK conflicts
+    find_package(ZLIB REQUIRED)
+
+    # --- GLFW: compiled from source submodule ---
+    set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    add_subdirectory(vendor/glfw)
+
+    # --- Freetype: compiled from source submodule ---
+    set(FT_DISABLE_ZLIB          OFF CACHE BOOL "" FORCE)
+    set(FT_DISABLE_BZIP2         ON  CACHE BOOL "" FORCE)
+    set(FT_DISABLE_PNG           ON  CACHE BOOL "" FORCE)
+    set(FT_DISABLE_HARFBUZZ      ON  CACHE BOOL "" FORCE)
+    set(FT_DISABLE_BROTLI        ON  CACHE BOOL "" FORCE)
+    set(SKIP_INSTALL_ALL         ON  CACHE BOOL "" FORCE)
+    add_subdirectory(vendor/freetype)
 endif()
 
 # ============================================================
@@ -99,6 +112,7 @@ endif()
 # ============================================================
 target_include_directories(${PROJECT_NAME} PRIVATE
     includes
+    vendor
     vendor/imgui
     vendor/imgui/backends
     ${CMAKE_SOURCE_DIR}/vendor/glm
@@ -152,7 +166,7 @@ if(EMSCRIPTEN)
         LINK_FLAGS  "${EM_LINK_FLAGS_STR}"
     )
 else()
-    target_link_libraries(${PROJECT_NAME} Freetype::Freetype)
+    target_link_libraries(${PROJECT_NAME} freetype)
     target_link_libraries(${PROJECT_NAME} glfw)
 endif()
 

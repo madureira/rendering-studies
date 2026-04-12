@@ -5,7 +5,7 @@
             "compilerPath": "/usr/bin/clang",
             "includePath": [
                 "${workspaceFolder}/includes/**",
-                "~/.conan2/**"
+                "${workspaceFolder}/vendor/**"
             ],
             "macFrameworkPath": [
                 "/Library/Frameworks",

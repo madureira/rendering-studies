@@ -1,45 +1,40 @@
 {
     "version": 3,
-    "vendor": {
-        "conan": {}
-    },
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 15,
+        "minor": 24,
         "patch": 0
     },
     "configurePresets": [
         {
-            "name": "conan-release",
-            "displayName": "'conan-release' config",
-            "description": "'conan-release' configure using 'Unix Makefiles' generator",
+            "name": "debug",
+            "displayName": "Debug",
             "generator": "Unix Makefiles",
             "cacheVariables": {
-                "CMAKE_POLICY_DEFAULT_CMP0091": "NEW",
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             },
-            "toolchainFile": "conan_toolchain.cmake",
-            "binaryDir": "/Users/rmadureira/projects/workspace/personal/rendering-studies"
+            "binaryDir": "${sourceDir}/build/Debug"
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            },
+            "binaryDir": "${sourceDir}/build/Release"
         }
     ],
     "buildPresets": [
         {
-            "name": "conan-release",
-            "configurePreset": "conan-release",
-            "jobs": 11
-        }
-    ],
-    "testPresets": [
+            "name": "debug",
+            "configurePreset": "debug"
+        },
         {
-            "name": "conan-release",
-            "configurePreset": "conan-release",
-            "execution": {
-                "jobs": 11
-            },
-            "environment": {
-                "LD_LIBRARY_PATH": "/Users/rmadureira/.conan2/p/b/gladaefca5ae2b650/p/lib:$penv{LD_LIBRARY_PATH}",
-                "DYLD_LIBRARY_PATH": "/Users/rmadureira/.conan2/p/b/gladaefca5ae2b650/p/lib:$penv{DYLD_LIBRARY_PATH}"
-            }
+            "name": "release",
+            "configurePreset": "release"
         }
     ]
 }
