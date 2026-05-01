@@ -1,0 +1,23 @@
+src/main.cpp
+  aa25fbfb0772b8f2 47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "89bb240af67359a0ca43dc9bff8a746b0fc71ae2",
+  "prompts": {
+    "aa25fbfb0772b8f2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ed25eec2-f844-4900-9043-e84fe35b0275",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 2,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
