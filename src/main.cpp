@@ -41,10 +41,10 @@ static void runFrame(LoopState& s)
         s.lastDemoIndex = currentDemoIndex;
     }
 
-    s.renderer->RenderGrid(s.window->GetWidth(), s.window->GetHeight(), s.demoSelector->IsGridEnabled());
-
     float32 deltaTime = s.window->GetDeltaTime();
     InputProcessorUtil::moveCamera(*s.renderer->GetCamera(), *s.window, deltaTime, s.demoSelector->GetCameraSpeed(), s.demoSelector->GetCameraAcceleratedSpeed());
+
+    s.renderer->RenderGrid(s.window->GetWidth(), s.window->GetHeight(), s.demoSelector->IsGridEnabled());
 
     if (s.demo)
     {
