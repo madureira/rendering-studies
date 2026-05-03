@@ -1,0 +1,45 @@
+src/Engine/Renderer/Renderer.cpp
+  8506bf5f24cbc4aa 18-24,32,58-62,86,118-122,184-251,254-257
+  h_57186cd00f4b87 252-253
+src/Engine/TextRenderer/TextRenderer.h
+  h_57186cd00f4b87 25
+  8506bf5f24cbc4aa 22,31
+src/Engine/Utils/DemoSelector.h
+  8506bf5f24cbc4aa 18,47,159-163
+src/Engine/Camera/Camera.h
+  8506bf5f24cbc4aa 54-55
+src/Engine/TextRenderer/TextRenderer.cpp
+  8506bf5f24cbc4aa 32,141-150
+src/Engine/Camera/Camera.cpp
+  8506bf5f24cbc4aa 3,89-92,94,96,98,100-107
+  h_57186cd00f4b87 93,95,97,99
+src/main.cpp
+  8506bf5f24cbc4aa 60-61
+src/Engine/Renderer/Renderer.h
+  8506bf5f24cbc4aa 3-4,20,31-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "cc82cd949a34015cf1d27150a79321d0fd421a02",
+  "prompts": {
+    "8506bf5f24cbc4aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b32c7125-7fba-4fd7-a8b3-0b041caa6b66",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira",
+      "messages": [],
+      "total_additions": 1671,
+      "total_deletions": 1537,
+      "accepted_lines": 137,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_57186cd00f4b87": {
+      "author": "Rafael Madureira"
+    }
+  }
+}
