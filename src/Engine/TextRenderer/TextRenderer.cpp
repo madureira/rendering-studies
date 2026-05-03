@@ -29,7 +29,7 @@ TextRenderer::TextRenderer(const std::string& fontPath)
 
     GL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 
-    for (GLubyte c = 0; c < 128; c++)
+    for (uint32_t c = 0; c < 256; c++)
     {
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))
         {
@@ -137,4 +137,14 @@ void TextRenderer::Render(const Shader& shader, const std::string& text, const g
     GL(glBindVertexArray(0));
 
     shader.Unbind();
+}
+
+float32 TextRenderer::MeasureText(const std::string& text, float32 scale) const
+{
+    float32 width = 0.0f;
+    for (const char& c : text)
+    {
+        width += (m_Characters[static_cast<unsigned char>(c)].Advance >> 6) * scale;
+    }
+    return width;
 }

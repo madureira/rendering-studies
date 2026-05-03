@@ -15,6 +15,7 @@ private:
     std::vector<std::string> m_DemoNames;
     int32 m_SelectedDemoIndex = 0;
     bool m_FpsEnabled = true;
+    bool m_CameraInfoEnabled = true;
     bool m_PolygonModeEnabled = false;
     bool m_ZBufferEnabled = true;
     bool m_CullFaceEnabled = true;
@@ -43,6 +44,7 @@ public:
         ImGui::NewLine();
 
         ImGui::Checkbox("FPS", &m_FpsEnabled);
+        ImGui::Checkbox("Camera Info", &m_CameraInfoEnabled);
         ImGui::Checkbox("Grid", &m_GridEnabled);
         ImGui::Checkbox("Controls", &m_ControlsEnabled);
 #ifndef __EMSCRIPTEN__
@@ -152,6 +154,11 @@ public:
     inline bool IsFpsEnabled() const
     {
         return m_FpsEnabled;
+    }
+
+    inline bool IsCameraInfoEnabled() const
+    {
+        return m_CameraInfoEnabled;
     }
 
     inline bool IsZBufferEnabled() const

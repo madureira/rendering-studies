@@ -1,5 +1,6 @@
 #include "Camera.h"
 
+#include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)
@@ -83,6 +84,25 @@ glm::mat4 Camera::GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight) c
 float32 Camera::GetZoom() const
 {
     return m_Zoom;
+}
+
+float32 Camera::GetYaw() const
+{
+    float32 yaw = std::fmod(m_Yaw, 360.0f);
+    if (yaw > 180.0f)
+    {
+        yaw -= 360.0f;
+    }
+    if (yaw < -180.0f)
+    {
+        yaw += 360.0f;
+    }
+    return yaw;
+}
+
+float32 Camera::GetPitch() const
+{
+    return m_Pitch;
 }
 
 void Camera::Move(CameraMove direction, float32 deltaTime, float32 speed) const

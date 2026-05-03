@@ -57,7 +57,8 @@ static void runFrame(LoopState& s)
 
     UI::Render();
 
-    s.renderer->RenderFPS(s.window->GetTime(), s.demoSelector->IsFpsEnabled(), s.window->GetWidth(), s.window->GetHeight());
+    s.renderer->RenderFPS(s.window->GetTime(), s.window->GetDeltaTime(), s.demoSelector->IsFpsEnabled(), s.window->GetWidth(), s.window->GetHeight());
+    s.renderer->RenderCameraInfo(s.window->GetWidth(), s.window->GetHeight(), s.demoSelector->IsCameraInfoEnabled());
     s.renderer->SetPolygonMode(s.demoSelector->IsPolygonModeEnabled());
 
     s.window->SwapBuffers();

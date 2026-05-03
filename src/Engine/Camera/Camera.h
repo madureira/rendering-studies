@@ -51,6 +51,8 @@ public:
     glm::mat4 GetViewMatrixRelative() const;
     glm::mat4 GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight) const;
     float32 GetZoom() const;
+    float32 GetYaw() const;
+    float32 GetPitch() const;
 
     void Move(CameraMove direction, float32 deltaTime, float32 speed = 1.0f) const;
     void Look(float32 dx, float32 dy, bool constrainPitch = true) const;
