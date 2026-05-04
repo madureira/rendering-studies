@@ -7,9 +7,9 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten/html5.h>
 
-static float s_ScrollY = 0.0f;
+static float32 s_ScrollY = 0.0f;
 
-static EM_BOOL onWheel(int /*eventType*/, const EmscriptenWheelEvent* e, void* /*userData*/)
+static EM_BOOL onWheel(int32 /*eventType*/, const EmscriptenWheelEvent* e, void* /*userData*/)
 {
     s_ScrollY -= static_cast<float>(e->deltaY) * 0.05f;
     return EM_TRUE;
@@ -65,7 +65,7 @@ void InputProcessorUtil::moveCamera(const Camera& camera, const Window& window, 
         camera.Look(io.MouseDelta.x, io.MouseDelta.y);
     }
 
-    const float scrollY = s_ScrollY;
+    const float32 scrollY = s_ScrollY;
     s_ScrollY = 0.0f;
     if (scrollY > 0.0f)
     {

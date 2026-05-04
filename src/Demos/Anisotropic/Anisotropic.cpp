@@ -77,8 +77,8 @@ void Anisotropic::Render()
     glm::vec3 modelPosRel = glm::vec3(glm::dvec3(0.0) - origin);
     glm::mat4 modelRel = glm::translate(glm::mat4(1.0f), modelPosRel);
 
-    float radius = 1.0f;
-    float gap = 0.01f;
+    float32 radius = 1.0f;
+    float32 gap = 0.01f;
     modelRel = glm::translate(modelRel, glm::vec3(0.0f, radius + gap, 0.0f));
 
     glm::vec3 r = glm::radians(m_RotDeg);

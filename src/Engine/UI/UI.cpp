@@ -20,13 +20,13 @@ UI::UI(const Window& window)
 #ifdef __EMSCRIPTEN__
     ImGui_ImplOpenGL3_Init("#version 300 es");
     {
-        double dpr = EM_ASM_DOUBLE({ return window.devicePixelRatio || 1.0; });
+        float64 dpr = EM_ASM_DOUBLE({ return window.devicePixelRatio || 1.0; });
         if (dpr < 1.0)
         {
             dpr = 1.0;
         }
         ImGuiIO& io = ImGui::GetIO();
-        const float baseFontSize = 20.0f;
+        const float32 baseFontSize = 20.0f;
         io.Fonts->AddFontFromFileTTF("assets/fonts/roboto-regular.ttf", baseFontSize * (float)dpr);
         io.FontGlobalScale = 1.0f / (float)dpr;
         ImGui::GetStyle().WindowMinSize.x = 200.0f;

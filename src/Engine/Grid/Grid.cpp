@@ -17,10 +17,10 @@ const uint32 Grid::m_Indices[6] = {
     0, 3, 2,
 };
 
-static glm::vec2 CalculateFract(const glm::dvec3& position, double scale)
+static glm::vec2 CalculateFract(const glm::dvec3& position, float64 scale)
 {
-    double scaledX = position.x / scale;
-    double scaledZ = position.z / scale;
+    float64 scaledX = position.x / scale;
+    float64 scaledZ = position.z / scale;
     return glm::vec2(
         static_cast<float>(scaledX - glm::floor(scaledX)),
         static_cast<float>(scaledZ - glm::floor(scaledZ)));

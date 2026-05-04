@@ -139,7 +139,7 @@ Window::Window(const Config& config)
     glfwSwapInterval(m_VSyncOn ? 1 : 0);
     glfwFocusWindow(m_Window);
 
-    double mx, my;
+    float64 mx, my;
     glfwGetCursorPos(m_Window, &mx, &my);
     m_Mouse.x = mx;
     m_Mouse.y = my;
@@ -367,9 +367,9 @@ void Window::ShowHardwareInfo() const
     LOG_INFO("CPU Architecture: {}", HardwareUtil::GetCPUArchitecture());
     LOG_INFO("CPU Cores: {}", HardwareUtil::GetCPUCores());
 
-    const double totalMem = HardwareUtil::GetTotalMemory();
-    const double freeMem = HardwareUtil::GetFreeMemory();
-    const double usedMem = HardwareUtil::GetUsedMemory();
+    const float64 totalMem = HardwareUtil::GetTotalMemory();
+    const float64 freeMem = HardwareUtil::GetFreeMemory();
+    const float64 usedMem = HardwareUtil::GetUsedMemory();
 
     if (totalMem > 0.0)
     {
@@ -408,7 +408,7 @@ void Window::ShowHardwareInfo() const
     else
     {
         // fallback (your older heuristic)
-        const double est = HardwareUtil::GetEstimateGPUMemory();
+        const float64 est = HardwareUtil::GetEstimateGPUMemory();
         if (est > 0.0)
         {
             LOG_INFO("GPU Memory (estimated): {:.2f} GB", est);

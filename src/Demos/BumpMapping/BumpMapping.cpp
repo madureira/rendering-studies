@@ -85,7 +85,7 @@ void BumpMapping::Render()
     glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
 
     // Move model above the x-axis origin
-    float distanceX = 1.0f;
+    float32 distanceX = 1.0f;
     model = glm::translate(model, glm::vec3(0.0f, distanceX, 0.0f));
 
     glm::vec3 cameraPos = m_Camera.GetPosition();

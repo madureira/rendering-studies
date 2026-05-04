@@ -194,22 +194,22 @@ public:
         return QuerySystemInfo().cpuLogicalCores;
     }
 
-    static double GetTotalMemory()
+    static float64 GetTotalMemory()
     {
         return QuerySystemInfo().totalMemoryGiB;
     }
 
-    static double GetFreeMemory()
+    static float64 GetFreeMemory()
     {
         return QueryMemoryStats().freeMemoryGiB;
     }
 
-    static double GetUsedMemory()
+    static float64 GetUsedMemory()
     {
         return QueryMemoryStats().usedMemoryGiB;
     }
 
-    static double GetProcessRssMiB()
+    static float64 GetProcessRssMiB()
     {
         return QueryMemoryStats().processRssMiB;
     }
@@ -234,19 +234,19 @@ public:
         return QueryGraphicsInfo().glslVersion;
     }
 
-    static double GetEstimateGPUMemory()
+    static float64 GetEstimateGPUMemory()
     {
         // Requires GL context to be current (same as QueryGraphicsInfo)
         const GraphicsInfo g = QueryGraphicsInfo();
 
         if (g.dedicatedVramMiB != 0)
         {
-            return double(g.dedicatedVramMiB) / 1024.0; // MiB -> GiB
+            return float64(g.dedicatedVramMiB) / 1024.0; // MiB -> GiB
         }
 
         if (g.totalAvailableVramMiB != 0)
         {
-            return double(g.totalAvailableVramMiB) / 1024.0; // MiB -> GiB
+            return float64(g.totalAvailableVramMiB) / 1024.0; // MiB -> GiB
         }
 
         // Fallback heuristic
@@ -876,7 +876,7 @@ inline DisplayInfo HardwareUtil::QueryDisplayInfo(GLFWwindow* window)
             d.refreshRate = (int32)mode->refreshRate;
         }
 
-        float xscale = 1.0f, yscale = 1.0f;
+        float32 xscale = 1.0f, yscale = 1.0f;
         glfwGetMonitorContentScale(monitor, &xscale, &yscale);
         d.contentScaleX = (float32)xscale;
         d.contentScaleY = (float32)yscale;

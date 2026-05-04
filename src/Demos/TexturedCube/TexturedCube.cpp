@@ -50,7 +50,7 @@ void TexturedCube::Render()
     glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
 
     // Move model above the x-axis origin
-    float distanceX = 0.5f;
+    float32 distanceX = 0.5f;
     model = glm::translate(model, glm::vec3(0.0f, distanceX, 0.0f));
 
     m_Shader->Bind();
