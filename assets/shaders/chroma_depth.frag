@@ -6,7 +6,7 @@ in float v_Z;              // depth in eye coordinates
 
 out vec4 frag_color;
 
-vec3 ChromaDepth(float t)
+vec3 chromaDepth(float t)
 {
     t = clamp(t, 0.0, 1.0);
 
@@ -55,6 +55,6 @@ vec3 ChromaDepth(float t)
 void main()
 {
     float t = (v_Z - u_ChromaRed) / (u_ChromaBlue - u_ChromaRed);
-    vec3 color = ChromaDepth(t);
+    vec3 color = chromaDepth(t);
     frag_color = vec4(v_LightIntensity * color, 1.0);
 }

@@ -14,7 +14,7 @@ void main()
 
     vec4 worldPos = u_Model * vec4(a_Vertex, 1.0);
 
-    v_Normal   = normalize(normalMatrix * a_Normal);
+    v_Normal = normalize(normalMatrix * a_Normal);
     v_WorldPos = worldPos.xyz;
 
     gl_Position = u_VP * worldPos;

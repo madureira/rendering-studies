@@ -22,10 +22,12 @@ void main()
     vec4 p2 = gl_in[2].gl_Position;
     vec4 p3 = gl_in[3].gl_Position;
 
+    // clang-format off
     vec4 pos = (1.0 - u) * (1.0 - v) * p0
              + u * (1.0 - v) * p1
              + u * v * p2
              + (1.0 - u) * v * p3;
+    // clang-format on
 
     vec3 worldPos = (u_Model * vec4(pos.xyz, 1.0)).xyz;
 

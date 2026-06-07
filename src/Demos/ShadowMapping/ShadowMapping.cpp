@@ -26,7 +26,7 @@ ShadowMapping::ShadowMapping(const Window& window, const Camera& camera)
     texParams.srgb = false;
     texParams.generateMipmaps = true;
     texParams.flipY = true;
-    m_Texture = new Texture("assets/images/container.jpg", texParams);
+    m_WoodTexture = new Texture("assets/images/container.jpg", texParams);
     m_MarbleTexture = new Texture("assets/images/marble.jpg", texParams);
 
     CreateMesh(PLANE_INDEX);
@@ -46,9 +46,9 @@ ShadowMapping::~ShadowMapping()
         m_DepthShader->Unbind();
         delete m_DepthShader;
     }
-    if (m_Texture)
+    if (m_WoodTexture)
     {
-        delete m_Texture;
+        delete m_WoodTexture;
     }
     if (m_MarbleTexture)
     {
@@ -126,7 +126,7 @@ void ShadowMapping::Render()
     for (uint32 i = 0; i < 2; ++i)
     {
         GL(glActiveTexture(GL_TEXTURE0));
-        GL(glBindTexture(GL_TEXTURE_2D, i == PLANE_INDEX ? m_MarbleTexture->GetID() : m_Texture->GetID()));
+        GL(glBindTexture(GL_TEXTURE_2D, i == PLANE_INDEX ? m_MarbleTexture->GetID() : m_WoodTexture->GetID()));
 
         glm::mat4 model = glm::mat4(1.0f);
         if (i == PLANE_INDEX)
@@ -264,6 +264,9 @@ glm::mat4 ShadowMapping::ComputeLightSpaceMatrix() const
 
 void ShadowMapping::RenderDepthMap()
 {
+    int32 savedViewport[4];
+    GL(glGetIntegerv(GL_VIEWPORT, savedViewport));
+
     m_DepthShader->Bind();
     m_DepthShader->SetMat4("u_LightSpaceMatrix", ComputeLightSpaceMatrix());
 
@@ -284,5 +287,5 @@ void ShadowMapping::RenderDepthMap()
 
     GL(glBindVertexArray(0));
     GL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-    GL(glViewport(0, 0, m_Window.GetWidth(), m_Window.GetHeight()));
+    GL(glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]));
 }

@@ -26,8 +26,8 @@ void main()
     vec3 T = normalize(cross(ref, N));
     vec3 B = cross(N, T);
 
-    v_Normal    = N;
-    v_Tangent   = T;
+    v_Normal = N;
+    v_Tangent = T;
     v_Bitangent = B;
 
     gl_Position = u_VP * worldPos;

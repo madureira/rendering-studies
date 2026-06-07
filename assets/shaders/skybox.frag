@@ -13,10 +13,10 @@ void main()
     color *= u_Exposure;
 
     // Tone mapping
-    //color = color / (color + vec3(1.0));
+    // color = color / (color + vec3(1.0));
 
     // Gamma correction
-    //color = pow(color, vec3(1.0 / 2.2));
+    // color = pow(color, vec3(1.0 / 2.2));
 
     frag_color = vec4(color, 1.0);
 }

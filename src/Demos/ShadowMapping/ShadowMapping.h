@@ -22,7 +22,7 @@ private:
     const Camera& m_Camera;
     Shader* m_ShadowMapShader;
     Shader* m_DepthShader;
-    Texture* m_Texture;
+    Texture* m_WoodTexture;
     Texture* m_MarbleTexture;
 
     uint32 m_DepthMapFBO;
