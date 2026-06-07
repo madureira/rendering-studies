@@ -1,10 +1,10 @@
 #include "ShadowMapping.h"
 
+#include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
 
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterDemo.h>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
@@ -13,11 +13,17 @@
 
 REGISTER_DEMO(ShadowMapping, true)
 
+static int32 selected_shadow_res = 2;
+
 ShadowMapping::ShadowMapping(const Window& window, const Camera& camera)
     : m_Window(window)
     , m_Camera(camera)
+    , m_DepthMapFBO(0)
+    , m_DepthMapTexture(0)
     , m_LightPos(2.0f, 4.0f, 2.0f)
     , m_CubePos(0.0f, 3.0f, 0.0f)
+    , m_ShadowRes(1024)
+    , m_DepthMapRes(0)
 {
     m_ShadowMapShader = new Shader("assets/shaders/shadow_mapping.vert", "assets/shaders/shadow_mapping.frag");
     m_DepthShader = new Shader("assets/shaders/depth.vert", "assets/shaders/depth.frag");
@@ -60,11 +66,14 @@ ShadowMapping::~ShadowMapping()
         GL(glDeleteBuffers(1, &m_VBO[i]));
         GL(glDeleteBuffers(1, &m_EBO[i]));
     }
+    if (m_DepthMapFBO != 0)
+    {
+        GL(glDeleteFramebuffers(1, &m_DepthMapFBO));
+    }
     if (m_DepthMapTexture != 0)
     {
         GL(glDeleteTextures(1, &m_DepthMapTexture));
     }
-    GL(glDeleteFramebuffers(1, &m_DepthMapFBO));
 }
 
 void ShadowMapping::Update(float32 /*unused: deltaTime*/)
@@ -101,6 +110,34 @@ void ShadowMapping::Update(float32 /*unused: deltaTime*/)
     DragVec3("Light", m_LightPos);
     ImGui::Separator();
     DragVec3("Cube", m_CubePos);
+    ImGui::Separator();
+
+    ImGui::Text("Shadow Quality");
+    if (ImGui::RadioButton("Very Low", selected_shadow_res == 0))
+    {
+        selected_shadow_res = 0;
+        m_ShadowRes = 256;
+    }
+    if (ImGui::RadioButton("Low", selected_shadow_res == 1))
+    {
+        selected_shadow_res = 1;
+        m_ShadowRes = 512;
+    }
+    if (ImGui::RadioButton("Medium", selected_shadow_res == 2))
+    {
+        selected_shadow_res = 2;
+        m_ShadowRes = 1024;
+    };
+    if (ImGui::RadioButton("High", selected_shadow_res == 3))
+    {
+        selected_shadow_res = 3;
+        m_ShadowRes = 2048;
+    };
+    if (ImGui::RadioButton("Very High", selected_shadow_res == 4))
+    {
+        selected_shadow_res = 4;
+        m_ShadowRes = 4096;
+    };
 
     ImGui::End();
 }
@@ -239,11 +276,22 @@ void ShadowMapping::CreateMesh(const uint32 index)
 
 void ShadowMapping::CreateFrameBuffer()
 {
+    if (m_DepthMapFBO != 0)
+    {
+        GL(glDeleteFramebuffers(1, &m_DepthMapFBO));
+        m_DepthMapFBO = 0;
+    }
+    if (m_DepthMapTexture != 0)
+    {
+        GL(glDeleteTextures(1, &m_DepthMapTexture));
+        m_DepthMapTexture = 0;
+    }
+
     GL(glGenFramebuffers(1, &m_DepthMapFBO));
 
     GL(glGenTextures(1, &m_DepthMapTexture));
     GL(glBindTexture(GL_TEXTURE_2D, m_DepthMapTexture));
-    GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
+    GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, m_ShadowRes, m_ShadowRes, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
     GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
@@ -253,6 +301,8 @@ void ShadowMapping::CreateFrameBuffer()
     GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthMapTexture, 0));
     GL(glReadBuffer(GL_NONE));
     GL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+
+    m_DepthMapRes = m_ShadowRes;
 }
 
 glm::mat4 ShadowMapping::ComputeLightSpaceMatrix() const
@@ -264,13 +314,18 @@ glm::mat4 ShadowMapping::ComputeLightSpaceMatrix() const
 
 void ShadowMapping::RenderDepthMap()
 {
+    if (m_ShadowRes != m_DepthMapRes)
+    {
+        CreateFrameBuffer();
+    }
+
     int32 savedViewport[4];
     GL(glGetIntegerv(GL_VIEWPORT, savedViewport));
 
     m_DepthShader->Bind();
     m_DepthShader->SetMat4("u_LightSpaceMatrix", ComputeLightSpaceMatrix());
 
-    GL(glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT));
+    GL(glViewport(0, 0, m_ShadowRes, m_ShadowRes));
     GL(glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO));
     GL(glClear(GL_DEPTH_BUFFER_BIT));
 

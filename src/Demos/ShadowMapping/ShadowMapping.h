@@ -1,8 +1,9 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include <RenderingStudies/Demo.h>
 #include <RenderingStudies/Types.h>
-#include <glm/glm.hpp>
 
 class Camera;
 class Shader;
@@ -12,8 +13,6 @@ class Texture;
 class ShadowMapping final : public Demo
 {
 private:
-    const uint32 SHADOW_WIDTH = 1024;
-    const uint32 SHADOW_HEIGHT = 1024;
     const uint32 PLANE_INDEX = 0;
     const uint32 CUBE_INDEX = 1;
     const uint32 INDEX_COUNT = 36;
@@ -34,6 +33,8 @@ private:
 
     glm::vec3 m_LightPos;
     glm::vec3 m_CubePos;
+    uint32 m_ShadowRes;
+    uint32 m_DepthMapRes;
 
 public:
     ShadowMapping(const Window& window, const Camera& camera);
