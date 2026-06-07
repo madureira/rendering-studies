@@ -60,6 +60,7 @@ void Cube::Render()
 
 void Cube::CreateMesh()
 {
+    // clang-format off
     float32 vertices[] = {
         // Positions        // Colors
         // Front face
@@ -89,6 +90,7 @@ void Cube::CreateMesh()
         // Bottom face
         4, 5, 1, 1, 0, 4,
     };
+    // clang-format on
 
     // Generate Objects
     GL(glGenVertexArrays(1, &m_VAO));

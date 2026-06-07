@@ -69,6 +69,7 @@ void Triangle::Render()
 
 void Triangle::CreateMesh()
 {
+    // clang-format off
     // Define the vertices and their associated colors for the triangle
     // Each vertex has a position (x, y, z) and a color (r, g, b)
     float32 vertices[] = {
@@ -84,6 +85,7 @@ void Triangle::CreateMesh()
     uint32 indices[] = {
         0, 1, 2 // The triangle consists of vertices 0, 1, and 2
     };
+    // clang-format on
 
     // Generate a Vertex Array Object (VAO), Vertex Buffer Object (VBO),
     // and Element Buffer Object (EBO) to manage and store OpenGL state

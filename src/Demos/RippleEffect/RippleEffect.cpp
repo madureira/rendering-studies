@@ -96,7 +96,7 @@ void RippleEffect::Render()
 
 void RippleEffect::CreateMesh()
 {
-    uint8 gridSize = 4;  // Number of subdivisions
+    uint8 gridSize = 4;   // Number of subdivisions
     float32 size = 20.0f; // Size of the plane
 
     const uint32 vertCount = (gridSize + 1) * (gridSize + 1);

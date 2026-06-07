@@ -72,6 +72,7 @@ void TexturedCube::Render()
 
 void TexturedCube::CreateMesh()
 {
+    // clang-format off
     float32 vertices[] = {
         // Positions           // TexCoords
 
@@ -112,7 +113,6 @@ void TexturedCube::CreateMesh()
         -0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
     };
 
-
     uint32 indices[] = {
         // Front face
         0, 1, 2, 2, 3, 0,
@@ -127,6 +127,7 @@ void TexturedCube::CreateMesh()
         // Top face
         20, 21, 22, 22, 23, 20,
     };
+    // clang-format on
 
     // Generate Objects
     GL(glGenVertexArrays(1, &m_VAO));
@@ -156,8 +157,8 @@ void TexturedCube::CreateMesh()
 
     m_Shader->Bind();
     m_Shader->SetInt("u_Texture", 0);
-    //m_Shader->SetBool("u_UseTint", 1);
-    //m_Shader->SetVec4("u_Tint", 2,2,2,2);
+    // m_Shader->SetBool("u_UseTint", 1);
+    // m_Shader->SetVec4("u_Tint", 2,2,2,2);
     m_Shader->Unbind();
 
     GL(glBindBuffer(GL_ARRAY_BUFFER, 0));

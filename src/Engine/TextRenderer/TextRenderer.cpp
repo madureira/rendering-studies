@@ -112,6 +112,7 @@ void TextRenderer::Render(const Shader& shader, const std::string& text, const g
         float32 w = ch.Size.x * scale;
         float32 h = ch.Size.y * scale;
 
+        // clang-format off
         float32 vertices[6][4] = {
             { xpos, ypos + h, 0.0, 0.0 },
             { xpos, ypos, 0.0, 1.0 },
@@ -120,6 +121,7 @@ void TextRenderer::Render(const Shader& shader, const std::string& text, const g
             { xpos + w, ypos, 1.0, 1.0 },
             { xpos + w, ypos + h, 1.0, 0.0 }
         };
+        // clang-format on
 
         GL(glBindTexture(GL_TEXTURE_2D, ch.TextureID));
 

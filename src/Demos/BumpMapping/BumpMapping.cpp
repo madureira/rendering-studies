@@ -113,6 +113,7 @@ void BumpMapping::Render()
 
 void BumpMapping::CreateMesh()
 {
+    // clang-format off
     // A unit plane centered at origin, on XZ plane (y = 0)
     // CCW (Counter-Clockwise) winding when looking from +y.
     const float32 vertices[] = {
@@ -127,6 +128,7 @@ void BumpMapping::CreateMesh()
         0, 2, 1,
         0, 3, 2
     };
+    // clang-format on
 
     m_IndexCount = (size_t)(sizeof(indices) / sizeof(indices[0]));
 

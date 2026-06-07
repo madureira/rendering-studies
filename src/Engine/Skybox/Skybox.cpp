@@ -6,12 +6,14 @@
 #include "../FileManager/FileManager.h"
 #include "../Shader/Shader.h"
 
+// clang-format off
 // Face names: p = positive, n = negative.
 // OpenGL cubemap targets are sequential: GL_TEXTURE_CUBE_MAP_POSITIVE_X + 0..5
 //   +X(px), -X(nx), +Y(py), -Y(ny), +Z(pz), -Z(nz)
 static const char* const s_SkyboxFaces[] = {
     "px", "nx", "py", "ny", "pz", "nz"
 };
+// clang-format on
 
 Skybox::Skybox(const std::string& skyboxTexturesBasePath)
 {
@@ -96,6 +98,7 @@ void Skybox::Render(const Camera& camera, uint32 windowWidth, uint32 windowHeigh
 
 void Skybox::CreateMesh()
 {
+    // clang-format off
     // Skybox cube: 8 unique corners, indexed by EBO (6 faces × 2 triangles × 3 verts = 36 indices).
     // Vertex layout: 0=(-1,-1,-1), 1=(+1,-1,-1), 2=(+1,+1,-1), 3=(-1,+1,-1), 4=(-1,-1,+1), 5=(+1,-1,+1), 6=(+1,+1,+1), 7=(-1,+1,+1).
     const float32 vertices[] = {
@@ -117,6 +120,7 @@ void Skybox::CreateMesh()
         3, 2, 6, 6, 7, 3,
         0, 4, 1, 1, 4, 5,
     };
+    // clang-format on
 
     GL(glGenVertexArrays(1, &m_VAO));
     GL(glGenBuffers(1, &m_VBO));

@@ -1,13 +1,14 @@
 #pragma once
 
 #include <cassert>
+
 #include <RenderingStudies/Types.h>
 
 namespace Input
 {
-    constexpr int32 kMouseButtonLeft = 0; // equivalent to GLFW_MOUSE_BUTTON_LEFT
-    constexpr int32 kMouseButtonLast = 7; // equivalent to GLFW_MOUSE_BUTTON_LAST
-}
+constexpr int32 kMouseButtonLeft = 0; // equivalent to GLFW_MOUSE_BUTTON_LEFT
+constexpr int32 kMouseButtonLast = 7; // equivalent to GLFW_MOUSE_BUTTON_LAST
+} // namespace Input
 
 struct MouseButtonState
 {

@@ -6,6 +6,7 @@
 #include "../Camera/Camera.h"
 #include "../Shader/Shader.h"
 
+// clang-format off
 const float32 Grid::m_Vertices[8] = {
     -1.0f, -1.0f,
     -1.0f,  1.0f,
@@ -16,6 +17,7 @@ const uint32 Grid::m_Indices[6] = {
     0, 2, 1,
     0, 3, 2,
 };
+// clang-format on
 
 static glm::vec2 CalculateFract(const glm::dvec3& position, float64 scale)
 {
