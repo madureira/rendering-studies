@@ -1,0 +1,34 @@
+src/Demos/ShadowMapping/ShadowMapping.h
+  h_48b237170f120f 3-4,36
+  s_cbd7cb3d54a7ba::t_293b71f72f0cf8 37
+src/Demos/ShadowMapping/ShadowMapping.cpp
+  s_cbd7cb3d54a7ba::t_eeaaff5cc3a7e8 69-71
+  s_cbd7cb3d54a7ba::t_bab681e7058616 283-287
+  s_cbd7cb3d54a7ba::t_7f8eca59767a81 26
+  s_cbd7cb3d54a7ba::t_cbac2882abc42c 317-321
+  s_cbd7cb3d54a7ba::t_920dfe478a1ae9 72
+  s_cbd7cb3d54a7ba::t_67f38e978be5bf 21-22
+  s_cbd7cb3d54a7ba::t_05a0876bb67ab0 279-282,288-289,304-305
+  h_48b237170f120f 3,16-17,25,113,115-140,294,328
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "880a1044329383e45f3587f25481336562caf035",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_cbd7cb3d54a7ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "141a9b5d-1895-4c63-880b-06c878796909",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
