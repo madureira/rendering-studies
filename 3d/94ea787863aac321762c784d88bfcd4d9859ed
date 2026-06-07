@@ -1,0 +1,33 @@
+src/Demos/ShadowMapping/ShadowMapping.cpp
+  s_cbd7cb3d54a7ba::t_62e7b71ba7d660 267-269,290
+  h_48b237170f120f 29,49,51,129
+assets/shaders/shadow_mapping.frag
+  h_48b237170f120f 13,66
+assets/shaders/chroma_depth.frag
+  h_48b237170f120f 9,58
+src/Demos/ShadowMapping/ShadowMapping.h
+  h_48b237170f120f 25
+assets/shaders/ripple_effect.tese
+  h_48b237170f120f 25,30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "3d94ea787863aac321762c784d88bfcd4d9859ed",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_cbd7cb3d54a7ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "141a9b5d-1895-4c63-880b-06c878796909",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
