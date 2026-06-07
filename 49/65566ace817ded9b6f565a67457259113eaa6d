@@ -1,0 +1,26 @@
+web_deploy.sh
+  h_48b237170f120f 36
+README.md
+  s_cbd7cb3d54a7ba::t_07bd2a3e9bdbe8 42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "4965566ace817ded9b6f565a67457259113eaa6d",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_cbd7cb3d54a7ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "141a9b5d-1895-4c63-880b-06c878796909",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
