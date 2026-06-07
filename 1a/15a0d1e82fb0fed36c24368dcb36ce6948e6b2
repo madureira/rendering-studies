@@ -1,0 +1,59 @@
+src/Demos/ShadowMapping/ShadowMapping.cpp
+  s_cbd7cb3d54a7ba::t_47d0269ab59e89 249-250
+  s_cbd7cb3d54a7ba::t_5a98942bfef7e9 74,76,78-84,86-90,92-96,99-101,103
+  s_cbd7cb3d54a7ba::t_a6fec97bf99981 77,85,91,97-98
+  s_cbd7cb3d54a7ba::t_1bf992f451b90e 53-56
+  s_cbd7cb3d54a7ba::t_8b1b617ce9d9ac 128-130
+  s_cbd7cb3d54a7ba::t_3bf9e489f2ecf5 258,262-263,265-266,268,274-275,278,280,283,285
+  s_cbd7cb3d54a7ba::t_b5167dcb4be1b1 134-135,137-140
+  s_cbd7cb3d54a7ba::t_2dc0cb2d10a821 20
+  s_cbd7cb3d54a7ba::t_cba2ce53a16a5c 159,161-164,166-189,193-198
+  s_cbd7cb3d54a7ba::t_7e0c307f4287da 260
+  h_48b237170f120f 1-18,21-29,31-52,57-71,106-116,118-119,122-125,127,131-133,136,141-142,144-146,148-158,160,165,190-192,199-245,247-248,251-257,259,261,264,267,269-273,276-277,279,281-282,284,286-288
+  s_cbd7cb3d54a7ba::t_af7be0125991a2 19
+  s_cbd7cb3d54a7ba::t_f4ab0b708e93d8 30
+  s_cbd7cb3d54a7ba::t_7d6cbc9909efed 143
+  s_cbd7cb3d54a7ba::t_4e3d9874572388 246
+  s_cbd7cb3d54a7ba::t_cc703f62d9381c 72-73,75,102,104-105
+  s_cbd7cb3d54a7ba::t_4dd578c9510634 117,120-121,126,147
+assets/shaders/shadow_mapping.vert
+  h_48b237170f120f 1-5,7-17,21,24
+  s_cbd7cb3d54a7ba::t_0078762af30177 6
+  s_cbd7cb3d54a7ba::t_5063b7512c46b5 18-20,22-23
+assets/shaders/shadow_mapping.frag
+  h_48b237170f120f 1-27,29-38,41-70
+  s_cbd7cb3d54a7ba::t_a974e02cfc73f7 28
+  s_cbd7cb3d54a7ba::t_2bd1cd29d22f37 39-40
+assets/shaders/depth.vert
+  h_48b237170f120f 1-9
+assets/shaders/depth.frag
+  h_48b237170f120f 1-2,4
+  s_cbd7cb3d54a7ba::t_dc07c3316360bf 3
+src/Demos/ShadowMapping/ShadowMapping.h
+  s_cbd7cb3d54a7ba::t_b4f051da320225 36
+  s_cbd7cb3d54a7ba::t_d0c4e5b911eef1 26
+  s_cbd7cb3d54a7ba::t_835bf5ea1a3f06 19
+  h_48b237170f120f 1-18,20-25,27-35,37-45,47-50
+  s_cbd7cb3d54a7ba::t_590614435a6f1b 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "1a15a0d1e82fb0fed36c24368dcb36ce6948e6b2",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_cbd7cb3d54a7ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "141a9b5d-1895-4c63-880b-06c878796909",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
