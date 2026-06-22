@@ -1,0 +1,52 @@
+includes/RenderingStudies/GL.h
+  h_48b237170f120f 6-7
+.vscode/launch.json
+  s_3693e89be3f52a::t_e75683b3a10ae6 18
+  s_3693e89be3f52a::t_138000073982fb 17
+includes/RenderingStudies/Types.h
+  h_48b237170f120f 4
+src/Demos/ShadowMapping/ShadowMapping.h
+  h_48b237170f120f 16-20,32-34
+.vscode/tasks.json
+  s_3693e89be3f52a::t_5721a56b3c68c1 4,6
+  s_3693e89be3f52a::t_a51552f43f2186 5,7-15
+src/Demos/ShadowMapping/ShadowMapping.cpp
+  h_48b237170f120f 16,63,116,118,121,123,126,128,131,133,136,138,163
+.vscode/settings.json
+  s_3693e89be3f52a::t_d62794c27b777b 76
+README.md
+  s_3693e89be3f52a::t_5f32386597da0a 137
+web_serve.sh
+  s_3693e89be3f52a::t_e2497a89caeb83 13-17
+  s_3693e89be3f52a::t_a2d4219686a1d1 1-12,18-27
+web_build.sh
+  s_3693e89be3f52a::t_e66699e6ec920c 18-23
+  s_3693e89be3f52a::t_8ddab71dcdf690 38
+src/main.cpp
+  h_48b237170f120f 4,51-52
+includes/RenderingStudies/Config.h
+  h_48b237170f120f 10-11
+includes/RenderingStudies/DemoRegistry.h
+  h_48b237170f120f 27,29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "3a95d175f7a4bdfd9682a7e5218f1c73161fd238",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_3693e89be3f52a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60531ab1-892c-4f7d-bd75-151eca6b2f5a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
