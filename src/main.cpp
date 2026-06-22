@@ -1,3 +1,7 @@
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
+
 #include <RenderingStudies/Config.h>
 #include <RenderingStudies/Types.h>
 
@@ -6,10 +10,6 @@
 #include "Engine/Utils/DemoSelector.h"
 #include "Engine/Utils/InputProcessorUtil.h"
 #include "Engine/Window/Window.h"
-
-#ifdef __EMSCRIPTEN__
-#include <emscripten/emscripten.h>
-#endif
 
 struct LoopState
 {
@@ -48,7 +48,8 @@ static void runFrame(LoopState& s)
 
     if (s.demo)
     {
-        ImGui::SetNextWindowPos(ImVec2(10.0f, s.demoSelector->GetPanelBottom() + 10.0f), ImGuiCond_Appearing);
+        static constexpr float32 offset = 10.0f;
+        ImGui::SetNextWindowPos(ImVec2(offset, s.demoSelector->GetPanelBottom() + offset), ImGuiCond_Appearing);
         s.demo->Update(deltaTime);
         s.demo->Render();
     }
@@ -92,7 +93,6 @@ int main()
     {
         runFrame(state);
     }
-
     delete state.demo;
 #endif
 

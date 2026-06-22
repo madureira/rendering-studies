@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 
 BUILD_TYPE="Debug"
 BUILD_DIR="build/${BUILD_TYPE}"

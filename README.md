@@ -134,7 +134,7 @@ source ~/emsdk/emsdk_env.sh
 Preview locally:
 
 ```sh
-python3 -m http.server 8080 --directory build/Web
+./web_serve.sh
 # → http://localhost:8080
 ```
 

@@ -14,7 +14,8 @@
                 { "name": "config", "value": "Debug" }
             ],
             "externalConsole": false,
-            "MIMode": "lldb"
+            "MIMode": "lldb",
+            "preLaunchTask": "CMake Build (Debug)"
         }
     ]
 }

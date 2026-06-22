@@ -73,6 +73,7 @@
         "unordered_set": "cpp",
         "functional": "cpp"
     },
+    "debug.defaultConfiguration": "(lldb) Launch",
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.intelliSenseEngine": "Tag Parser",
     "clang-format.executable": "/opt/homebrew/bin/clang-format",

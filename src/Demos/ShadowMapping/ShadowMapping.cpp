@@ -13,7 +13,7 @@
 
 REGISTER_DEMO(ShadowMapping, true)
 
-static int32 selected_shadow_res = 2;
+int32 ShadowMapping::s_SelectedShadowRes = 2;
 
 ShadowMapping::ShadowMapping(const Window& window, const Camera& camera)
     : m_Window(window)
@@ -60,7 +60,7 @@ ShadowMapping::~ShadowMapping()
     {
         delete m_MarbleTexture;
     }
-    for (uint32 i = 0; i <= 1; ++i)
+    for (uint32 i = 0; i < MODEL_COUNT; ++i)
     {
         GL(glDeleteVertexArrays(1, &m_VAO[i]));
         GL(glDeleteBuffers(1, &m_VBO[i]));
@@ -113,29 +113,29 @@ void ShadowMapping::Update(float32 /*unused: deltaTime*/)
     ImGui::Separator();
 
     ImGui::Text("Shadow Quality");
-    if (ImGui::RadioButton("Very Low", selected_shadow_res == 0))
+    if (ImGui::RadioButton("Very Low", s_SelectedShadowRes == 0))
     {
-        selected_shadow_res = 0;
+        s_SelectedShadowRes = 0;
         m_ShadowRes = 256;
     }
-    if (ImGui::RadioButton("Low", selected_shadow_res == 1))
+    if (ImGui::RadioButton("Low", s_SelectedShadowRes == 1))
     {
-        selected_shadow_res = 1;
+        s_SelectedShadowRes = 1;
         m_ShadowRes = 512;
     }
-    if (ImGui::RadioButton("Medium", selected_shadow_res == 2))
+    if (ImGui::RadioButton("Medium", s_SelectedShadowRes == 2))
     {
-        selected_shadow_res = 2;
+        s_SelectedShadowRes = 2;
         m_ShadowRes = 1024;
     };
-    if (ImGui::RadioButton("High", selected_shadow_res == 3))
+    if (ImGui::RadioButton("High", s_SelectedShadowRes == 3))
     {
-        selected_shadow_res = 3;
+        s_SelectedShadowRes = 3;
         m_ShadowRes = 2048;
     };
-    if (ImGui::RadioButton("Very High", selected_shadow_res == 4))
+    if (ImGui::RadioButton("Very High", s_SelectedShadowRes == 4))
     {
-        selected_shadow_res = 4;
+        s_SelectedShadowRes = 4;
         m_ShadowRes = 4096;
     };
 
@@ -160,7 +160,7 @@ void ShadowMapping::Render()
     GL(glActiveTexture(GL_TEXTURE1));
     GL(glBindTexture(GL_TEXTURE_2D, m_DepthMapTexture));
 
-    for (uint32 i = 0; i < 2; ++i)
+    for (uint32 i = 0; i < MODEL_COUNT; ++i)
     {
         GL(glActiveTexture(GL_TEXTURE0));
         GL(glBindTexture(GL_TEXTURE_2D, i == PLANE_INDEX ? m_MarbleTexture->GetID() : m_WoodTexture->GetID()));

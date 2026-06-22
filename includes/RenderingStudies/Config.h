@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Log.h"
-#include "Types.h"
-
 #include <algorithm>
 #include <cctype>
 #include <fstream>
 #include <limits>
 #include <stdexcept>
 #include <string>
+
+#include "Log.h"
+#include "Types.h"
 
 struct Config
 {
@@ -24,11 +24,17 @@ namespace
 inline bool parseBool(const std::string& raw)
 {
     std::string v = raw;
-    v.erase(v.begin(), std::find_if(v.begin(), v.end(), [](unsigned char c) { return !std::isspace(c); }));
-    v.erase(std::find_if(v.rbegin(), v.rend(), [](unsigned char c) { return !std::isspace(c); }).base(),
+    v.erase(v.begin(), std::find_if(v.begin(), v.end(), [](unsigned char c) {
+        return !std::isspace(c);
+    }));
+    v.erase(std::find_if(v.rbegin(), v.rend(), [](unsigned char c) {
+        return !std::isspace(c);
+    }).base(),
         v.end());
 
-    std::transform(v.begin(), v.end(), v.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+    std::transform(v.begin(), v.end(), v.begin(), [](unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    });
 
     if (v == "true" || v == "1")
     {
@@ -126,7 +132,6 @@ inline Config loadConfig(const std::string& path)
     {
         throw std::runtime_error("Missing 'window_width' or 'window_height' in config file");
     }
-
 
     return Config {
         window_title,

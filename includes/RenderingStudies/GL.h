@@ -3,13 +3,14 @@
 #include "Log.h"
 #include "Types.h"
 #include <cstring>
-#ifdef __EMSCRIPTEN__
-#  include <GLES3/gl3.h>
-#  include <emscripten/emscripten.h>
-#else
-#  include <glad/glad.h>
-#endif
 #include <type_traits>
+
+#ifdef __EMSCRIPTEN__
+#include <GLES3/gl3.h>
+#include <emscripten/emscripten.h>
+#else
+#include <glad/glad.h>
+#endif
 
 /**
  * @brief Converts OpenGL error codes to human-readable symbolic names.

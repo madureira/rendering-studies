@@ -23,7 +23,10 @@ public:
     void Register(const std::string& name, Creator creator, bool webCompatible = true)
     {
 #ifdef __EMSCRIPTEN__
-        if (!webCompatible) return;
+        if (!webCompatible)
+        {
+            return;
+        }
 #else
         (void)webCompatible;
 #endif

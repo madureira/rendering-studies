@@ -2,7 +2,6 @@
 
 # Exit on error, print each command
 set -e
-set -x
 
 # ============================================================
 # WEB BUILD SCRIPT (Emscripten -> WebAssembly + WebGL 2.0)
@@ -15,6 +14,12 @@ BUILD_DIR="build/Web"
 
 # Create the build directory if needed
 mkdir -p "$BUILD_DIR"
+
+if ! command -v emcmake &>/dev/null; then
+    echo "Error: Emscripten not found. Activate it first:"
+    echo "  source ~/emsdk/emsdk_env.sh"
+    exit 1
+fi
 
 # Configure with Emscripten toolchain
 emcmake cmake . \
@@ -30,5 +35,5 @@ echo "Web build complete! Output files in $BUILD_DIR/:"
 ls -lh "$BUILD_DIR"/index.* 2>/dev/null || true
 echo ""
 echo "To serve locally:"
-echo "  python3 -m http.server 8080 --directory $BUILD_DIR"
+echo "  ./web_serve.sh"
 echo "  Then open: http://localhost:8080"

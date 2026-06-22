@@ -13,9 +13,11 @@ class Texture;
 class ShadowMapping final : public Demo
 {
 private:
-    const uint32 PLANE_INDEX = 0;
-    const uint32 CUBE_INDEX = 1;
-    const uint32 INDEX_COUNT = 36;
+    static constexpr uint32 MODEL_COUNT = 2;
+    static constexpr uint32 PLANE_INDEX = 0;
+    static constexpr uint32 CUBE_INDEX = 1;
+    static constexpr uint32 INDEX_COUNT = 36;
+    static int32 s_SelectedShadowRes;
 
     const Window& m_Window;
     const Camera& m_Camera;
@@ -27,9 +29,9 @@ private:
     uint32 m_DepthMapFBO;
     uint32 m_DepthMapTexture;
 
-    uint32 m_VAO[2];
-    uint32 m_VBO[2];
-    uint32 m_EBO[2];
+    uint32 m_VAO[MODEL_COUNT];
+    uint32 m_VBO[MODEL_COUNT];
+    uint32 m_EBO[MODEL_COUNT];
 
     glm::vec3 m_LightPos;
     glm::vec3 m_CubePos;

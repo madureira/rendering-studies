@@ -32,15 +32,15 @@ endif()
 # ============================================================
 
 # --- Assimp: compiled from source submodule (both desktop and web) ---
-set(ASSIMP_BUILD_TESTS                  OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ASSIMP_TOOLS           OFF CACHE BOOL "" FORCE)
-set(ASSIMP_INSTALL                      OFF CACHE BOOL "" FORCE)
-set(ASSIMP_NO_EXPORT                    ON  CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_OBJ_IMPORTER           ON  CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_FBX_IMPORTER           ON  CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS                      OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS               OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL                          OFF CACHE BOOL "" FORCE)
+set(ASSIMP_NO_EXPORT                        ON  CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT   OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_OBJ_IMPORTER               ON  CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_FBX_IMPORTER               ON  CACHE BOOL "" FORCE)
 # Always build assimp as a static library to avoid dynamic linker overhead
-set(BUILD_SHARED_LIBS                   OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS                       OFF CACHE BOOL "" FORCE)
 if(EMSCRIPTEN)
     # Web: no system zlib available, build assimp's bundled one
     set(ASSIMP_BUILD_ZLIB ON  CACHE BOOL "" FORCE)

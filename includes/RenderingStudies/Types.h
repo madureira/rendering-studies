@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
 typedef int8_t int8;
 typedef int16_t int16;
@@ -15,6 +15,5 @@ typedef uint64_t uint64;
 
 typedef float float32;
 typedef double float64;
-typedef long double float128;
 
 typedef unsigned char uchar;

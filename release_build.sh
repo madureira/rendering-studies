@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 
 BUILD_TYPE="Release"
 BUILD_DIR="build/${BUILD_TYPE}"
