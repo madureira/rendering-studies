@@ -1,0 +1,51 @@
+assets/shaders/normal_mapping.frag
+  s_09011797e2507e::t_f8ebd73b030254 7,14-16
+  s_09011797e2507e::t_d9fdbf4ea7efa9 1-6,8-13,17-32
+src/Engine/Model/Model.h
+  s_09011797e2507e::t_a05912fd83dd1c 19
+src/Demos/NormalMapping/NormalMapping.h
+  h_48b237170f120f 1-33
+src/Demos/Cube/Cube.cpp
+  h_48b237170f120f 43-45
+src/Engine/Model/Model.cpp
+  s_09011797e2507e::t_c2b007c8de6a2b 37
+  s_09011797e2507e::t_08cfa0d60d3fcf 131-134
+  s_09011797e2507e::t_38736d0fe0fa40 74,83-85
+src/Demos/NormalMapping/NormalMapping.cpp
+  s_09011797e2507e::t_fd97fe1683f749 125
+  s_09011797e2507e::t_88fc627dc17d3b 128
+  s_09011797e2507e::t_6c06fb49343831 129
+  h_48b237170f120f 1-45,50-111,113-120,122-124,130-136
+  s_09011797e2507e::t_3e8c019595d676 112
+  s_09011797e2507e::t_202c8601660977 46-49
+  s_09011797e2507e::t_8ed0355485dabc 121,126-127
+assets/shaders/normal_mapping.vert
+  s_09011797e2507e::t_b148c92e520a54 8,17,39-40
+  s_09011797e2507e::t_2365ccd5b90e9b 22-34
+  h_48b237170f120f 1-3,5-6,10-11,15-16,42-43
+  s_09011797e2507e::t_f942caf285b550 18
+  s_09011797e2507e::t_0fc763d577e07d 38
+  s_09011797e2507e::t_244d73e1dbd5ac 4,7,12-14,19-21,35-37,41
+  s_09011797e2507e::t_bf13324da2b684 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "5c6ff0eefd869c3cf24f8a066d12d803544ea9b8",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_09011797e2507e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1b76626b-9d5d-4f97-adeb-e0288f38ee76",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
