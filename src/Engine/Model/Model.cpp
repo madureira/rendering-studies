@@ -34,7 +34,7 @@ void Model::Draw() const
 void Model::LoadModel(const std::string& path)
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -71,13 +71,18 @@ Mesh Model::ProcessMesh(const aiMesh* mesh)
         vertex.Position = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
         vertex.Normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
 
-        if (mesh->mTextureCoords[0]) // If the mesh contains texture coordinates
+        if (mesh->mTextureCoords[0])
         {
             vertex.TexCoords = { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y };
         }
         else
         {
             vertex.TexCoords = { 0.0f, 0.0f };
+        }
+
+        if (mesh->mTangents)
+        {
+            vertex.Tangent = { mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z };
         }
 
         newMesh.vertices.push_back(vertex);
@@ -122,6 +127,10 @@ void Model::SetupMesh(Mesh* mesh) const
     // Texture coordinate attribute
     GL(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords)));
     GL(glEnableVertexAttribArray(2));
+
+    // Tangent attribute
+    GL(glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent)));
+    GL(glEnableVertexAttribArray(3));
 
     // Unbind objects
     GL(glBindBuffer(GL_ARRAY_BUFFER, 0));

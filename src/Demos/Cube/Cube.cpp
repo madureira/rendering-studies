@@ -40,9 +40,9 @@ void Cube::Render()
     glm::mat4 view = m_Camera.GetViewMatrix();
     glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
 
-    // Move model above the x-axis origin
-    float32 distanceX = 0.5f;
-    model = glm::translate(model, glm::vec3(0.0f, distanceX, 0.0f));
+    // Move model along the y-axis origin
+    float32 distanceY = 0.5f;
+    model = glm::translate(model, glm::vec3(0.0f, distanceY, 0.0f));
 
     m_Shader->Bind();
     m_Shader->SetMat4("u_MVP", projection * view * model);
