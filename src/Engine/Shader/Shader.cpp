@@ -4,9 +4,26 @@
 
 #include "../FileManager/FileManager.h"
 
+#ifdef __EMSCRIPTEN__
+static const char* s_VertPreamble = "#version 300 es\nprecision highp float;\n";
+static const char* s_FragPreamble = "#version 300 es\nprecision mediump float;\n";
+#else
+static const char* s_VertPreamble = "#version 410 core\n";
+static const char* s_FragPreamble = "#version 410 core\n";
+#endif
+
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
     m_VertexCode = FileManager::ReadText(vertexPath);
+    m_FragmentCode = FileManager::ReadText(fragmentPath);
+    Compile();
+    Link();
+}
+
+Shader::Shader(const std::string& vertexPath, const std::string& geometryPath, const std::string& fragmentPath)
+{
+    m_VertexCode = FileManager::ReadText(vertexPath);
+    m_GeometryCode = FileManager::ReadText(geometryPath);
     m_FragmentCode = FileManager::ReadText(fragmentPath);
     Compile();
     Link();
@@ -157,14 +174,6 @@ void Shader::SetMat4(const std::string& name, const glm::mat4& mat) const
     }
 }
 
-#ifdef __EMSCRIPTEN__
-static const char* s_VertPreamble = "#version 300 es\nprecision highp float;\n";
-static const char* s_FragPreamble = "#version 300 es\nprecision mediump float;\n";
-#else
-static const char* s_VertPreamble = "#version 410 core\n";
-static const char* s_FragPreamble = "#version 410 core\n";
-#endif
-
 void Shader::Compile()
 {
     const char* vsCode = m_VertexCode.c_str();
@@ -191,6 +200,16 @@ void Shader::Compile()
         GL(glCompileShader(m_TessEvalId));
         CheckCompileError(m_TessEvalId, "Tessellation Evaluation Shader");
     }
+
+    if (!m_GeometryCode.empty())
+    {
+        const char* geomCode = m_GeometryCode.c_str();
+        const char* geomSources[2] = { s_VertPreamble, geomCode };
+        m_GeomId = GLR(glCreateShader(GL_GEOMETRY_SHADER));
+        GL(glShaderSource(m_GeomId, 2, geomSources, NULL));
+        GL(glCompileShader(m_GeomId));
+        CheckCompileError(m_GeomId, "Geometry Shader");
+    }
 #endif
 
     const char* fsCode = m_FragmentCode.c_str();
@@ -211,6 +230,10 @@ void Shader::Link()
         GL(glAttachShader(m_ID, m_TessControlId));
         GL(glAttachShader(m_ID, m_TessEvalId));
     }
+    if (m_GeomId != 0)
+    {
+        GL(glAttachShader(m_ID, m_GeomId));
+    }
 #endif
     GL(glAttachShader(m_ID, m_FragmentId));
     GL(glLinkProgram(m_ID));
@@ -221,6 +244,10 @@ void Shader::Link()
     {
         GL(glDeleteShader(m_TessControlId));
         GL(glDeleteShader(m_TessEvalId));
+    }
+    if (m_GeomId != 0)
+    {
+        GL(glDeleteShader(m_GeomId));
     }
 #endif
     GL(glDeleteShader(m_FragmentId));

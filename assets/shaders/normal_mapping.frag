@@ -6,7 +6,7 @@ uniform sampler2D u_DiffuseMap;
 uniform sampler2D u_NormalMap;
 uniform float u_NormalStrength;
 
-out vec4 FragColor;
+out vec4 frag_color;
 
 void main()
 {
@@ -28,5 +28,5 @@ void main()
     float spec = pow(max(dot(normal, halfDir), 0.0), 32.0);
     vec3 specular = vec3(0.2) * spec;
 
-    FragColor = vec4(ambient + diffuseLight + specular, 1.0);
+    frag_color = vec4(ambient + diffuseLight + specular, 1.0);
 }
