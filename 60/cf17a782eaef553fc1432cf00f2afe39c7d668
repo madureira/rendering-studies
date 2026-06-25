@@ -1,0 +1,56 @@
+src/Demos/DisplayNormals/DisplayNormals.cpp
+  h_48b237170f120f 1-88
+src/Engine/Shader/Shader.cpp
+  s_9a0c15459a2a28::t_8d6371d9c1666f 233-236
+  s_9a0c15459a2a28::t_93d9d5cd05a909 248-251
+  h_48b237170f120f 14,23-31,203-212
+assets/shaders/normal_mapping.frag
+  h_48b237170f120f 9,31
+assets/shaders/display_normals.frag
+  h_48b237170f120f 1-6
+src/Engine/Shader/Shader.h
+  h_48b237170f120f 16-17,23-24,30
+src/Demos/DisplayNormals/DisplayNormals.h
+  h_48b237170f120f 1-29
+README.md
+  s_f2d46328d3ce41::t_d430bd9abc301a 45
+assets/shaders/display_normals.vert
+  s_9a0c15459a2a28::t_78616e0fd76497 10-11
+  h_48b237170f120f 1-9,12-13
+assets/shaders/display_normals.geom
+  s_9a0c15459a2a28::t_3aaa576c03d4cf 22-40
+  h_48b237170f120f 1-14,16-21,41
+  s_9a0c15459a2a28::t_6828ed8ef16b0c 15
+assets/shaders/per_face_gray.frag
+  s_f2d46328d3ce41::t_7421c3daa18b68 7
+  h_48b237170f120f 2-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "60cf17a782eaef553fc1432cf00f2afe39c7d668",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_9a0c15459a2a28": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2ec11c9-5686-4e77-b22e-c7d1f1411af2",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    },
+    "s_f2d46328d3ce41": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "055ec014-07dd-42ae-a5cc-af89ae77ddf2",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
