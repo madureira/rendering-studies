@@ -1,0 +1,46 @@
+src/Demos/TeapotShading/TeapotShading.h
+  h_48b237170f120f 21
+includes/RenderingStudies/Config.h
+  h_48b237170f120f 19,66,140-141
+src/Demos/DisplayNormals/DisplayNormals.h
+  h_48b237170f120f 7,16-18
+src/Engine/Renderer/Renderer.h
+  h_48b237170f120f 27-28
+src/Demos/ShadowMapping/ShadowMapping.h
+  h_48b237170f120f 13-17
+src/Demos/SkyboxDemo/SkyboxDemo.h
+  h_48b237170f120f 1-29
+src/Demos/TeapotShading/TeapotShading.cpp
+  h_48b237170f120f 25
+src/Engine/Camera/Camera.h
+  h_48b237170f120f 35-39
+src/Demos/NormalMapping/NormalMapping.h
+  h_48b237170f120f 20
+src/Engine/Window/Window.h
+  h_48b237170f120f 35
+src/Engine/Utils/ModelSelector.h
+  h_48b237170f120f 1-26
+src/Demos/SimpleMesh/SimpleMesh.cpp
+  h_48b237170f120f 9,21,26,40,88
+src/Demos/DisplayNormals/DisplayNormals.cpp
+  h_48b237170f120f 10,25,30,45,48-49,52-62,89,98
+src/Engine/Utils/ModelSelector.cpp
+  h_48b237170f120f 1-61
+src/Demos/SimpleMesh/SimpleMesh.h
+  h_48b237170f120f 8,18
+src/Demos/SkyboxDemo/SkyboxDemo.cpp
+  h_48b237170f120f 1-90
+src/Engine/Utils/HardwareUtil.h
+  h_48b237170f120f 77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "4c76e91a11a7236925e8cacaac74dbecca9688ed",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
