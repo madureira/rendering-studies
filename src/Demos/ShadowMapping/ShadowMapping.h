@@ -10,15 +10,14 @@ class Shader;
 class Window;
 class Texture;
 
+#define MODEL_COUNT 2
+#define PLANE_INDEX 0
+#define CUBE_INDEX 1
+#define INDEX_COUNT 36
+
 class ShadowMapping final : public Demo
 {
 private:
-    static constexpr uint32 MODEL_COUNT = 2;
-    static constexpr uint32 PLANE_INDEX = 0;
-    static constexpr uint32 CUBE_INDEX = 1;
-    static constexpr uint32 INDEX_COUNT = 36;
-    static int32 s_SelectedShadowRes;
-
     const Window& m_Window;
     const Camera& m_Camera;
     Shader* m_ShadowMapShader;
@@ -37,6 +36,8 @@ private:
     glm::vec3 m_CubePos;
     uint32 m_ShadowRes;
     uint32 m_DepthMapRes;
+
+    static int32 s_SelectedShadowRes;
 
 public:
     ShadowMapping(const Window& window, const Camera& camera);

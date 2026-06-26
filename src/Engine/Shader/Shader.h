@@ -10,18 +10,18 @@
 class Shader final
 {
 private:
-    std::string m_VertexCode;
-    std::string m_TessControlCode;
-    std::string m_TessEvalCode;
-    std::string m_GeometryCode;
-    std::string m_FragmentCode;
-
     uint32 m_ID = 0;
     uint32 m_VertexId = 0;
     uint32 m_TessControlId = 0;
     uint32 m_TessEvalId = 0;
     uint32 m_GeomId = 0;
     uint32 m_FragmentId = 0;
+
+    std::string m_VertexCode;
+    std::string m_TessControlCode;
+    std::string m_TessEvalCode;
+    std::string m_GeometryCode;
+    std::string m_FragmentCode;
 
     mutable std::unordered_map<std::string, int32> m_UniformLocationCache;
 

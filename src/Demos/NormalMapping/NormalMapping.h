@@ -17,9 +17,9 @@ private:
     const Window& m_Window;
     const Camera& m_Camera;
     Shader* m_Shader;
+    Model* m_Model;
     Texture* m_DiffuseMap;
     Texture* m_NormalMap;
-    Model* m_Model;
     glm::vec3 m_LightPos;
     float32 m_NormalStrength = 2.0f;
     float32 m_TexScale = 4.0f;

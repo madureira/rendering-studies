@@ -11,7 +11,6 @@ class Skybox final
 {
 private:
     Shader* m_Shader;
-
     uint32 m_VAO;
     uint32 m_VBO;
     uint32 m_EBO;

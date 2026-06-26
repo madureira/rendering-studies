@@ -22,11 +22,11 @@ TeapotShading::TeapotShading(const Window& window, const Camera& camera)
     : m_Window(window)
     , m_Camera(camera)
     , m_CurrentShader(0)
+    , m_ScaleAll(1.0f)
     , m_LightDir(0.5f, 0.6f, 0.5f)
     , m_RotDeg(0.0f, 0.0f, 0.0f)
     , m_Scale(1.0f, 1.0f, 1.0f)
     , m_LockScale(true)
-    , m_ScaleAll(1.0f)
 {
     m_Shader[0] = new Shader("assets/shaders/flat_shading.vert", "assets/shaders/flat_shading.frag");
     m_Shader[1] = new Shader("assets/shaders/gouraud_shading.vert", "assets/shaders/gouraud_shading.frag");

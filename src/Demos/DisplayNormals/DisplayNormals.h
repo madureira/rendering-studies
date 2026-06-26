@@ -4,7 +4,7 @@
 #include <RenderingStudies/Types.h>
 
 class Camera;
-class Model;
+class ModelSelector;
 class Shader;
 class Window;
 
@@ -13,9 +13,9 @@ class DisplayNormals final : public Demo
 private:
     const Window& m_Window;
     const Camera& m_Camera;
-    Shader* m_Shader;
-    Shader* m_NormalShader;
-    Model* m_Model;
+    Shader* m_Shader = nullptr;
+    Shader* m_NormalShader = nullptr;
+    ModelSelector* m_ModelSelector = nullptr;
 
     bool m_ShowNormals = true;
     bool m_IsFaceNormal = false;

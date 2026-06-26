@@ -23,16 +23,16 @@ class Window final
 private:
     GLFWwindow* m_Window;
     GLFWmonitor* m_Monitor;
+    MouseState m_Mouse;
+    mutable bool m_FullScreen = false;
+    mutable float64 m_LastTime = 0.0f;
 
     uint32 m_InitialWidth;
     uint32 m_InitialHeight;
     uint32 m_Width;
     uint32 m_Height;
-    bool m_VSyncOn;
-    MouseState m_Mouse;
-    mutable bool m_FullScreen = false;
-    mutable float64 m_LastTime = 0.0f;
     int32 m_MonitorIndex;
+    bool m_VSyncOn;
 
 public:
     Window(const Config& config);

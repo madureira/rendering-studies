@@ -1,4 +1,4 @@
-#include "SkyboxExample.h"
+#include "SkyboxDemo.h"
 
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterDemo.h>
@@ -13,18 +13,18 @@
 #include "../../Engine/Skybox/Skybox.h"
 #include "../../Engine/Window/Window.h"
 
-REGISTER_DEMO(SkyboxExample, true)
+REGISTER_DEMO(SkyboxDemo, true)
 
 const char* SKYBOX_BASE_PATH = "assets/images/skybox";
 
-const char* const SkyboxExample::s_SkyboxOptions[2] = {
+const char* const SkyboxDemo::s_SkyboxOptions[2] = {
     "day",
     "night"
 };
 
 static float32 exposure = 1.0f;
 
-SkyboxExample::SkyboxExample(const Window& window, const Camera& camera)
+SkyboxDemo::SkyboxDemo(const Window& window, const Camera& camera)
     : m_Window(window)
     , m_Camera(camera)
 {
@@ -42,12 +42,12 @@ SkyboxExample::SkyboxExample(const Window& window, const Camera& camera)
     CreateSkybox();
 }
 
-SkyboxExample::~SkyboxExample()
+SkyboxDemo::~SkyboxDemo()
 {
     delete m_Skybox;
 }
 
-void SkyboxExample::Update(float32 /*unused: deltaTime*/)
+void SkyboxDemo::Update(float32 /*unused: deltaTime*/)
 {
     ImGui::Begin("Skybox");
     ImGui::AlignTextToFramePadding();
@@ -67,7 +67,7 @@ void SkyboxExample::Update(float32 /*unused: deltaTime*/)
     ImGui::End();
 }
 
-void SkyboxExample::Render()
+void SkyboxDemo::Render()
 {
     if (!m_Skybox)
     {
@@ -80,7 +80,7 @@ void SkyboxExample::Render()
     m_Skybox->Render(m_Camera, winWidth, winHeight, exposure);
 }
 
-void SkyboxExample::CreateSkybox()
+void SkyboxDemo::CreateSkybox()
 {
     delete m_Skybox;
 

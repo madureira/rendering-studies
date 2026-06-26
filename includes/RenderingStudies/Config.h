@@ -15,8 +15,8 @@ struct Config
     std::string window_title;
     int16 window_width;
     int16 window_height;
-    bool vsync_on;
     int32 monitor_index;
+    bool vsync_on;
 };
 
 namespace
@@ -62,8 +62,8 @@ inline Config loadConfig(const std::string& path)
     std::string window_title;
     int16 window_width = 0;
     int16 window_height = 0;
-    bool vsync_on = false;
     int8 monitor_index = 0;
+    bool vsync_on = false;
 
     bool has_width = false;
     bool has_height = false;
@@ -137,7 +137,7 @@ inline Config loadConfig(const std::string& path)
         window_title,
         window_width,
         window_height,
-        vsync_on,
-        monitor_index
+        monitor_index,
+        vsync_on
     };
 }

@@ -7,7 +7,7 @@ class Camera;
 class Skybox;
 class Window;
 
-class SkyboxExample final : public Demo
+class SkyboxDemo final : public Demo
 {
 private:
     const Window& m_Window;
@@ -18,8 +18,8 @@ private:
     static const char* const s_SkyboxOptions[2];
 
 public:
-    SkyboxExample(const Window& window, const Camera& camera);
-    ~SkyboxExample();
+    SkyboxDemo(const Window& window, const Camera& camera);
+    ~SkyboxDemo();
 
     virtual void Update(float32 deltaTime) override;
     virtual void Render() override;

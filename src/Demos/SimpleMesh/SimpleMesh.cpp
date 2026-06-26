@@ -6,31 +6,11 @@
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Grid/Grid.h"
-#include "../../Engine/Model/Model.h"
+#include "../../Engine/Utils/ModelSelector.h"
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_DEMO(SimpleMesh, true)
-
-const char* const SimpleMesh::s_MeshOptions[7] = {
-    "apple",
-    "bunny",
-    "cube",
-    "dragon",
-    "monkey",
-    "sphere",
-    "teapot"
-};
-
-const char* const SimpleMesh::s_MeshPaths[7] = {
-    "assets/models/apple.fbx",
-    "assets/models/bunny.obj",
-    "assets/models/cube.obj",
-    "assets/models/dragon.obj",
-    "assets/models/monkey.obj",
-    "assets/models/sphere.obj",
-    "assets/models/teapot.obj"
-};
 
 SimpleMesh::SimpleMesh(const Window& window, const Camera& camera)
     : m_Window(window)
@@ -38,12 +18,12 @@ SimpleMesh::SimpleMesh(const Window& window, const Camera& camera)
     , m_ModelPos(0.0f, 0.0f, 0.0f)
 {
     m_Shader = new Shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
-    LoadCurrentModel();
+    m_ModelSelector = new ModelSelector();
 }
 
 SimpleMesh::~SimpleMesh()
 {
-    delete m_Model;
+    delete m_ModelSelector;
 
     if (m_Shader)
     {
@@ -52,26 +32,12 @@ SimpleMesh::~SimpleMesh()
     }
 }
 
-void SimpleMesh::LoadCurrentModel()
-{
-    delete m_Model;
-    m_Model = new Model(s_MeshPaths[m_CurrentMesh]);
-    m_LoadedMeshIndex = m_CurrentMesh;
-}
-
 void SimpleMesh::Update(float32 /*unused: deltaTime*/)
 {
     ImGui::Begin("Simple Mesh");
     ImGui::AlignTextToFramePadding();
 
-    ImGui::TextUnformatted("Meshes");
-    ImGui::SameLine();
-    ImGui::Combo("##Meshes", &m_CurrentMesh, s_MeshOptions, IM_ARRAYSIZE(s_MeshOptions));
-
-    if (m_CurrentMesh != m_LoadedMeshIndex)
-    {
-        LoadCurrentModel();
-    }
+    m_ModelSelector->Render();
 
     ImGui::AlignTextToFramePadding();
     ImGui::TextUnformatted("Position");
@@ -102,11 +68,6 @@ void SimpleMesh::Update(float32 /*unused: deltaTime*/)
 
 void SimpleMesh::Render()
 {
-    if (!m_Model)
-    {
-        return;
-    }
-
     uint32 winWidth = m_Window.GetWidth();
     uint32 winHeight = m_Window.GetHeight();
 
@@ -124,7 +85,7 @@ void SimpleMesh::Render()
 
     m_Shader->SetMat4("u_MVP", projection * viewRel * modelRel);
 
-    m_Model->Draw();
+    m_ModelSelector->GetSelectedModel().Draw();
 
     m_Shader->Unbind();
 }

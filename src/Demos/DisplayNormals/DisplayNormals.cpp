@@ -7,7 +7,7 @@
 #include <RenderingStudies/RegisterDemo.h>
 
 #include "../../Engine/Camera/Camera.h"
-#include "../../Engine/Model/Model.h"
+#include "../../Engine/Utils/ModelSelector.h"
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Window/Window.h"
 
@@ -22,12 +22,12 @@ DisplayNormals::DisplayNormals(const Window& window, const Camera& camera)
         "assets/shaders/display_normals.vert",
         "assets/shaders/display_normals.geom",
         "assets/shaders/display_normals.frag");
-    m_Model = new Model("assets/models/cube.obj");
+    m_ModelSelector = new ModelSelector(2);
 }
 
 DisplayNormals::~DisplayNormals()
 {
-    delete m_Model;
+    delete m_ModelSelector;
     if (m_Shader)
     {
         m_Shader->Unbind();
@@ -42,11 +42,24 @@ DisplayNormals::~DisplayNormals()
 
 void DisplayNormals::Update(float32 /*unused: deltaTime*/)
 {
-    ImGui::Begin("Display Normals");
+    ImGui::Begin("Display Normals (Geometry Shader)");
     ImGui::AlignTextToFramePadding();
 
+    m_ModelSelector->Render();
+
     ImGui::Checkbox("View normals?", &m_ShowNormals);
-    ImGui::Checkbox("Face normal?", &m_IsFaceNormal);
+
+    if (m_ShowNormals)
+    {
+        if (ImGui::RadioButton("Vertex normals", !m_IsFaceNormal))
+        {
+            m_IsFaceNormal = false;
+        }
+        if (ImGui::RadioButton("Face normals", m_IsFaceNormal))
+        {
+            m_IsFaceNormal = true;
+        }
+    }
 
     ImGui::End();
 }
@@ -73,7 +86,7 @@ void DisplayNormals::Render()
 
     m_Shader->Bind();
     m_Shader->SetMat4("u_MVP", projection * modelView);
-    m_Model->Draw();
+    m_ModelSelector->GetSelectedModel().Draw();
     m_Shader->Unbind();
 
     if (m_ShowNormals)
@@ -82,7 +95,7 @@ void DisplayNormals::Render()
         m_NormalShader->SetMat4("u_Projection", projection);
         m_NormalShader->SetMat4("u_ModelView", modelView);
         m_NormalShader->SetBool("u_FaceNormal", m_IsFaceNormal);
-        m_Model->Draw();
+        m_ModelSelector->GetSelectedModel().Draw();
         m_NormalShader->Unbind();
     }
 }

@@ -14,6 +14,9 @@ class DemoSelector final
 private:
     std::vector<std::string> m_DemoNames;
     int32 m_SelectedDemoIndex = 0;
+    float32 m_CameraSpeed = 5.0f;
+    float32 m_CameraAcceleratedSpeed = 15.0f;
+    float32 m_PanelBottom = 10.0f;
     bool m_FpsEnabled = true;
     bool m_CameraInfoEnabled = true;
     bool m_PolygonModeEnabled = false;
@@ -21,9 +24,6 @@ private:
     bool m_CullFaceEnabled = true;
     bool m_GridEnabled = true;
     bool m_ControlsEnabled = true;
-    float32 m_CameraSpeed = 5.0f;
-    float32 m_CameraAcceleratedSpeed = 15.0f;
-    float32 m_PanelBottom = 10.0f;
 
 public:
     inline void RenderSettings()

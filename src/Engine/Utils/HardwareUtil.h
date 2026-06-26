@@ -71,11 +71,10 @@ struct SystemInfo
 {
     std::string osName;
     std::string osVersion;
-
     std::string cpuModel;
     std::string cpuArch;
-    int32 cpuLogicalCores = -1;
 
+    int32 cpuLogicalCores = -1;
     float64 totalMemoryGiB = -1.0; // physical RAM
 };
 
@@ -95,7 +94,6 @@ struct CpuFeatures
     bool sse42 = false;
     bool avx = false;
     bool avx2 = false;
-
     bool neon = false; // ARM
 };
 

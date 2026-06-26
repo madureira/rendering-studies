@@ -18,11 +18,11 @@ private:
     Model* m_Model;
 
     int32 m_CurrentShader;
+    float32 m_ScaleAll;
     glm::vec3 m_LightDir;
     glm::vec3 m_RotDeg;
     glm::vec3 m_Scale;
     bool m_LockScale;
-    float32 m_ScaleAll;
 
     static const char* const s_ShaderOptions[3];
 

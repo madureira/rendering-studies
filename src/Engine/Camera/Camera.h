@@ -14,12 +14,6 @@ enum class CameraMove
 class Camera final
 {
 private:
-    const float32 SPEED = 2.5f;
-    const float32 SENSITIVITY = 0.05f;
-    const float32 ZOOM = 45.0f;
-    const float32 NEAR_CLIP = 0.1f;
-    const float32 FAR_CLIP = 10000.0f;
-
     mutable glm::dvec3 m_Position;
     mutable glm::vec3 m_Up;
     mutable glm::vec3 m_Front;
@@ -37,6 +31,12 @@ private:
 
     float32 m_MovementSpeed;
     float32 m_MouseSensitivity;
+
+    static constexpr float32 SPEED = 2.5f;
+    static constexpr float32 SENSITIVITY = 0.05f;
+    static constexpr float32 ZOOM = 45.0f;
+    static constexpr float32 NEAR_CLIP = 0.1f;
+    static constexpr float32 FAR_CLIP = 10000.0f;
 
 public:
     Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch);
