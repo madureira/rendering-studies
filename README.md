@@ -175,3 +175,4 @@ monitor_index=0
 | [spdlog](https://github.com/gabime/spdlog) | 1.15.1 | Logging | Git submodule |
 | [stb](https://github.com/nothings/stb) | 2.30 | Image loading (stb_image) | Git submodule |
 | [glad](https://github.com/Dav1dde/glad) | gl=4.1 core | OpenGL loader *(desktop only)* | Vendored |
+| [ImViewGuizmo](https://github.com/Ka1serM/ImViewGuizmo) | 1.0.2 | 3D view gizmo for Dear ImGui | Vendored |
