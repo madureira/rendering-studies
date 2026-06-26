@@ -6,6 +6,7 @@
 #include <RenderingStudies/Types.h>
 
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/UI/CameraGizmo.h"
 #include "Engine/UI/UI.h"
 #include "Engine/Utils/DemoSelector.h"
 #include "Engine/Utils/InputProcessorUtil.h"
@@ -22,6 +23,10 @@ struct LoopState
 
 static void runFrame(LoopState& s)
 {
+    uint32 winWidth = s.window->GetWidth();
+    uint32 winHeight = s.window->GetHeight();
+    Camera& camera = *s.renderer->GetCamera();
+
     s.window->BeginFrame();
     s.window->PollEvents();
     s.renderer->Clear(0.2f, 0.2f, 0.2f);
@@ -37,29 +42,30 @@ static void runFrame(LoopState& s)
     {
         delete s.demo;
         s.renderer->ResetCameraPosition();
-        s.demo = s.demoSelector->GetSelectedDemo(*s.window, *s.renderer->GetCamera());
+        s.demo = s.demoSelector->GetSelectedDemo(*s.window, camera);
         s.lastDemoIndex = currentDemoIndex;
     }
 
-    float32 deltaTime = s.window->GetDeltaTime();
-    InputProcessorUtil::moveCamera(*s.renderer->GetCamera(), *s.window, deltaTime, s.demoSelector->GetCameraSpeed(), s.demoSelector->GetCameraAcceleratedSpeed());
+    InputProcessorUtil::moveCamera(camera, *s.window, s.window->GetDeltaTime(), s.demoSelector->GetCameraSpeed(), s.demoSelector->GetCameraAcceleratedSpeed());
 
-    s.renderer->RenderGrid(s.window->GetWidth(), s.window->GetHeight(), s.demoSelector->IsGridEnabled());
+    s.renderer->RenderGrid(winWidth, winHeight, s.demoSelector->IsGridEnabled());
 
     if (s.demo)
     {
         static constexpr float32 offset = 10.0f;
         ImGui::SetNextWindowPos(ImVec2(offset, s.demoSelector->GetPanelBottom() + offset), ImGuiCond_Appearing);
-        s.demo->Update(deltaTime);
+        s.demo->Update(s.window->GetDeltaTime());
         s.demo->Render();
     }
 
-    s.demoSelector->RenderControls(s.window->GetWidth());
+    CameraGizmo::Render(camera, winWidth);
+
+    s.demoSelector->RenderControls(winWidth);
 
     UI::Render();
 
-    s.renderer->RenderFPS(s.window->GetTime(), s.window->GetDeltaTime(), s.demoSelector->IsFpsEnabled(), s.window->GetWidth(), s.window->GetHeight());
-    s.renderer->RenderCameraInfo(s.window->GetWidth(), s.window->GetHeight(), s.demoSelector->IsCameraInfoEnabled());
+    s.renderer->RenderFPS(s.window->GetTime(), s.window->GetDeltaTime(), s.demoSelector->IsFpsEnabled(), winWidth, winHeight);
+    s.renderer->RenderCameraInfo(winWidth, winHeight, s.demoSelector->IsCameraInfoEnabled());
     s.renderer->SetPolygonMode(s.demoSelector->IsPolygonModeEnabled());
 
     s.window->SwapBuffers();

@@ -73,7 +73,7 @@ public:
         }
 
         const float32 panelWidth = 250.0f;
-        ImGui::SetNextWindowPos(ImVec2(winWidth - panelWidth - 160.0f, 50.0f), ImGuiCond_Appearing);
+        ImGui::SetNextWindowPos(ImVec2(winWidth - panelWidth - 360.0f, 50.0f), ImGuiCond_Appearing);
         ImGui::SetNextWindowSize(ImVec2(panelWidth, 0.0f), ImGuiCond_Appearing);
         ImGui::Begin("Controls", &m_ControlsEnabled, ImGuiWindowFlags_NoSavedSettings);
 
