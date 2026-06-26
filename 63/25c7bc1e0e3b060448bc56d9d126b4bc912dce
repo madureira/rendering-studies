@@ -1,0 +1,38 @@
+src/Engine/Utils/DemoSelector.h
+  h_48b237170f120f 76
+src/main.cpp
+  s_df16ecacc1e5dd::t_0290284f5bddba 9
+  h_48b237170f120f 26-29,45,49,51,57,61,63,67-68
+  s_df16ecacc1e5dd::t_b5bce12b3c5d6b 62
+src/Engine/UI/CameraGizmo.h
+  s_df16ecacc1e5dd::t_537a3f5e22c1a7 1-2,6-9,11-12
+  h_48b237170f120f 3-5,10
+src/Engine/UI/CameraGizmo.cpp
+  h_48b237170f120f 8,19,61
+  s_df16ecacc1e5dd::t_69286b3d54413a 5-6
+  s_df16ecacc1e5dd::t_b33cfbd655ab94 40-43
+  s_df16ecacc1e5dd::t_ef090f59177455 54,56,60,62
+  s_df16ecacc1e5dd::t_7a8c7ba59cffa8 7,9-18,20-39,44-53,55,57-59,63-66
+  s_df16ecacc1e5dd::t_c0e68b7d7d98a9 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "6325c7bc1e0e3b060448bc56d9d126b4bc912dce",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_df16ecacc1e5dd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "016ba232-885d-460a-a2c9-70914ecf82cc",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
