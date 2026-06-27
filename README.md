@@ -176,3 +176,31 @@ monitor_index=0
 | [stb](https://github.com/nothings/stb) | 2.30 | Image loading (stb_image) | Git submodule |
 | [glad](https://github.com/Dav1dde/glad) | gl=4.1 core | OpenGL loader *(desktop only)* | Vendored |
 | [ImViewGuizmo](https://github.com/Ka1serM/ImViewGuizmo) | 1.0.2 | 3D view gizmo for Dear ImGui | Vendored |
+
+---
+
+## 📚 References and Study Materials
+
+The study was based on the following books, articles, and online resources, which provided the foundational knowledge, methodologies, and insights used in this research:
+
+| Book | Author | Year |
+| --- | --- | --- |
+| [Graphics Shaders: Theory and Practice, Second Edition](https://a.co/d/0bV6bVv6) | Mike Bailey, Steve Cunningham | 2011 |
+| [Foundations of Game Engine Development, Volume 1: Mathematics](https://a.co/d/09LIxfqG) | Eric Lengyel | 2016 |
+| [Foundations of Game Engine Development, Volume 2: Rendering](https://a.co/d/04xBGdi5) | Eric Lengyel | 2019 |
+| [3D Math Primer for Graphics and Game Development](https://a.co/d/07by4dGc) | Fletcher Dunn, Ian Parberry | 2011 |
+
+| Website | Description |
+| --- | --- |
+| [https://learnopengl.com](https://learnopengl.com/) | A comprehensive and highly recommended resource for learning OpenGL from the ground up. |
+| [https://bgolus.medium.com](https://bgolus.medium.com/the-best-darn-grid-shader-yet-727f9278b9d8) | An excellent article explaining how to create an efficient and visually appealing infinite grid shader. |
+| [https://dev.to/javiersalcedopuyo](https://dev.to/javiersalcedopuyo/simple-infinite-grid-shader-5fah) | A clear and practical guide with code examples for implementing a simple infinite grid shader. |
+
+| Videos | Description |
+| --- | --- |
+| [Casey Muratori - Handmade Hero](https://www.youtube.com/@MollyRocket) | An ongoing project by Casey Muratori to create a complete, professional-quality game accompanied by videos that explain every single line of its source code. |
+| [Cem Yuksel](https://www.youtube.com/@cem_yuksel) | Cem Yuksel is a computer graphics researcher and a professor in the School of Computing at the University of Utah. |
+| [OGLDEV](https://www.youtube.com/@OGLDEV) | Video tutorials on modern OpenGL using C++ |
+| [pikuma](https://www.youtube.com/@pikuma) | An education platform teaching the fundamentals of computer science & math. |
+| [The Cherno](https://www.youtube.com/@TheCherno) | Yan Chernikov's channel about game engine development |
+| [Inigo Quilez](https://www.youtube.com/@InigoQuilez) | "Painting with Maths" is all about using mathematics with purely artistic goals , designing mathematical expressions and deriving formulas to sculpt, color, light and compose beautiful paintings. |
