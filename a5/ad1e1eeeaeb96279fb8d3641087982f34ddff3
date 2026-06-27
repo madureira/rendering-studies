@@ -1,0 +1,30 @@
+src/Engine/Utils/InputProcessorUtil.cpp
+  s_4080b0ba907765::t_134afb88b347cc 9,13-22,28-78,83-92
+  s_4080b0ba907765::t_65c0c68ec380b5 79-82
+  s_4080b0ba907765::t_4751af171dbb07 106-114
+  s_4080b0ba907765::t_883506234fc0cb 148-150
+  s_4080b0ba907765::t_e1a4213bcdd520 155-164
+assets/index.html
+  s_4080b0ba907765::t_4351529c37036c 43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "a5ad1e1eeeaeb96279fb8d3641087982f34ddff3",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_4080b0ba907765": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f0ca6067-2af7-4a71-ae1a-9a949fb965e2",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
