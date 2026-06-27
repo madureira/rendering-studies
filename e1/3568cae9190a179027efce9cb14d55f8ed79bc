@@ -1,0 +1,76 @@
+includes/RenderingStudies/DemoRegistry.h
+  h_48b237170f120f 5,49,51,53,59
+src/Engine/Renderer/Renderer.cpp
+  s_551a3f2210fb1d::t_c16547a0e62bc5 41
+  s_5fa4baea4acebb::t_05d807903a7f06 3
+  s_551a3f2210fb1d::t_e68f7260ec2232 105
+  s_5fa4baea4acebb::t_5efd0843399a5a 142
+  s_551a3f2210fb1d::t_d8dff90f8f01fe 183-187,190-191,195
+  s_551a3f2210fb1d::t_240677b0fb4ece 42
+  s_5fa4baea4acebb::t_a0a64c6eeb90c2 43-50
+  s_551a3f2210fb1d::t_09805240ec19d8 108,113,116-119,124-126
+  s_551a3f2210fb1d::t_a26c577e4a9b1f 147
+  s_551a3f2210fb1d::t_a4d7468904d7bf 166-170
+  s_5fa4baea4acebb::t_c25d4de277c230 235,237-238,245-249,252-256,259-261,268-272,275-279,282-284
+  s_551a3f2210fb1d::t_f1a1ed565bd852 103
+  s_5fa4baea4acebb::t_4a4239c234e3a4 91,93-100
+  s_551a3f2210fb1d::t_64fc732e3a229b 14
+  s_551a3f2210fb1d::t_b29fc12cddeee4 104
+  s_551a3f2210fb1d::t_9438a73d10a36d 106-107
+  s_551a3f2210fb1d::t_bd4ea938a9bd69 127
+src/Engine/Camera/Camera.h
+  s_551a3f2210fb1d::t_f0627b7bfffcf8 18
+  h_48b237170f120f 33,37
+  s_551a3f2210fb1d::t_b35ba737ab76a1 34-36
+  s_551a3f2210fb1d::t_c41543938d1f0f 38
+src/Engine/Camera/Camera.cpp
+  s_551a3f2210fb1d::t_0268e8b8100e82 174
+  s_551a3f2210fb1d::t_13828cd9e16d2e 28
+  s_551a3f2210fb1d::t_9b6d46319f2de4 53-57,61-65,70-74
+  h_48b237170f120f 58-60
+  s_551a3f2210fb1d::t_42c348c6fe25fa 144-145
+src/Engine/Utils/DemoSelector.h
+  s_551a3f2210fb1d::t_6ad796a8423275 33-36
+  h_48b237170f120f 6-9
+  s_551a3f2210fb1d::t_be95f8ca4d4179 10
+src/main.cpp
+  h_48b237170f120f 31-32,51,59
+  s_551a3f2210fb1d::t_821852b217ef61 69
+  s_551a3f2210fb1d::t_77186edced6f0b 34
+src/Engine/Renderer/Renderer.h
+  h_48b237170f120f 5,35-40
+  s_5fa4baea4acebb::t_b9c419110d3073 33-34,41-42,63
+  s_5fa4baea4acebb::t_fa98c1541e6a1a 43-45
+  s_551a3f2210fb1d::t_e19381b1fe8ae5 24,28-29,31-32
+  s_551a3f2210fb1d::t_09de8fd6a331b8 51
+  s_551a3f2210fb1d::t_468fbc52d7cc9d 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "e13568cae9190a179027efce9cb14d55f8ed79bc",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_551a3f2210fb1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "afb782f4-da04-4633-a6b9-29f64e44a812",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    },
+    "s_5fa4baea4acebb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f36f393a-b450-49b6-aa13-cd753fe14bef",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
