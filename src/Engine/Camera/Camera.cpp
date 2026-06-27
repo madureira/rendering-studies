@@ -17,12 +17,12 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)
     UpdateCameraVectors();
 }
 
-void Camera::OverrideInitialPosition(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch) const
+void Camera::OverrideInitialPosition(glm::vec3 position, float32 yaw, float32 pitch, float32 roll) const
 {
     m_Position = position;
-    m_WorldUp = up;
     m_Yaw = yaw;
     m_Pitch = pitch;
+    m_Roll = roll;
 
     UpdateCameraVectors();
     m_ViewDirty = true;
@@ -116,6 +116,11 @@ float32 Camera::GetPitch() const
     return m_Pitch;
 }
 
+float32 Camera::GetRoll() const
+{
+    return m_Roll;
+}
+
 void Camera::Move(CameraMove direction, float32 deltaTime, float32 speed) const
 {
     float64 velocity = static_cast<float64>(m_MovementSpeed * deltaTime * speed);
@@ -196,6 +201,15 @@ void Camera::UpdateCameraVectors() const
     front.y = sin(glm::radians(m_Pitch));
     front.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
     m_Front = glm::normalize(front);
-    m_Right = glm::normalize(glm::cross(m_Front, m_WorldUp));
-    m_Up = glm::normalize(glm::cross(m_Right, m_Front));
+
+    // Use a fallback reference when front is nearly parallel to world up (pitch ~ +-90deg)
+    glm::vec3 ref = (std::abs(m_Front.y) < 0.999f) ? m_WorldUp : glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 right0 = glm::normalize(glm::cross(m_Front, ref));
+    glm::vec3 up0 = glm::normalize(glm::cross(right0, m_Front));
+
+    // Apply roll (rotation around the front axis)
+    float32 cosR = std::cos(glm::radians(m_Roll));
+    float32 sinR = std::sin(glm::radians(m_Roll));
+    m_Right = glm::normalize(right0 * cosR - up0 * sinR);
+    m_Up = glm::normalize(right0 * sinR + up0 * cosR);
 }

@@ -27,14 +27,12 @@ BumpMapping::BumpMapping(const Window& window, const Camera& camera)
     m_Shader = new Shader("assets/shaders/bump_mapping.vert", "assets/shaders/bump_mapping.frag");
 
     // Isometric-style: elevated, diagonal, looking at origin (not straight top-down).
-    // Position in +X,+Y,+Z octant; yaw 225° + pitch ~-35° so front points at (0,0,0).
     const float32 isoDist = 14.0f; // distance in XZ
     const float32 isoHeight = 12.0f;
     m_Camera.OverrideInitialPosition(
         glm::vec3(isoDist, isoHeight, isoDist),
-        glm::vec3(0.0f, 1.0f, 0.0f),
         225.0f,  // yaw: look from (+X,+Z) back toward origin
-        -35.264f // pitch: ~35° down from horizontal (classic isometric)
+        -35.264f // pitch: ~35deg down from horizontal (classic isometric)
     );
 
     CreateMesh();

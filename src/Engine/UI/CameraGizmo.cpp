@@ -57,9 +57,20 @@ void Render(const Camera& cam, uint32 winWidth)
         const float pitch = glm::degrees(std::asin(glm::clamp(newFront.y, -1.0f, 1.0f)));
         const float yaw = glm::degrees(std::atan2(newFront.z, newFront.x));
 
-        // Pass newUp as worldUp so Camera::UpdateCameraVectors doesn't degenerate
-        // when front is parallel to (0,1,0) (top/bottom views, pitch = +-90 degrees).
-        cam.OverrideInitialPosition(cameraPos, newUp, yaw, pitch);
+        // Extract roll: signed angle from the no-roll up to the actual up, around front.
+        // Degenerate when front is parallel to world up (pitch ~ +-90deg) — leave roll at 0.
+        float roll = 0.0f;
+        if (std::abs(newFront.y) < 0.999f)
+        {
+            const glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+            const glm::vec3 refRight = glm::normalize(glm::cross(newFront, worldUp));
+            const glm::vec3 refUp = glm::normalize(glm::cross(refRight, newFront));
+            const float cosRoll = glm::dot(refUp, newUp);
+            const float sinRoll = glm::dot(glm::cross(refUp, newUp), newFront);
+            roll = glm::degrees(std::atan2(sinRoll, cosRoll));
+        }
+
+        cam.OverrideInitialPosition(cameraPos, yaw, pitch, roll);
     }
 }
 

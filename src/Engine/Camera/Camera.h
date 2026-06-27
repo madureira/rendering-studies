@@ -23,6 +23,7 @@ private:
 
     mutable float32 m_Yaw;
     mutable float32 m_Pitch;
+    mutable float32 m_Roll = 0.0f;
     mutable float32 m_Zoom;
     mutable uint32 m_LastWindowWidth = 0;
     mutable uint32 m_LastWindowHeight = 0;
@@ -45,7 +46,7 @@ private:
 public:
     Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch);
 
-    void OverrideInitialPosition(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch) const;
+    void OverrideInitialPosition(glm::vec3 position, float32 yaw, float32 pitch, float32 roll = 0.0f) const;
 
     glm::vec3 GetPosition() const;
     glm::dvec3 GetPositionHP() const;
@@ -57,6 +58,7 @@ public:
     float32 GetZoom() const;
     float32 GetYaw() const;
     float32 GetPitch() const;
+    float32 GetRoll() const;
 
     void Move(CameraMove direction, float32 deltaTime, float32 speed = 1.0f) const;
     void Look(float32 dx, float32 dy, bool constrainPitch = true) const;

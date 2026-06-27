@@ -22,7 +22,7 @@ const glm::vec3 Y_AXIS_COLOR = glm::vec3(0.35f, 1.0f, 0.35f);
 const glm::vec3 Z_AXIS_COLOR = glm::vec3(0.4f, 0.65f, 1.0f);
 const glm::vec3 PITCH_COLOR = glm::vec3(1.0f, 0.55f, 0.0f);
 const glm::vec3 YAW_COLOR = glm::vec3(0.75f, 0.4f, 1.0f);
-const glm::vec3 FOV_COLOR = glm::vec3(0.0f, 0.85f, 0.85f);
+const glm::vec3 ROLL_COLOR = glm::vec3(1.0f, 0.85f, 0.2f);
 const glm::vec3 HUD_VALUE_WHITE = glm::vec3(1.0f, 1.0f, 1.0f);
 
 Renderer::Renderer(uint32 windowInitialWidth, uint32 windowInitialHeight)
@@ -46,7 +46,7 @@ Renderer::Renderer(uint32 windowInitialWidth, uint32 windowInitialHeight)
     m_HudLabelWidths.z = m_BoldTextRenderer->MeasureText("  Z:", kCamInfoScale);
     m_HudLabelWidths.pitch = m_BoldTextRenderer->MeasureText("Pitch:", kCamInfoScale);
     m_HudLabelWidths.yaw = m_BoldTextRenderer->MeasureText("  Yaw:", kCamInfoScale);
-    m_HudLabelWidths.fov = m_BoldTextRenderer->MeasureText("  FOV:", kCamInfoScale);
+    m_HudLabelWidths.roll = m_BoldTextRenderer->MeasureText("  Roll:", kCamInfoScale);
 
     m_Camera = new Camera(CAMERA_POSITION, CAMERA_UP, CAMERA_YAW, CAMERA_PITCH);
     m_Grid = new Grid();
@@ -206,7 +206,7 @@ void Renderer::RenderGrid(uint32 winWidth, uint32 winHeight, bool enabled) const
 
 void Renderer::ResetCameraPosition() const
 {
-    m_Camera->OverrideInitialPosition(CAMERA_POSITION, CAMERA_UP, CAMERA_YAW, CAMERA_PITCH);
+    m_Camera->OverrideInitialPosition(CAMERA_POSITION, CAMERA_YAW, CAMERA_PITCH);
 }
 
 Camera* Renderer::GetCamera() const
@@ -224,11 +224,11 @@ void Renderer::RenderCameraInfo(uint32 winWidth, uint32 winHeight, bool display)
     glm::vec3 pos = m_Camera->GetPosition();
     float32 pitch = m_Camera->GetPitch();
     float32 yaw = m_Camera->GetYaw();
-    float32 fov = m_Camera->GetZoom();
+    float32 roll = m_Camera->GetRoll();
 
     static const float32 rowHeight = 32.0f;
     static const float32 scale = 0.45f;
-    static const float32 maxLineWidth = 380.0f;
+    static const float32 maxLineWidth = 410.0f;
     static const float32 rightPad = 10.0f;
     const float32 originX = static_cast<float32>(winWidth) - maxLineWidth - rightPad;
 
@@ -278,10 +278,10 @@ void Renderer::RenderCameraInfo(uint32 winWidth, uint32 winHeight, bool display)
     m_TextRenderer->Render(*m_TextShader, v, YAW_COLOR, rx, rotY, scale);
     rx += m_TextRenderer->MeasureText(v, scale);
 
-    RenderBold("  FOV:", FOV_COLOR, rx, rotY, scale);
-    rx += m_HudLabelWidths.fov;
-    snprintf(buf, sizeof(buf), " %.0f\xb0", fov);
-    m_TextRenderer->Render(*m_TextShader, buf, FOV_COLOR, rx, rotY, scale);
+    RenderBold("  Roll:", ROLL_COLOR, rx, rotY, scale);
+    rx += m_HudLabelWidths.roll;
+    snprintf(buf, sizeof(buf), " %.2f", roll);
+    m_TextRenderer->Render(*m_TextShader, buf, ROLL_COLOR, rx, rotY, scale);
 }
 
 void Renderer::RenderBold(const std::string& text, const glm::vec3& color, float32 x, float32 y, float32 scale) const
