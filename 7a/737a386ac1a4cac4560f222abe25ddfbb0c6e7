@@ -1,0 +1,25 @@
+src/main.cpp
+  s_f35ffd89378453::t_010d9903273441 22
+  s_f35ffd89378453::t_c4cd9c1e8a4b69 47,49-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "7a737a386ac1a4cac4560f222abe25ddfbb0c6e7",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_f35ffd89378453": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be5b3e87-4941-4c29-b9eb-e29f08442aa3",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
