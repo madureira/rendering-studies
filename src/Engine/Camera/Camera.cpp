@@ -25,6 +25,7 @@ void Camera::OverrideInitialPosition(glm::vec3 position, glm::vec3 up, float32 y
     m_Pitch = pitch;
 
     UpdateCameraVectors();
+    m_ViewDirty = true;
 }
 
 glm::vec3 Camera::GetPosition() const
@@ -49,18 +50,28 @@ glm::vec3 Camera::GetUp() const
 
 glm::mat4 Camera::GetViewMatrix() const
 {
-    glm::vec3 pos = glm::vec3(m_Position);
-    return glm::lookAt(pos, pos + m_Front, m_Up);
+    if (m_ViewDirty)
+    {
+        glm::vec3 pos = glm::vec3(m_Position);
+        m_ViewCache = glm::lookAt(pos, pos + m_Front, m_Up);
+
+        glm::dvec3 origin = m_Position;
+        origin.y = 0.0;
+        glm::vec3 posRel = glm::vec3(m_Position - origin);
+        m_ViewRelCache = glm::lookAt(posRel, posRel + m_Front, m_Up);
+
+        m_ViewDirty = false;
+    }
+    return m_ViewCache;
 }
 
 glm::mat4 Camera::GetViewMatrixRelative() const
 {
-    glm::dvec3 origin = m_Position;
-    origin.y = 0.0;
-    // Subtract origin in double precision, then convert to float.
-    // Keeps values small and preserves precision.
-    glm::vec3 posRel = glm::vec3(m_Position - origin);
-    return glm::lookAt(posRel, posRel + m_Front, m_Up);
+    if (m_ViewDirty)
+    {
+        GetViewMatrix();
+    }
+    return m_ViewRelCache;
 }
 
 glm::mat4 Camera::GetProjectionMatrix(uint32 windowWidth, uint32 windowHeight) const
@@ -130,6 +141,8 @@ void Camera::Move(CameraMove direction, float32 deltaTime, float32 speed) const
     {
         m_Position += right * velocity;
     }
+
+    m_ViewDirty = true;
 }
 
 void Camera::Look(float32 dx, float32 dy, bool constrainPitch) const
@@ -158,6 +171,7 @@ void Camera::Look(float32 dx, float32 dy, bool constrainPitch) const
     }
 
     UpdateCameraVectors();
+    m_ViewDirty = true;
 }
 
 void Camera::Zoom(float32 yoffset) const

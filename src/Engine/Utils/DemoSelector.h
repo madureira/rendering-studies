@@ -1,10 +1,12 @@
 #pragma once
 
-#include <RenderingStudies/DemoRegistry.h>
-#include <RenderingStudies/Types.h>
-#include <imgui.h>
 #include <string>
 #include <vector>
+
+#include <imgui.h>
+
+#include <RenderingStudies/DemoRegistry.h>
+#include <RenderingStudies/Types.h>
 
 class Window;
 class Camera;
@@ -28,7 +30,10 @@ private:
 public:
     inline void RenderSettings()
     {
-        m_DemoNames = DemoRegistry::Instance().GetAllDemoNames();
+        if (m_DemoNames.empty())
+        {
+            m_DemoNames = DemoRegistry::Instance().GetAllDemoNames();
+        }
 
 #ifdef __EMSCRIPTEN__
         ImGui::SetNextWindowPos(ImVec2(10.0f, 80.0f), ImGuiCond_Appearing);

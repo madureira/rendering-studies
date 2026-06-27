@@ -28,8 +28,10 @@ static void runFrame(LoopState& s)
     Camera& camera = *s.renderer->GetCamera();
 
     s.window->BeginFrame();
+    float32 deltaTime = s.window->GetDeltaTime();
+
     s.window->PollEvents();
-    s.renderer->Clear(0.2f, 0.2f, 0.2f);
+    s.renderer->Clear();
 
     UI::NewFrame();
     s.demoSelector->RenderSettings();
@@ -46,7 +48,7 @@ static void runFrame(LoopState& s)
         s.lastDemoIndex = currentDemoIndex;
     }
 
-    InputProcessorUtil::moveCamera(camera, *s.window, s.window->GetDeltaTime(), s.demoSelector->GetCameraSpeed(), s.demoSelector->GetCameraAcceleratedSpeed());
+    InputProcessorUtil::moveCamera(camera, *s.window, deltaTime, s.demoSelector->GetCameraSpeed(), s.demoSelector->GetCameraAcceleratedSpeed());
 
     s.renderer->RenderGrid(winWidth, winHeight, s.demoSelector->IsGridEnabled());
 
@@ -54,7 +56,7 @@ static void runFrame(LoopState& s)
     {
         static constexpr float32 offset = 10.0f;
         ImGui::SetNextWindowPos(ImVec2(offset, s.demoSelector->GetPanelBottom() + offset), ImGuiCond_Appearing);
-        s.demo->Update(s.window->GetDeltaTime());
+        s.demo->Update(deltaTime);
         s.demo->Render();
     }
 
@@ -64,7 +66,7 @@ static void runFrame(LoopState& s)
 
     UI::Render();
 
-    s.renderer->RenderFPS(s.window->GetTime(), s.window->GetDeltaTime(), s.demoSelector->IsFpsEnabled(), winWidth, winHeight);
+    s.renderer->RenderFPS(s.window->GetTime(), s.demoSelector->IsFpsEnabled(), winWidth, winHeight);
     s.renderer->RenderCameraInfo(winWidth, winHeight, s.demoSelector->IsCameraInfoEnabled());
     s.renderer->SetPolygonMode(s.demoSelector->IsPolygonModeEnabled());
 

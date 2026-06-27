@@ -15,6 +15,7 @@ class Camera final
 {
 private:
     mutable glm::dvec3 m_Position;
+
     mutable glm::vec3 m_Up;
     mutable glm::vec3 m_Front;
     mutable glm::vec3 m_Right;
@@ -23,14 +24,17 @@ private:
     mutable float32 m_Yaw;
     mutable float32 m_Pitch;
     mutable float32 m_Zoom;
-
-    mutable glm::mat4 m_ProjectionCache{ 1.0f };
     mutable uint32 m_LastWindowWidth = 0;
     mutable uint32 m_LastWindowHeight = 0;
     mutable float32 m_LastZoom = 0.0f;
-
     float32 m_MovementSpeed;
     float32 m_MouseSensitivity;
+
+    mutable glm::mat4 m_ProjectionCache{ 1.0f };
+    mutable glm::mat4 m_ViewCache{ 1.0f };
+    mutable glm::mat4 m_ViewRelCache{ 1.0f };
+
+    mutable bool m_ViewDirty = true;
 
     static constexpr float32 SPEED = 2.5f;
     static constexpr float32 SENSITIVITY = 0.05f;

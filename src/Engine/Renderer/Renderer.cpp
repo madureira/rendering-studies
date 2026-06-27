@@ -1,5 +1,6 @@
 #include "Renderer.h"
 
+#include <cstdio>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iomanip>
 #include <sstream>
@@ -10,6 +11,7 @@
 #include "../TextRenderer/TextRenderer.h"
 #include <RenderingStudies/GL.h>
 
+const glm::vec4 BACKGROUND_COLOR = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
 const glm::vec3 CAMERA_POSITION = glm::vec3(0.0f, 10.0f, 20.0f);
 const glm::vec3 CAMERA_UP = glm::vec3(0.0f, 1.0f, 0.0f);
 const float32 CAMERA_YAW = -90.0f;
@@ -35,6 +37,16 @@ Renderer::Renderer(uint32 windowInitialWidth, uint32 windowInitialHeight)
     m_TextShader->Bind();
     m_TextShader->SetMat4("u_Projection", projection);
     m_TextShader->Unbind();
+
+    GL(glClearColor(BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b, BACKGROUND_COLOR.a));
+
+    static constexpr float32 kCamInfoScale = 0.45f;
+    m_HudLabelWidths.x = m_BoldTextRenderer->MeasureText("X:", kCamInfoScale);
+    m_HudLabelWidths.y = m_BoldTextRenderer->MeasureText("  Y:", kCamInfoScale);
+    m_HudLabelWidths.z = m_BoldTextRenderer->MeasureText("  Z:", kCamInfoScale);
+    m_HudLabelWidths.pitch = m_BoldTextRenderer->MeasureText("Pitch:", kCamInfoScale);
+    m_HudLabelWidths.yaw = m_BoldTextRenderer->MeasureText("  Yaw:", kCamInfoScale);
+    m_HudLabelWidths.fov = m_BoldTextRenderer->MeasureText("  FOV:", kCamInfoScale);
 
     m_Camera = new Camera(CAMERA_POSITION, CAMERA_UP, CAMERA_YAW, CAMERA_PITCH);
     m_Grid = new Grid();
@@ -76,24 +88,42 @@ Renderer::~Renderer()
     }
 }
 
-void Renderer::Clear(float32 r, float32 g, float32 b) const
+void Renderer::UpdateTextProjectionIfNeeded(uint32 winWidth, uint32 winHeight) const
 {
-    // Background color
-    GL(glClearColor(r, g, b, 1.0f));
-    GL(glClear(GL_COLOR_BUFFER_BIT));
+    if (winWidth == m_LastTextWidth && winHeight == m_LastTextHeight)
+        return;
+    m_TextProjection = glm::ortho(0.0f, (float32)winWidth, 0.0f, (float32)winHeight);
+    m_LastTextWidth = winWidth;
+    m_LastTextHeight = winHeight;
+    m_TextShader->Bind();
+    m_TextShader->SetMat4("u_Projection", m_TextProjection);
+    m_TextShader->Unbind();
 }
 
-void Renderer::RenderFPS(float64 currentTime, float32 deltaTime, bool display, uint32 winWidth, uint32 winHeight) const
+void Renderer::Clear() const
+{
+    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
+
+void Renderer::RenderFPS(float64 currentTime, bool display, uint32 winWidth, uint32 winHeight) const
 {
     m_FpsNbFrames++;
 
     static std::string fpsText;
+    static std::string ftText;
     if (currentTime - m_FpsLastTime >= 1.0)
     {
-        float64 fps = float64(m_FpsNbFrames) / (currentTime - m_FpsLastTime);
+        float64 elapsed = currentTime - m_FpsLastTime;
+        float64 fps = float64(m_FpsNbFrames) / elapsed;
+        float64 avgFrameMs = elapsed / float64(m_FpsNbFrames) * 1000.0;
+
         std::stringstream fpsStream;
         fpsStream << std::fixed << std::setprecision(2) << fps;
         fpsText = "FPS: " + fpsStream.str();
+
+        std::stringstream ftStream;
+        ftStream << std::fixed << std::setprecision(2) << "  " << avgFrameMs << "ms";
+        ftText = ftStream.str();
 
         m_FpsNbFrames = 0;
         m_FpsLastTime = currentTime;
@@ -109,17 +139,12 @@ void Renderer::RenderFPS(float64 currentTime, float32 deltaTime, bool display, u
         return;
     }
 
-    glm::mat4 projection = glm::ortho(0.0f, (float32)winWidth, 0.0f, (float32)winHeight);
-    m_TextShader->Bind();
-    m_TextShader->SetMat4("u_Projection", projection);
-    m_TextShader->Unbind();
+    UpdateTextProjectionIfNeeded(winWidth, winHeight);
 
     m_TextRenderer->Render(*m_TextShader, fpsText, FPS_COLOR, originX, fpsTextPosY, scale);
 
-    std::stringstream ftStream;
-    ftStream << std::fixed << std::setprecision(2) << "  " << (deltaTime * 1000.0f) << "ms";
     const float32 fpsTextWidth = m_TextRenderer->MeasureText(fpsText, scale);
-    m_TextRenderer->Render(*m_TextShader, ftStream.str(), FPS_COLOR, originX + fpsTextWidth, fpsTextPosY, scale);
+    m_TextRenderer->Render(*m_TextShader, ftText, FPS_COLOR, originX + fpsTextWidth, fpsTextPosY, scale);
 }
 
 void Renderer::SetPolygonMode(bool enabled)
@@ -138,29 +163,36 @@ void Renderer::SetPolygonMode(bool enabled)
 
 void Renderer::SetZBuffer(bool enabled)
 {
+    if (enabled == m_LastZBuffer)
+    {
+        return;
+    }
+    m_LastZBuffer = enabled;
     if (enabled)
     {
         GL(glEnable(GL_DEPTH_TEST));
-        GL(glDepthFunc(GL_LEQUAL));
-        GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     }
     else
     {
         GL(glDisable(GL_DEPTH_TEST));
-        GL(glClear(GL_COLOR_BUFFER_BIT));
     }
 }
 
 void Renderer::SetCullFace(bool enabled)
 {
+    if (enabled == m_LastCullFace)
+    {
+        return;
+    }
+    m_LastCullFace = enabled;
     if (enabled)
     {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        GL(glEnable(GL_CULL_FACE));
+        GL(glCullFace(GL_BACK));
     }
     else
     {
-        glDisable(GL_CULL_FACE);
+        GL(glDisable(GL_CULL_FACE));
     }
 }
 
@@ -200,55 +232,56 @@ void Renderer::RenderCameraInfo(uint32 winWidth, uint32 winHeight, bool display)
     static const float32 rightPad = 10.0f;
     const float32 originX = static_cast<float32>(winWidth) - maxLineWidth - rightPad;
 
-    glm::mat4 projection = glm::ortho(0.0f, (float32)winWidth, 0.0f, (float32)winHeight);
-    m_TextShader->Bind();
-    m_TextShader->SetMat4("u_Projection", projection);
-    m_TextShader->Unbind();
+    UpdateTextProjectionIfNeeded(winWidth, winHeight);
 
-    auto fmt1 = [](float32 v) { std::stringstream ss; ss << std::fixed << std::setprecision(1) << v; return ss.str(); };
-    auto fmt2 = [](float32 v) { std::stringstream ss; ss << std::fixed << std::setprecision(2) << v; return ss.str(); };
+    char buf[32];
+    std::string v;
 
     // Position line: bold colored labels, white values
     const float32 posY = 2.0f * rowHeight;
     float32 x = originX;
 
     RenderBold("X:", X_AXIS_COLOR, x, posY, scale);
-    x += m_BoldTextRenderer->MeasureText("X:", scale);
-    const std::string xVal = " " + fmt1(pos.x);
-    m_TextRenderer->Render(*m_TextShader, xVal, HUD_VALUE_WHITE, x, posY, scale);
-    x += m_TextRenderer->MeasureText(xVal, scale);
+    x += m_HudLabelWidths.x;
+    snprintf(buf, sizeof(buf), " %.1f", pos.x);
+    v = buf;
+    m_TextRenderer->Render(*m_TextShader, v, HUD_VALUE_WHITE, x, posY, scale);
+    x += m_TextRenderer->MeasureText(v, scale);
 
     RenderBold("  Y:", Y_AXIS_COLOR, x, posY, scale);
-    x += m_BoldTextRenderer->MeasureText("  Y:", scale);
-    const std::string yVal = " " + fmt1(pos.y);
-    m_TextRenderer->Render(*m_TextShader, yVal, HUD_VALUE_WHITE, x, posY, scale);
-    x += m_TextRenderer->MeasureText(yVal, scale);
+    x += m_HudLabelWidths.y;
+    snprintf(buf, sizeof(buf), " %.1f", pos.y);
+    v = buf;
+    m_TextRenderer->Render(*m_TextShader, v, HUD_VALUE_WHITE, x, posY, scale);
+    x += m_TextRenderer->MeasureText(v, scale);
 
     RenderBold("  Z:", Z_AXIS_COLOR, x, posY, scale);
-    x += m_BoldTextRenderer->MeasureText("  Z:", scale);
-    m_TextRenderer->Render(*m_TextShader, " " + fmt1(pos.z), HUD_VALUE_WHITE, x, posY, scale);
+    x += m_HudLabelWidths.z;
+    snprintf(buf, sizeof(buf), " %.1f", pos.z);
+    m_TextRenderer->Render(*m_TextShader, buf, HUD_VALUE_WHITE, x, posY, scale);
 
     // Rotation line: bold labels, colored values
     const float32 rotY = rowHeight;
     float32 rx = originX;
 
     RenderBold("Pitch:", PITCH_COLOR, rx, rotY, scale);
-    rx += m_BoldTextRenderer->MeasureText("Pitch:", scale);
-    const std::string pitchVal = " " + fmt2(pitch);
-    m_TextRenderer->Render(*m_TextShader, pitchVal, PITCH_COLOR, rx, rotY, scale);
-    rx += m_TextRenderer->MeasureText(pitchVal, scale);
+    rx += m_HudLabelWidths.pitch;
+    snprintf(buf, sizeof(buf), " %.2f", pitch);
+    v = buf;
+    m_TextRenderer->Render(*m_TextShader, v, PITCH_COLOR, rx, rotY, scale);
+    rx += m_TextRenderer->MeasureText(v, scale);
 
     RenderBold("  Yaw:", YAW_COLOR, rx, rotY, scale);
-    rx += m_BoldTextRenderer->MeasureText("  Yaw:", scale);
-    const std::string yawVal = " " + fmt2(yaw);
-    m_TextRenderer->Render(*m_TextShader, yawVal, YAW_COLOR, rx, rotY, scale);
-    rx += m_TextRenderer->MeasureText(yawVal, scale);
+    rx += m_HudLabelWidths.yaw;
+    snprintf(buf, sizeof(buf), " %.2f", yaw);
+    v = buf;
+    m_TextRenderer->Render(*m_TextShader, v, YAW_COLOR, rx, rotY, scale);
+    rx += m_TextRenderer->MeasureText(v, scale);
 
     RenderBold("  FOV:", FOV_COLOR, rx, rotY, scale);
-    rx += m_BoldTextRenderer->MeasureText("  FOV:", scale);
-    std::stringstream fovStream;
-    fovStream << std::fixed << std::setprecision(0) << " " << fov << "\xb0";
-    m_TextRenderer->Render(*m_TextShader, fovStream.str(), FOV_COLOR, rx, rotY, scale);
+    rx += m_HudLabelWidths.fov;
+    snprintf(buf, sizeof(buf), " %.0f\xb0", fov);
+    m_TextRenderer->Render(*m_TextShader, buf, FOV_COLOR, rx, rotY, scale);
 }
 
 void Renderer::RenderBold(const std::string& text, const glm::vec3& color, float32 x, float32 y, float32 scale) const

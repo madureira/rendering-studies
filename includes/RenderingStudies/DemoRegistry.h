@@ -2,8 +2,8 @@
 
 #include "Demo.h"
 
+#include <map>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 class Window;
@@ -46,14 +46,15 @@ public:
     std::vector<std::string> GetAllDemoNames() const
     {
         std::vector<std::string> demoNames;
+        demoNames.reserve(m_Registry.size());
 
-        for (auto it = m_Registry.begin(); it != m_Registry.end(); ++it)
+        for (const auto& pair : m_Registry)
         {
-            demoNames.push_back(it->first);
+            demoNames.push_back(pair.first);
         }
         return demoNames;
     }
 
 private:
-    std::unordered_map<std::string, Creator> m_Registry;
+    std::map<std::string, Creator> m_Registry;
 };
