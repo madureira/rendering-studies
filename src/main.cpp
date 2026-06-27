@@ -19,6 +19,7 @@ struct LoopState
     DemoSelector* demoSelector;
     Demo* demo = nullptr;
     int32 lastDemoIndex = -1;
+    bool initialized = false;
 };
 
 static void runFrame(LoopState& s)
@@ -39,25 +40,32 @@ static void runFrame(LoopState& s)
     s.renderer->SetZBuffer(s.demoSelector->IsZBufferEnabled());
     s.renderer->SetCullFace(s.demoSelector->IsCullFaceEnabled());
 
-    int32 currentDemoIndex = s.demoSelector->GetSelectedIndex();
-    if (currentDemoIndex != s.lastDemoIndex)
-    {
-        delete s.demo;
-        s.renderer->ResetCameraPosition();
-        s.demo = s.demoSelector->GetSelectedDemo(*s.window, camera);
-        s.lastDemoIndex = currentDemoIndex;
-    }
-
     InputProcessorUtil::moveCamera(camera, *s.window, deltaTime, s.demoSelector->GetCameraSpeed(), s.demoSelector->GetCameraAcceleratedSpeed());
 
     s.renderer->RenderGrid(winWidth, winHeight, s.demoSelector->IsGridEnabled());
 
-    if (s.demo)
+    if (!s.initialized)
     {
-        static constexpr float32 offset = 10.0f;
-        ImGui::SetNextWindowPos(ImVec2(offset, s.demoSelector->GetPanelBottom() + offset), ImGuiCond_Appearing);
-        s.demo->Update(deltaTime);
-        s.demo->Render();
+        s.initialized = true;
+    }
+    else
+    {
+        int32 currentDemoIndex = s.demoSelector->GetSelectedIndex();
+        if (currentDemoIndex != s.lastDemoIndex)
+        {
+            delete s.demo;
+            s.renderer->ResetCameraPosition();
+            s.demo = s.demoSelector->GetSelectedDemo(*s.window, camera);
+            s.lastDemoIndex = currentDemoIndex;
+        }
+
+        if (s.demo)
+        {
+            static constexpr float32 offset = 10.0f;
+            ImGui::SetNextWindowPos(ImVec2(offset, s.demoSelector->GetPanelBottom() + offset), ImGuiCond_Appearing);
+            s.demo->Update(deltaTime);
+            s.demo->Render();
+        }
     }
 
     CameraGizmo::Render(camera, winWidth);
