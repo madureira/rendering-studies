@@ -1,0 +1,52 @@
+src/Engine/UI/CameraGizmo.cpp
+  s_82a55428e3ea29::t_c9ba32bfbe226f 60,62-73
+  h_48b237170f120f 61
+src/Engine/Camera/Camera.cpp
+  s_82a55428e3ea29::t_3271101d4fb4de 204,206-214
+  h_48b237170f120f 205
+  s_82a55428e3ea29::t_6151d0cf6c3904 119-123
+  s_82a55428e3ea29::t_1b2c60c5dbadcc 20,25
+src/Engine/Renderer/Renderer.h
+  s_82a55428e3ea29::t_ca20a9e5426779 40
+src/Demos/BumpMapping/BumpMapping.cpp
+  h_48b237170f120f 35
+src/Demos/Triangle/Triangle.cpp
+  s_82a55428e3ea29::t_4f58fcf741a011 18
+src/Demos/SkyboxDemo/SkyboxDemo.cpp
+  h_48b237170f120f 32,38
+src/Engine/Renderer/Renderer.cpp
+  s_82a55428e3ea29::t_a305f6782e794b 227
+  s_82a55428e3ea29::t_e4aa06446c1a0c 209
+  s_82a55428e3ea29::t_fc2e68604bec15 25
+  s_82a55428e3ea29::t_edc7572c9c9904 281-283
+  s_82a55428e3ea29::t_2af3131cac1f29 49
+  s_82a55428e3ea29::t_9d5ef778b8047d 284
+  h_48b237170f120f 231
+src/Demos/RippleEffect/RippleEffect.cpp
+  h_48b237170f120f 30,37
+src/Engine/Camera/Camera.h
+  s_82a55428e3ea29::t_cf72c9de72de55 26
+  s_82a55428e3ea29::t_a1b193fcc19060 61
+  s_82a55428e3ea29::t_3186bce05706a2 49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "1c889311d01a829e2b6618ea040cad6394e86eb2",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_82a55428e3ea29": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5aebe05-4879-4142-82cc-9496c2c11416",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
