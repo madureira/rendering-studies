@@ -1,0 +1,30 @@
+src/Engine/UI/UI.cpp
+  s_f99e82ff2ee1a1::t_afd07dfbe6a37b 11-59,85-88,109-119
+  s_f99e82ff2ee1a1::t_6f0f4d55c561b8 107-108,120-121
+  s_6e5b924bcc6d3e::t_5334038944b98f 78
+  s_f99e82ff2ee1a1::t_8b181f61aab0e3 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "be300c8b9b7f77838857cd5f368f512f1594fabd",
+  "prompts": {},
+  "sessions": {
+    "s_6e5b924bcc6d3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e03af20a-be81-4958-89a3-61d5caf0eec3",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    },
+    "s_f99e82ff2ee1a1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2eb6c45-52db-4191-8ab4-36d32e108e39",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
