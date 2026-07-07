@@ -33,7 +33,6 @@ ModelSelector::ModelSelector(const int32 modelIndex)
 ModelSelector::~ModelSelector()
 {
     delete m_Model;
-
 }
 
 void ModelSelector::Render()

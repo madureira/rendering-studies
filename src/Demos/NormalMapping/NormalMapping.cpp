@@ -27,8 +27,8 @@ NormalMapping::NormalMapping(const Window& window, const Camera& camera)
     texParams.generateMipmaps = true;
     texParams.flipY = true;
 
-    m_DiffuseMap = new Texture("assets/images/brickwall.png", texParams);
-    m_NormalMap = new Texture("assets/images/brickwall_normal.png", texParams);
+    m_DiffuseMap = new Texture("assets/images/brickwall/diffuse.png", texParams);
+    m_NormalMap = new Texture("assets/images/brickwall/normal.png", texParams);
 }
 
 NormalMapping::~NormalMapping()
