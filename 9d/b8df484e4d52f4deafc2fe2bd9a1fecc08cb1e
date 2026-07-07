@@ -1,0 +1,46 @@
+assets/shaders/specular_mapping.vert
+  s_5244944caf5c2f::t_56a0b10969b710 37
+  s_5244944caf5c2f::t_2fb1ac2ecc6089 34-36
+  s_5244944caf5c2f::t_8159552a593c94 38-40
+  s_5244944caf5c2f::t_0335c4b11a957f 1-33,41-42
+src/Demos/SpecularMapping/SpecularMapping.cpp
+  s_5244944caf5c2f::t_2761e7222479f0 95-98
+  s_5244944caf5c2f::t_3f3b28890aec1f 141
+  h_48b237170f120f 1-94,99-140,142-150
+src/Demos/SpecularMapping/SpecularMapping.h
+  h_48b237170f120f 1-24,26-34
+  s_5244944caf5c2f::t_fa059641773a6d 25
+src/Demos/NormalMapping/NormalMapping.cpp
+  h_48b237170f120f 30-31
+README.md
+  s_5244944caf5c2f::t_53051fc45217aa 44
+assets/shaders/specular_mapping.frag
+  s_5244944caf5c2f::t_c2b9fb2e9cd90b 31-32
+  s_5244944caf5c2f::t_eaf8992d611293 8
+  s_5244944caf5c2f::t_bce830847673c4 16-18
+  s_5244944caf5c2f::t_3ffe6fa55a4e28 6,15
+  h_48b237170f120f 1-5,7,9-14,19-30,33-35
+assets/models/backpack.obj
+  h_48b237170f120f 1-199480
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9db8df484e4d52f4deafc2fe2bd9a1fecc08cb1e",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_5244944caf5c2f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d4591f70-8f1b-4989-80d7-b42bf1760fd3",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
