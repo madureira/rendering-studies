@@ -1,0 +1,19 @@
+README.md
+  s_76dc70e3fac28b::t_29e2e6f69bcdd4 44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f689b9d7d20bb0c4e805a0ac81c3b0e3d6ece811",
+  "prompts": {},
+  "sessions": {
+    "s_76dc70e3fac28b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7deb1379-6099-43d1-95da-1a2c41db5481",
+        "model": "unknown"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
