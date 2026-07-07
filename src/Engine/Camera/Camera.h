@@ -1,6 +1,5 @@
 #pragma once
 
-#include <RenderingStudies/Types.h>
 #include <glm/glm.hpp>
 
 enum class CameraMove

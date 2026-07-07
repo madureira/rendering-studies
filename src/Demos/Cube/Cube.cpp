@@ -1,8 +1,9 @@
 #include "Cube.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterDemo.h>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
@@ -30,8 +31,10 @@ Cube::~Cube()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void Cube::Update(float32 /*unused: deltaTime*/)
+void Cube::Update(float32 deltaTime)
 {
+    // Update the y-axis rotation angle
+    m_RotDeg += deltaTime * 30.0f; // Rotates by 30 degres by second
 }
 
 void Cube::Render()
@@ -41,8 +44,13 @@ void Cube::Render()
     glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
 
     // Move model along the y-axis origin
-    float32 distanceY = 0.5f;
+    const float32 distanceY = 0.5f;
     model = glm::translate(model, glm::vec3(0.0f, distanceY, 0.0f));
+
+    const float32 scaleFactor = 2.0f;
+    model = glm::scale(model, glm::vec3(scaleFactor));
+
+    model = glm::rotate(model, glm::radians(m_RotDeg), glm::vec3(0.0f, 1.0f, 0.0f));
 
     m_Shader->Bind();
     m_Shader->SetMat4("u_MVP", projection * view * model);

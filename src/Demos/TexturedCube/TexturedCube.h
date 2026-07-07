@@ -1,7 +1,6 @@
 #pragma once
 
 #include <RenderingStudies/Demo.h>
-#include <RenderingStudies/Types.h>
 
 class Camera;
 class Shader;
@@ -19,6 +18,8 @@ private:
     uint32 m_VAO;
     uint32 m_VBO;
     uint32 m_EBO;
+
+    float32 m_RotDeg;
 
 public:
     TexturedCube(const Window& window, const Camera& camera);

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Demo.h"
-
 #include <map>
 #include <string>
 #include <vector>
+
+#include "Demo.h"
 
 class Window;
 class Camera;

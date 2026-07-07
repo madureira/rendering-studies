@@ -1,12 +1,14 @@
 #include "BumpMapping.h"
 
-#include <RenderingStudies/GL.h>
-#include <RenderingStudies/RegisterDemo.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
 
+#include <RenderingStudies/GL.h>
+#include <RenderingStudies/RegisterDemo.h>
+
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
+#include "../../Engine/Utils/UIComponents.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_DEMO(BumpMapping, true)
@@ -57,9 +59,7 @@ void BumpMapping::Update(float32 deltaTime)
 
     ImGui::Begin("Bump Mapping");
 
-    ImGui::TextUnformatted("Light");
-    ImGui::SliderFloat3("Light position", &m_LightPos.x, -10.0f, 10.0f, "%.2f");
-    ImGui::ColorEdit3("Light color", &m_LightColor.x);
+    UIComponent::Vector3Sliders("Light", m_LightPos.x, m_LightPos.y, m_LightPos.z);
 
     ImGui::Separator();
     ImGui::TextUnformatted("Ripple (height field)");

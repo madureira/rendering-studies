@@ -1,7 +1,5 @@
 #pragma once
 
-#include <RenderingStudies/Types.h>
-
 class Camera;
 class Window;
 

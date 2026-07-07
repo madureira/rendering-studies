@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 #include <cmath>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float32 yaw, float32 pitch)

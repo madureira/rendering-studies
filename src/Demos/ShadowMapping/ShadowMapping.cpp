@@ -9,6 +9,7 @@
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Texture/Texture.h"
+#include "../../Engine/Utils/UIComponents.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_DEMO(ShadowMapping, true)
@@ -80,36 +81,9 @@ void ShadowMapping::Update(float32 /*unused: deltaTime*/)
 {
     ImGui::Begin("Shadow Mapping");
 
-    const float32 itemWidth = ImGui::CalcItemWidth() / 3.0f;
-
-    auto DragVec3 = [&](const char* label, glm::vec3& v) {
-        ImGui::PushID(label);
-        ImGui::AlignTextToFramePadding();
-        ImGui::TextUnformatted(label);
-        ImGui::SameLine();
-
-        ImGui::TextColored(ImVec4(1, 0, 0, 1), "X");
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth - 20.0f);
-        ImGui::DragFloat("##x", &v.x, 0.1f);
-        ImGui::SameLine();
-
-        ImGui::TextColored(ImVec4(0, 1, 0, 1), "Y");
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth - 20.0f);
-        ImGui::DragFloat("##y", &v.y, 0.1f);
-        ImGui::SameLine();
-
-        ImGui::TextColored(ImVec4(0, 0.5f, 1, 1), "Z");
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth - 20.0f);
-        ImGui::DragFloat("##z", &v.z, 0.1f);
-        ImGui::PopID();
-    };
-
-    DragVec3("Light", m_LightPos);
+    UIComponent::Vector3Sliders("Light", m_LightPos.x, m_LightPos.y, m_LightPos.z);
     ImGui::Separator();
-    DragVec3("Cube", m_CubePos);
+    UIComponent::Vector3Sliders("Cube", m_CubePos.x, m_CubePos.y, m_CubePos.z);
     ImGui::Separator();
 
     ImGui::Text("Shadow Quality");

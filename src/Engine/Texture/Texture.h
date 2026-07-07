@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <RenderingStudies/Types.h>
 
 struct TextureParams
 {

@@ -7,8 +7,8 @@
 #include <RenderingStudies/RegisterDemo.h>
 
 #include "../../Engine/Camera/Camera.h"
-#include "../../Engine/Utils/ModelSelector.h"
 #include "../../Engine/Shader/Shader.h"
+#include "../../Engine/Utils/ModelSelector.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_DEMO(DisplayNormals, false)

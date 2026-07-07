@@ -10,6 +10,7 @@
 #include "../../Engine/Model/Model.h"
 #include "../../Engine/Shader/Shader.h"
 #include "../../Engine/Texture/Texture.h"
+#include "../../Engine/Utils/UIComponents.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_DEMO(NormalMapping, true)
@@ -55,32 +56,7 @@ void NormalMapping::Update(float32 /*unused: deltaTime*/)
 
     const float32 itemWidth = ImGui::CalcItemWidth() / 3.0f;
 
-    auto DragVec3 = [&](const char* label, glm::vec3& v) {
-        ImGui::PushID(label);
-        ImGui::AlignTextToFramePadding();
-        ImGui::TextUnformatted(label);
-        ImGui::SameLine();
-
-        ImGui::TextColored(ImVec4(1, 0, 0, 1), "X");
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth - 20.0f);
-        ImGui::DragFloat("##x", &v.x, 0.1f);
-        ImGui::SameLine();
-
-        ImGui::TextColored(ImVec4(0, 1, 0, 1), "Y");
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth - 20.0f);
-        ImGui::DragFloat("##y", &v.y, 0.1f);
-        ImGui::SameLine();
-
-        ImGui::TextColored(ImVec4(0, 0.5f, 1, 1), "Z");
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth - 20.0f);
-        ImGui::DragFloat("##z", &v.z, 0.1f);
-        ImGui::PopID();
-    };
-
-    DragVec3("Light", m_LightPos);
+    UIComponent::Vector3Sliders("Light", m_LightPos.x, m_LightPos.y, m_LightPos.z);
 
     ImGui::TextUnformatted("Normal Strength");
     ImGui::SameLine();

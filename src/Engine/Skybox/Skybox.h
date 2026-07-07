@@ -1,7 +1,7 @@
 #pragma once
 
-#include <RenderingStudies/Types.h>
 #include <string>
+
 #include <glm/glm.hpp>
 
 class Camera;

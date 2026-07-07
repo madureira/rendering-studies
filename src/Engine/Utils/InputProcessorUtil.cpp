@@ -1,8 +1,9 @@
 #include "InputProcessorUtil.h"
 
+#include <imgui.h>
+
 #include "../Camera/Camera.h"
 #include "../Window/Window.h"
-#include <imgui.h>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/html5.h>

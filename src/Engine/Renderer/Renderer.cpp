@@ -1,15 +1,17 @@
 #include "Renderer.h"
 
 #include <cstdio>
-#include <glm/gtc/matrix_transform.hpp>
 #include <iomanip>
 #include <sstream>
+
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <RenderingStudies/GL.h>
 
 #include "../Camera/Camera.h"
 #include "../Grid/Grid.h"
 #include "../Shader/Shader.h"
 #include "../TextRenderer/TextRenderer.h"
-#include <RenderingStudies/GL.h>
 
 const glm::vec4 BACKGROUND_COLOR = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
 const glm::vec3 CAMERA_POSITION = glm::vec3(0.0f, 10.0f, 20.0f);

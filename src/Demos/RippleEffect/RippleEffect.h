@@ -3,7 +3,6 @@
 #include <vector>
 
 #include <RenderingStudies/Demo.h>
-#include <RenderingStudies/Types.h>
 
 class Camera;
 class Shader;

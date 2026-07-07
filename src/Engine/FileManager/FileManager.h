@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include <RenderingStudies/Types.h>
-
 class FileManager final
 {
 private:

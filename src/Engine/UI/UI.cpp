@@ -1,10 +1,11 @@
 #include "UI.h"
 
-#include "../Window/Window.h"
 
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 #include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+#include "../Window/Window.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>

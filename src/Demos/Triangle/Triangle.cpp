@@ -1,8 +1,9 @@
 #include "Triangle.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterDemo.h>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"

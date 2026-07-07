@@ -1,9 +1,10 @@
 #include "RippleEffect.h"
 
-#include <RenderingStudies/GL.h>
-#include <RenderingStudies/RegisterDemo.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+
+#include <RenderingStudies/GL.h>
+#include <RenderingStudies/RegisterDemo.h>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"

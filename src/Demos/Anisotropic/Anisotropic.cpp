@@ -1,13 +1,15 @@
 #include "Anisotropic.h"
 
-#include <RenderingStudies/RegisterDemo.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+
+#include <RenderingStudies/RegisterDemo.h>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Grid/Grid.h"
 #include "../../Engine/Model/Model.h"
 #include "../../Engine/Shader/Shader.h"
+#include "../../Engine/Utils/UIComponents.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_DEMO(Anisotropic, true)
@@ -16,7 +18,6 @@ Anisotropic::Anisotropic(const Window& window, const Camera& camera)
     : m_Window(window)
     , m_Camera(camera)
     , m_LightDir(0.5f, 0.6f, 0.5f)
-    , m_RotDeg(0.0f, 0.0f, 0.0f)
     , m_Roughness(1.0f)
     , m_Anisotropy(0.75f)
     , m_Metallic(1.0f)
@@ -41,13 +42,7 @@ void Anisotropic::Update(float32 /*unused: deltaTime*/)
     ImGui::Begin("Anisotropic Shading");
     ImGui::AlignTextToFramePadding();
 
-    ImGui::TextUnformatted("Light direction");
-    ImGui::SameLine();
-    ImGui::SliderFloat3("##Light direction", &m_LightDir.x, -10.0f, 10.0f);
-
-    ImGui::TextUnformatted("Rotation (deg)");
-    ImGui::SameLine();
-    ImGui::SliderFloat3("##Rotation (deg)", &m_RotDeg.x, -180.0f, 180.0f);
+    UIComponent::Vector3Sliders("Light", m_LightDir.x, m_LightDir.y, m_LightDir.z);
 
     ImGui::Separator();
     ImGui::TextUnformatted("Material");
@@ -80,13 +75,6 @@ void Anisotropic::Render()
     float32 radius = 1.0f;
     float32 gap = 0.01f;
     modelRel = glm::translate(modelRel, glm::vec3(0.0f, radius + gap, 0.0f));
-
-    glm::vec3 r = glm::radians(m_RotDeg);
-
-    // Rotation: yaw (Y), pitch (X), roll (Z)
-    modelRel = glm::rotate(modelRel, r.y, glm::vec3(0, 1, 0));
-    modelRel = glm::rotate(modelRel, r.x, glm::vec3(1, 0, 0));
-    modelRel = glm::rotate(modelRel, r.z, glm::vec3(0, 0, 1));
 
     // Camera position in origin-relative space (same space as WorldPos in shaders)
     glm::vec3 cameraPosRel = glm::vec3(cameraPos - origin);

@@ -6,7 +6,6 @@
 #include <imgui.h>
 
 #include <RenderingStudies/DemoRegistry.h>
-#include <RenderingStudies/Types.h>
 
 class Window;
 class Camera;

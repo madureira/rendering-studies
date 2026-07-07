@@ -1,4 +1,3 @@
-
 #include "TextRenderer.h"
 
 #include <ft2build.h>

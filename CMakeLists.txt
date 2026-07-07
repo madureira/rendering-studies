@@ -171,9 +171,7 @@ else()
 endif()
 
 # ============================================================
-# PRECOMPILED HEADERS (desktop only — Emscripten PCH support is limited)
+# PRECOMPILED HEADERS
 # ============================================================
-if(NOT EMSCRIPTEN)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE
-        $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/includes/RenderingStudies/pch.h>)
-endif()
+target_precompile_headers(${PROJECT_NAME} PRIVATE
+    $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/includes/RenderingStudies/pch.h>)

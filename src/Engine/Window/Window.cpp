@@ -6,11 +6,11 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten/html5.h>
 #endif
-
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../Utils/HardwareUtil.h"
 #include <RenderingStudies/Config.h>
+
+#include "../Utils/HardwareUtil.h"
 
 Window::Window(const Config& config)
 {

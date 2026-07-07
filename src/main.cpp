@@ -3,7 +3,6 @@
 #endif
 
 #include <RenderingStudies/Config.h>
-#include <RenderingStudies/Types.h>
 
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/UI/CameraGizmo.h"
@@ -43,6 +42,7 @@ static void runFrame(LoopState& s)
     InputProcessorUtil::moveCamera(camera, *s.window, deltaTime, s.demoSelector->GetCameraSpeed(), s.demoSelector->GetCameraAcceleratedSpeed());
 
     s.renderer->RenderGrid(winWidth, winHeight, s.demoSelector->IsGridEnabled());
+    CameraGizmo::Render(camera, winWidth);
 
     if (!s.initialized)
     {
@@ -67,8 +67,6 @@ static void runFrame(LoopState& s)
             s.demo->Render();
         }
     }
-
-    CameraGizmo::Render(camera, winWidth);
 
     s.demoSelector->RenderControls(winWidth);
 

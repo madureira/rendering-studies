@@ -1,8 +1,9 @@
 #include "ColorCoord.h"
 
-#include <RenderingStudies/RegisterDemo.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+
+#include <RenderingStudies/RegisterDemo.h>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Grid/Grid.h"

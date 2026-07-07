@@ -1,8 +1,9 @@
 #include "TexturedCube.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <RenderingStudies/GL.h>
 #include <RenderingStudies/RegisterDemo.h>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Shader/Shader.h"
@@ -23,6 +24,11 @@ TexturedCube::TexturedCube(const Window& window, const Camera& camera)
     texParams.flipY = true;
     m_Texture = new Texture("assets/images/container.jpg", texParams);
     CreateMesh();
+
+    m_Camera.OverrideInitialPosition(
+        glm::vec3(0.0f, 5.0f, 10.0f),
+        -90.0f,
+        -23.0f);
 }
 
 TexturedCube::~TexturedCube()
@@ -39,8 +45,9 @@ TexturedCube::~TexturedCube()
     GL(glDeleteBuffers(1, &m_EBO));
 }
 
-void TexturedCube::Update(float32 /*unused: deltaTime*/)
+void TexturedCube::Update(float32 deltaTime)
 {
+    m_RotDeg += deltaTime * 30.0f;
 }
 
 void TexturedCube::Render()
@@ -50,8 +57,10 @@ void TexturedCube::Render()
     glm::mat4 projection = m_Camera.GetProjectionMatrix(m_Window.GetWidth(), m_Window.GetHeight());
 
     // Move model above the x-axis origin
-    float32 distanceX = 0.5f;
+    float32 distanceX = 1.0f;
     model = glm::translate(model, glm::vec3(0.0f, distanceX, 0.0f));
+
+    model = glm::rotate(model, glm::radians(m_RotDeg), glm::vec3(1.0f, 1.0f, 1.0f));
 
     m_Shader->Bind();
     m_Texture->Bind(0);

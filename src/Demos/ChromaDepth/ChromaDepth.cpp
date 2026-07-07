@@ -1,7 +1,8 @@
 #include "ChromaDepth.h"
 
-#include <RenderingStudies/RegisterDemo.h>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <RenderingStudies/RegisterDemo.h>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Grid/Grid.h"

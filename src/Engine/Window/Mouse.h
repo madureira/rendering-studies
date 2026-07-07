@@ -2,8 +2,6 @@
 
 #include <cassert>
 
-#include <RenderingStudies/Types.h>
-
 namespace Input
 {
 constexpr int32 kMouseButtonLeft = 0; // equivalent to GLFW_MOUSE_BUTTON_LEFT

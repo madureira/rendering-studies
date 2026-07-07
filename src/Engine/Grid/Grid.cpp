@@ -1,7 +1,8 @@
 #include "Grid.h"
 
-#include <RenderingStudies/GL.h>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <RenderingStudies/GL.h>
 
 #include "../Camera/Camera.h"
 #include "../Shader/Shader.h"

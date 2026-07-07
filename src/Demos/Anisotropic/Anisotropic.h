@@ -1,8 +1,8 @@
 #pragma once
 
-#include <RenderingStudies/Demo.h>
-#include <RenderingStudies/Types.h>
 #include <glm/glm.hpp>
+
+#include <RenderingStudies/Demo.h>
 
 class Camera;
 class Model;
@@ -18,7 +18,6 @@ private:
     Model* m_Model;
 
     glm::vec3 m_LightDir;
-    glm::vec3 m_RotDeg;
     float32 m_Roughness;
     float32 m_Anisotropy;
     float32 m_Metallic;

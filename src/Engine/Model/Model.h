@@ -5,8 +5,6 @@
 
 #include <glm/glm.hpp>
 
-#include <RenderingStudies/Types.h>
-
 struct aiMesh;
 struct aiNode;
 struct aiScene;

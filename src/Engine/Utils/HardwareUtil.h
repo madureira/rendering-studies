@@ -1,31 +1,5 @@
 #pragma once
 
-#include <RenderingStudies/Types.h>
-
-// Keep this include because GraphicsInfo queries use OpenGL calls.
-// IMPORTANT: QueryGraphicsInfo() requires a current valid GL context.
-#include <RenderingStudies/GL.h>
-// Some GL loaders (e.g. GLAD generated for OpenGL 4.1) don't ship newer enums.
-// We define them here so the code compiles; runtime usage is still guarded.
-#ifndef GL_CONTEXT_FLAG_DEBUG_BIT
-#define GL_CONTEXT_FLAG_DEBUG_BIT 0x00000002
-#endif
-
-#ifndef GL_MAX_COMPUTE_WORK_GROUP_COUNT
-#define GL_MAX_COMPUTE_WORK_GROUP_COUNT 0x91BE
-#endif
-
-#ifndef GL_MAX_COMPUTE_WORK_GROUP_SIZE
-#define GL_MAX_COMPUTE_WORK_GROUP_SIZE 0x91BF
-#endif
-
-#ifndef GL_MAX_TESS_GEN_LEVEL
-#define GL_MAX_TESS_GEN_LEVEL 0x8E7F
-#endif
-#ifndef GL_MAX_PATCH_VERTICES
-#define GL_MAX_PATCH_VERTICES 0x8E7D
-#endif
-
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -61,6 +35,30 @@
 #endif
 #else
 #define RS_HAS_GLFW 0
+#endif
+
+// Keep this include because GraphicsInfo queries use OpenGL calls.
+// IMPORTANT: QueryGraphicsInfo() requires a current valid GL context.
+#include <RenderingStudies/GL.h>
+// Some GL loaders (e.g. GLAD generated for OpenGL 4.1) don't ship newer enums.
+// We define them here so the code compiles; runtime usage is still guarded.
+#ifndef GL_CONTEXT_FLAG_DEBUG_BIT
+#define GL_CONTEXT_FLAG_DEBUG_BIT 0x00000002
+#endif
+
+#ifndef GL_MAX_COMPUTE_WORK_GROUP_COUNT
+#define GL_MAX_COMPUTE_WORK_GROUP_COUNT 0x91BE
+#endif
+
+#ifndef GL_MAX_COMPUTE_WORK_GROUP_SIZE
+#define GL_MAX_COMPUTE_WORK_GROUP_SIZE 0x91BF
+#endif
+
+#ifndef GL_MAX_TESS_GEN_LEVEL
+#define GL_MAX_TESS_GEN_LEVEL 0x8E7F
+#endif
+#ifndef GL_MAX_PATCH_VERTICES
+#define GL_MAX_PATCH_VERTICES 0x8E7D
 #endif
 
 // ==========================

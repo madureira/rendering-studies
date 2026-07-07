@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 
 #include <RenderingStudies/Demo.h>
-#include <RenderingStudies/Types.h>
 
 class Camera;
 class Shader;

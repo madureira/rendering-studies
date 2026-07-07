@@ -8,7 +8,6 @@
 #include <string>
 
 #include "Log.h"
-#include "Types.h"
 
 struct Config
 {

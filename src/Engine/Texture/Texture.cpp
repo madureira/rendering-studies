@@ -1,7 +1,8 @@
 #include "Texture.h"
 
-#include "../FileManager/FileManager.h"
 #include <RenderingStudies/GL.h>
+
+#include "../FileManager/FileManager.h"
 
 static GLenum WrapFromParam(int32 v)
 {

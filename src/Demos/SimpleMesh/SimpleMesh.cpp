@@ -1,13 +1,15 @@
 #include "SimpleMesh.h"
 
-#include <RenderingStudies/RegisterDemo.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
 
+#include <RenderingStudies/RegisterDemo.h>
+
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Grid/Grid.h"
-#include "../../Engine/Utils/ModelSelector.h"
 #include "../../Engine/Shader/Shader.h"
+#include "../../Engine/Utils/ModelSelector.h"
+#include "../../Engine/Utils/UIComponents.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_DEMO(SimpleMesh, true)
@@ -39,29 +41,7 @@ void SimpleMesh::Update(float32 /*unused: deltaTime*/)
 
     m_ModelSelector->Render();
 
-    ImGui::AlignTextToFramePadding();
-    ImGui::TextUnformatted("Position");
-    ImGui::SameLine();
-
-    float32 itemWidth = ImGui::CalcItemWidth() / 3.0f;
-
-    ImGui::AlignTextToFramePadding();
-    ImGui::TextColored(ImVec4(1, 0, 0, 1), "X");
-    ImGui::SameLine();
-    ImGui::SetNextItemWidth(itemWidth - 20.0f);
-    ImGui::DragFloat("##x", &m_ModelPos[0], 0.1f);
-    ImGui::SameLine();
-
-    ImGui::TextColored(ImVec4(0, 1, 0, 1), "Y");
-    ImGui::SameLine();
-    ImGui::SetNextItemWidth(itemWidth - 20.0f);
-    ImGui::DragFloat("##y", &m_ModelPos[1], 0.1f);
-    ImGui::SameLine();
-
-    ImGui::TextColored(ImVec4(0, 0.5f, 1, 1), "Z");
-    ImGui::SameLine();
-    ImGui::SetNextItemWidth(itemWidth - 20.0f);
-    ImGui::DragFloat("##z", &m_ModelPos[2], 0.1f);
+    UIComponent::Vector3Sliders("Position", m_ModelPos[0], m_ModelPos[1], m_ModelPos[2]);
 
     ImGui::End();
 }

@@ -1,13 +1,15 @@
 #include "TeapotShading.h"
 
-#include <RenderingStudies/RegisterDemo.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+
+#include <RenderingStudies/RegisterDemo.h>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/Grid/Grid.h"
 #include "../../Engine/Model/Model.h"
 #include "../../Engine/Shader/Shader.h"
+#include "../../Engine/Utils/UIComponents.h"
 #include "../../Engine/Window/Window.h"
 
 REGISTER_DEMO(TeapotShading, true)
@@ -56,18 +58,13 @@ void TeapotShading::Update(float32 /*unused: deltaTime*/)
     ImGui::SameLine();
     ImGui::Combo("##Shading type", &m_CurrentShader, s_ShaderOptions, IM_ARRAYSIZE(s_ShaderOptions));
 
-    ImGui::TextUnformatted("Light direction");
-    ImGui::SameLine();
-    ImGui::SliderFloat3("##Light direction", &m_LightDir.x, -10.0f, 10.0f);
+    UIComponent::Vector3Sliders("Light", m_LightDir.x, m_LightDir.y, m_LightDir.z);
+    UIComponent::Vector3Sliders("Rotation", m_RotDeg.x, m_RotDeg.y, m_RotDeg.z, 0.0f, 360.0f);
 
-    ImGui::TextUnformatted("Rotation (deg)");
-    ImGui::SameLine();
-    ImGui::SliderFloat3("##Rotation (deg)", &m_RotDeg.x, -180.0f, 180.0f);
-
-    ImGui::TextUnformatted("Scale");
-    ImGui::SameLine();
     if (m_LockScale)
     {
+        ImGui::TextUnformatted("Scale");
+        ImGui::SameLine();
         if (ImGui::SliderFloat("##ScaleAll", &m_ScaleAll, 0.1f, 10.0f))
         {
             m_Scale = glm::vec3(m_ScaleAll);
@@ -75,7 +72,7 @@ void TeapotShading::Update(float32 /*unused: deltaTime*/)
     }
     else
     {
-        ImGui::SliderFloat3("##Scale", &m_Scale.x, 0.1f, 10.0f);
+        UIComponent::Vector3Sliders("Scale", m_Scale.x, m_Scale.y, m_Scale.z, 0.1f);
     }
 
     ImGui::SameLine();

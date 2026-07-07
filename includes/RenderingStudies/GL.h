@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Log.h"
-#include "Types.h"
 #include <cstring>
 #include <type_traits>
 
@@ -11,6 +9,8 @@
 #else
 #include <glad/glad.h>
 #endif
+
+#include "Log.h"
 
 /**
  * @brief Converts OpenGL error codes to human-readable symbolic names.

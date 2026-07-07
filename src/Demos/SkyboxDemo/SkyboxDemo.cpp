@@ -1,10 +1,12 @@
 #include "SkyboxDemo.h"
 
-#include <RenderingStudies/GL.h>
-#include <RenderingStudies/RegisterDemo.h>
+#include <string>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
-#include <string>
+
+#include <RenderingStudies/GL.h>
+#include <RenderingStudies/RegisterDemo.h>
 
 #include "../../Engine/Camera/Camera.h"
 #include "../../Engine/FileManager/FileManager.h"

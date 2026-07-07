@@ -1,8 +1,8 @@
 #pragma once
 
-#include <RenderingStudies/Demo.h>
-#include <RenderingStudies/Types.h>
 #include <glm/glm.hpp>
+
+#include <RenderingStudies/Demo.h>
 
 class Camera;
 class ModelSelector;
