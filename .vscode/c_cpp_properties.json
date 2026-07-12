@@ -13,8 +13,8 @@
                 "/System/Library/Frameworks"
             ],
             "defines": [],
-            "cStandard": "c17",
-            "cppStandard": "c++17",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
             "intelliSenseMode": "macos-clang-arm64",
             "browse": {
                 "limitSymbolsToIncludedHeaders": true
