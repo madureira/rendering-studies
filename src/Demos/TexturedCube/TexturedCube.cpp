@@ -17,12 +17,13 @@ TexturedCube::TexturedCube(const Window& window, const Camera& camera)
     , m_Camera(camera)
 {
     m_Shader = new Shader("assets/shaders/texture.vert", "assets/shaders/texture.frag");
-    // Load and create a texture
+
     TextureParams texParams{};
     texParams.srgb = false;
     texParams.generateMipmaps = true;
     texParams.flipY = true;
     m_Texture = new Texture("assets/images/container.jpg", texParams);
+
     CreateMesh();
 
     m_Camera.OverrideInitialPosition(

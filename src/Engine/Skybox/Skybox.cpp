@@ -55,7 +55,7 @@ void Skybox::Render(const Camera& camera, uint32 windowWidth, uint32 windowHeigh
     // Only the upper-left 3x3 (rotation) matters; the skybox cube stays centered on the camera.
     glm::mat4 viewRotOnly = glm::mat4(glm::mat3(view));
 
-    // Disable wireframe mode
+    // Disable wireframe mode for Web
 #ifndef __EMSCRIPTEN__
     GLint oldPolygonMode[2];
     GL(glGetIntegerv(GL_POLYGON_MODE, oldPolygonMode));

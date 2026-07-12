@@ -82,15 +82,10 @@ Window::Window(const Config& config)
     glfwWindowHint(GLFW_REFRESH_RATE, 60);
     glfwWindowHint(GLFW_SAMPLES, 4);
 #if defined(DEBUG) && defined(GL_DEBUG_SOURCE_API)
-    // Required for reliable debug callback coverage on all drivers.
-    // On macOS (4.1 + ARB_debug_output): registering our callback via
-    // glDebugMessageCallbackARB replaces Apple's terse stderr output with
-    // our detailed spdlog messages.
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 #endif
 
-    // Create the window
     m_Window = glfwCreateWindow(m_Width, m_Height, config.window_title.c_str(),
 #ifndef __EMSCRIPTEN__
         m_FullScreen ? m_Monitor : NULL,
@@ -106,7 +101,6 @@ Window::Window(const Config& config)
         return;
     }
 
-    // Make OpenGL context current
     glfwMakeContextCurrent(m_Window);
 
 #ifdef __EMSCRIPTEN__
@@ -184,7 +178,6 @@ Window::Window(const Config& config)
     });
 
 #ifndef __EMSCRIPTEN__
-    // Initialize GLAD
     if (!gladLoadGL())
     {
         LOG_ERROR("Window: error initializing GLAD");

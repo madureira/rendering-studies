@@ -6,8 +6,6 @@
 
 static GLenum WrapFromParam(int32 v)
 {
-    // keep it simple for now
-    // v == 0 => REPEAT, else CLAMP_TO_EDGE
     return (v == 0) ? GL_REPEAT : GL_CLAMP_TO_EDGE;
 }
 
