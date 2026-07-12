@@ -1,0 +1,16 @@
+src/Demos/TexturedCube/TexturedCube.cpp
+  h_48b237170f120f 20,26
+src/Engine/Skybox/Skybox.cpp
+  h_48b237170f120f 58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "00d0a84525af14c8bd3d80cdf59c389bbb427ca4",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
