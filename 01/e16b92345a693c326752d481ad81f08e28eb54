@@ -1,0 +1,18 @@
+src/Engine/Engine.h
+  h_48b237170f120f 1-24
+src/main.cpp
+  h_48b237170f120f 1,5-6,8
+src/Engine/Engine.cpp
+  h_48b237170f120f 1-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "01e16b92345a693c326752d481ad81f08e28eb54",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
