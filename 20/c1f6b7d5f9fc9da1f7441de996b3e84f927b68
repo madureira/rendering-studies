@@ -1,0 +1,59 @@
+src/Engine/Renderer/Renderer.cpp
+  s_a225d2bd9ba5c9::t_4fffe68eb0269c 117-118,134,149-153
+  s_a225d2bd9ba5c9::t_57f8acc94a4fb3 155-160
+  s_a225d2bd9ba5c9::t_2da38251b173ef 308-330
+  s_a225d2bd9ba5c9::t_8a0fd43bae692b 251-288
+  s_a225d2bd9ba5c9::t_e3eb3eb04fb52b 290,294-299,301-306
+  h_48b237170f120f 94,96,114,120-124,133,300
+  s_a225d2bd9ba5c9::t_e7d90344efb5b5 165
+  s_a225d2bd9ba5c9::t_ed3e96c49240f8 126-130
+  s_a225d2bd9ba5c9::t_327dfaff8ba27b 307
+src/Engine/Engine.cpp
+  h_48b237170f120f 16-25
+src/Engine/Renderer/Renderer.h
+  s_d91263433d9036::t_e3ccfb6996a6b0 29-31
+  s_a225d2bd9ba5c9::t_afeb0246efc0a6 46-53
+  h_48b237170f120f 28,32
+src/Engine/TextRenderer/TextRenderer.h
+  h_48b237170f120f 13-15,25,43-45
+  s_a225d2bd9ba5c9::t_77911ed31bfda5 30-31,38-40
+  s_d91263433d9036::t_7d41e891c4ab19 32
+  s_a225d2bd9ba5c9::t_bdbdc052f689e7 21-22,29
+  s_d91263433d9036::t_47194530877993 26
+src/Engine/TextRenderer/TextRenderer.cpp
+  s_a225d2bd9ba5c9::t_cd9feab5f274d6 120,122,124,126-130,132-134,142-144,146-148,150-153,159,162,165-184,188,190-192,196-197,199-201,203,205-208
+  s_a225d2bd9ba5c9::t_d9b122c3bdde37 3-4,32-33,40-41,43,45-52,54-58,60,62,64-68,71-74,76,78-79,81,84-92,112,114,136,155-156
+  s_d91263433d9036::t_e7e9d408602d5e 103,157
+  h_48b237170f120f 31,42,44,70,75,77,80,82,123,125,158,160,202,204
+debug_build.sh
+  h_48b237170f120f 4,12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "20c1f6b7d5f9fc9da1f7441de996b3e84f927b68",
+  "prompts": {},
+  "humans": {
+    "h_48b237170f120f": {
+      "author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_a225d2bd9ba5c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c29a43ce-51cf-4c09-aafb-40ca297a7b07",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    },
+    "s_d91263433d9036": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4609dbd5-977f-4d4e-9e3b-eb48731ef14d",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rafael Madureira <rafael.madureira.santos@gmail.com>"
+    }
+  }
+}
