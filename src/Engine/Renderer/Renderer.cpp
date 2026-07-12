@@ -1,8 +1,6 @@
 #include "Renderer.h"
 
 #include <cstdio>
-#include <iomanip>
-#include <sstream>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -93,7 +91,9 @@ Renderer::~Renderer()
 void Renderer::UpdateTextProjectionIfNeeded(uint32 winWidth, uint32 winHeight) const
 {
     if (winWidth == m_LastTextWidth && winHeight == m_LastTextHeight)
+    {
         return;
+    }
     m_TextProjection = glm::ortho(0.0f, (float32)winWidth, 0.0f, (float32)winHeight);
     m_LastTextWidth = winWidth;
     m_LastTextHeight = winHeight;
@@ -111,24 +111,27 @@ void Renderer::RenderFPS(float64 currentTime, bool display, uint32 winWidth, uin
 {
     m_FpsNbFrames++;
 
+    static float64 lastTime = 0.0;
     static std::string fpsText;
     static std::string ftText;
-    if (currentTime - m_FpsLastTime >= 1.0)
+    static float32 fpsTextWidth = 0.0f;
+    static bool fpsTextWidthDirty = true;
+
+    if (currentTime - lastTime >= 1.0)
     {
-        float64 elapsed = currentTime - m_FpsLastTime;
-        float64 fps = float64(m_FpsNbFrames) / elapsed;
-        float64 avgFrameMs = elapsed / float64(m_FpsNbFrames) * 1000.0;
+        float64 elapsed = currentTime - lastTime;
+        float64 fps = static_cast<float64>(m_FpsNbFrames) / elapsed;
+        float64 avgFrameMs = (elapsed / static_cast<float64>(m_FpsNbFrames)) * 1000.0;
 
-        std::stringstream fpsStream;
-        fpsStream << std::fixed << std::setprecision(2) << fps;
-        fpsText = "FPS: " + fpsStream.str();
-
-        std::stringstream ftStream;
-        ftStream << std::fixed << std::setprecision(2) << "  " << avgFrameMs << "ms";
-        ftText = ftStream.str();
+        char buf[64];
+        snprintf(buf, sizeof(buf), "FPS: %.2f", fps);
+        fpsText = buf;
+        snprintf(buf, sizeof(buf), "  %.2fms", avgFrameMs);
+        ftText = buf;
 
         m_FpsNbFrames = 0;
-        m_FpsLastTime = currentTime;
+        lastTime = currentTime;
+        fpsTextWidthDirty = true;
     }
 
     static const float32 rowHeight = 32.0f;
@@ -143,14 +146,23 @@ void Renderer::RenderFPS(float64 currentTime, bool display, uint32 winWidth, uin
 
     UpdateTextProjectionIfNeeded(winWidth, winHeight);
 
-    m_TextRenderer->Render(*m_TextShader, fpsText, FPS_COLOR, originX, fpsTextPosY, scale);
+    if (fpsTextWidthDirty)
+    {
+        fpsTextWidth = m_TextRenderer->MeasureText(fpsText, scale);
+        fpsTextWidthDirty = false;
+    }
 
-    const float32 fpsTextWidth = m_TextRenderer->MeasureText(fpsText, scale);
-    m_TextRenderer->Render(*m_TextShader, ftText, FPS_COLOR, originX + fpsTextWidth, fpsTextPosY, scale);
+    m_TextShader->Bind();
+    m_TextRenderer->BeginBatch(*m_TextShader);
+    m_TextRenderer->SubmitText(fpsText, FPS_COLOR, originX, fpsTextPosY, scale);
+    m_TextRenderer->SubmitText(ftText, FPS_COLOR, originX + fpsTextWidth, fpsTextPosY, scale);
+    m_TextRenderer->EndBatch();
+    m_TextShader->Unbind();
 }
 
 void Renderer::SetPolygonMode(bool enabled)
 {
+    m_WireframeMode = enabled;
 #ifndef __EMSCRIPTEN__
     if (enabled)
     {
@@ -236,57 +248,84 @@ void Renderer::RenderCameraInfo(uint32 winWidth, uint32 winHeight, bool display)
 
     UpdateTextProjectionIfNeeded(winWidth, winHeight);
 
-    char buf[32];
-    std::string v;
+    // Refresh cached formatted strings and widths only when values change
+    {
+        char buf[32];
+        snprintf(buf, sizeof(buf), " %.1f", pos.x);
+        if (m_CamCache.xVal != buf)
+        {
+            m_CamCache.xVal = buf;
+            m_CamCache.xW = m_TextRenderer->MeasureText(m_CamCache.xVal, scale);
+        }
+        snprintf(buf, sizeof(buf), " %.1f", pos.y);
+        if (m_CamCache.yVal != buf)
+        {
+            m_CamCache.yVal = buf;
+            m_CamCache.yW = m_TextRenderer->MeasureText(m_CamCache.yVal, scale);
+        }
+        snprintf(buf, sizeof(buf), " %.1f", pos.z);
+        if (m_CamCache.zVal != buf)
+        {
+            m_CamCache.zVal = buf;
+        }
+        snprintf(buf, sizeof(buf), " %.2f", pitch);
+        if (m_CamCache.pitchVal != buf)
+        {
+            m_CamCache.pitchVal = buf;
+            m_CamCache.pitchW = m_TextRenderer->MeasureText(m_CamCache.pitchVal, scale);
+        }
+        snprintf(buf, sizeof(buf), " %.2f", yaw);
+        if (m_CamCache.yawVal != buf)
+        {
+            m_CamCache.yawVal = buf;
+            m_CamCache.yawW = m_TextRenderer->MeasureText(m_CamCache.yawVal, scale);
+        }
+        snprintf(buf, sizeof(buf), " %.2f", roll);
+        if (m_CamCache.rollVal != buf)
+        {
+            m_CamCache.rollVal = buf;
+        }
+    }
 
-    // Position line: bold colored labels, white values
+    // Pre-compute all X positions from cached widths
     const float32 posY = 2.0f * rowHeight;
-    float32 x = originX;
-
-    RenderBold("X:", X_AXIS_COLOR, x, posY, scale);
-    x += m_HudLabelWidths.x;
-    snprintf(buf, sizeof(buf), " %.1f", pos.x);
-    v = buf;
-    m_TextRenderer->Render(*m_TextShader, v, HUD_VALUE_WHITE, x, posY, scale);
-    x += m_TextRenderer->MeasureText(v, scale);
-
-    RenderBold("  Y:", Y_AXIS_COLOR, x, posY, scale);
-    x += m_HudLabelWidths.y;
-    snprintf(buf, sizeof(buf), " %.1f", pos.y);
-    v = buf;
-    m_TextRenderer->Render(*m_TextShader, v, HUD_VALUE_WHITE, x, posY, scale);
-    x += m_TextRenderer->MeasureText(v, scale);
-
-    RenderBold("  Z:", Z_AXIS_COLOR, x, posY, scale);
-    x += m_HudLabelWidths.z;
-    snprintf(buf, sizeof(buf), " %.1f", pos.z);
-    m_TextRenderer->Render(*m_TextShader, buf, HUD_VALUE_WHITE, x, posY, scale);
-
-    // Rotation line: bold labels, colored values
     const float32 rotY = rowHeight;
-    float32 rx = originX;
 
-    RenderBold("Pitch:", PITCH_COLOR, rx, rotY, scale);
-    rx += m_HudLabelWidths.pitch;
-    snprintf(buf, sizeof(buf), " %.2f", pitch);
-    v = buf;
-    m_TextRenderer->Render(*m_TextShader, v, PITCH_COLOR, rx, rotY, scale);
-    rx += m_TextRenderer->MeasureText(v, scale);
+    const float32 xLabelX = originX;
+    const float32 xValX = xLabelX + m_HudLabelWidths.x;
+    const float32 yLabelX = xValX + m_CamCache.xW;
+    const float32 yValX = yLabelX + m_HudLabelWidths.y;
+    const float32 zLabelX = yValX + m_CamCache.yW;
+    const float32 zValX = zLabelX + m_HudLabelWidths.z;
 
-    RenderBold("  Yaw:", YAW_COLOR, rx, rotY, scale);
-    rx += m_HudLabelWidths.yaw;
-    snprintf(buf, sizeof(buf), " %.2f", yaw);
-    v = buf;
-    m_TextRenderer->Render(*m_TextShader, v, YAW_COLOR, rx, rotY, scale);
-    rx += m_TextRenderer->MeasureText(v, scale);
+    const float32 pitchLabelX = originX;
+    const float32 pitchValX = pitchLabelX + m_HudLabelWidths.pitch;
+    const float32 yawLabelX = pitchValX + m_CamCache.pitchW;
+    const float32 yawValX = yawLabelX + m_HudLabelWidths.yaw;
+    const float32 rollLabelX = yawValX + m_CamCache.yawW;
+    const float32 rollValX = rollLabelX + m_HudLabelWidths.roll;
 
-    RenderBold("  Roll:", ROLL_COLOR, rx, rotY, scale);
-    rx += m_HudLabelWidths.roll;
-    snprintf(buf, sizeof(buf), " %.2f", roll);
-    m_TextRenderer->Render(*m_TextShader, buf, ROLL_COLOR, rx, rotY, scale);
-}
+    m_TextShader->Bind();
 
-void Renderer::RenderBold(const std::string& text, const glm::vec3& color, float32 x, float32 y, float32 scale) const
-{
-    m_BoldTextRenderer->Render(*m_TextShader, text, color, x, y, scale);
+    // Bold batch: each label has a unique color — SubmitText flushes on each color change
+    m_BoldTextRenderer->BeginBatch(*m_TextShader);
+    m_BoldTextRenderer->SubmitText("X:", X_AXIS_COLOR, xLabelX, posY, scale);
+    m_BoldTextRenderer->SubmitText("  Y:", Y_AXIS_COLOR, yLabelX, posY, scale);
+    m_BoldTextRenderer->SubmitText("  Z:", Z_AXIS_COLOR, zLabelX, posY, scale);
+    m_BoldTextRenderer->SubmitText("Pitch:", PITCH_COLOR, pitchLabelX, rotY, scale);
+    m_BoldTextRenderer->SubmitText("  Yaw:", YAW_COLOR, yawLabelX, rotY, scale);
+    m_BoldTextRenderer->SubmitText("  Roll:", ROLL_COLOR, rollLabelX, rotY, scale);
+    m_BoldTextRenderer->EndBatch();
+
+    // Regular batch: xVal/yVal/zVal share WHITE (batched together), colored values flush individually
+    m_TextRenderer->BeginBatch(*m_TextShader);
+    m_TextRenderer->SubmitText(m_CamCache.xVal, HUD_VALUE_WHITE, xValX, posY, scale);
+    m_TextRenderer->SubmitText(m_CamCache.yVal, HUD_VALUE_WHITE, yValX, posY, scale);
+    m_TextRenderer->SubmitText(m_CamCache.zVal, HUD_VALUE_WHITE, zValX, posY, scale);
+    m_TextRenderer->SubmitText(m_CamCache.pitchVal, PITCH_COLOR, pitchValX, rotY, scale);
+    m_TextRenderer->SubmitText(m_CamCache.yawVal, YAW_COLOR, yawValX, rotY, scale);
+    m_TextRenderer->SubmitText(m_CamCache.rollVal, ROLL_COLOR, rollValX, rotY, scale);
+    m_TextRenderer->EndBatch();
+
+    m_TextShader->Unbind();
 }

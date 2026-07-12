@@ -13,6 +13,16 @@
 #include "Utils/InputProcessorUtil.h"
 #include "Window/Window.h"
 
+struct LoopState
+{
+    Window* window;
+    Renderer* renderer;
+    DemoSelector* demoSelector;
+    Demo* demo = nullptr;
+    int32 lastDemoIndex = -1;
+    bool initialized = false;
+};
+
 static void runFrame(LoopState& s);
 
 #ifdef __EMSCRIPTEN__
